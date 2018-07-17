@@ -1,0 +1,141 @@
+fileFormatVersion: 2
+guid: 82c7cdba74aac3c409ee52bd9fe293f4
+timeCreated: 1513784710
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: BUIILDINGS_unwarped
+    100004: BUIILDINGS_unwarped_1
+    100006: building10
+    100008: building10_straight
+    100010: building14
+    100012: building14_conical
+    100014: building14_straight
+    100016: building16
+    100018: building16_conical
+    100020: building16_straight
+    100022: building18
+    100024: building18_conical
+    100026: building18_straight
+    100028: buildings_straight
+    400000: //RootNode
+    400002: BUIILDINGS_unwarped
+    400004: BUIILDINGS_unwarped_1
+    400006: building10
+    400008: building10_straight
+    400010: building14
+    400012: building14_conical
+    400014: building14_straight
+    400016: building16
+    400018: building16_conical
+    400020: building16_straight
+    400022: building18
+    400024: building18_conical
+    400026: building18_straight
+    400028: buildings_straight
+    2300000: building10
+    2300002: building10_straight
+    2300004: building14
+    2300006: building14_conical
+    2300008: building14_straight
+    2300010: building16
+    2300012: building16_conical
+    2300014: building16_straight
+    2300016: building18
+    2300018: building18_conical
+    2300020: building18_straight
+    3300000: building10
+    3300002: building10_straight
+    3300004: building14
+    3300006: building14_conical
+    3300008: building14_straight
+    3300010: building16
+    3300012: building16_conical
+    3300014: building16_straight
+    3300016: building18
+    3300018: building18_conical
+    3300020: building18_straight
+    4300000: building14_conical
+    4300002: building18_conical
+    4300004: building16_conical
+    4300006: building10
+    4300008: building14
+    4300010: building18
+    4300012: building16
+    4300014: building10_straight
+    4300016: building14_straight
+    4300018: building18_straight
+    4300020: building16_straight
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 1
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 13
+    secondaryUVAreaDistortion: 18
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 1
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

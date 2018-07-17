@@ -1,0 +1,45 @@
+<config>
+  <game>
+    <timeout timeunit="sec">120</timeout>
+    <countdown timeunit="sec">3</countdown>
+    <crashscreentimeout timeunit="sec">1</crashscreentimeout>
+  </game>
+  <controller>
+    <maxenginepower>8</maxenginepower>
+    <lift>0.015</lift>
+    <zeroliftspeed>70</zeroliftspeed>
+    <rolleffect>0.5</rolleffect>
+    <pitcheffect>1</pitcheffect>
+    <yaweffect>-0.0033</yaweffect>
+    <bankedturneffect>5.5</bankedturneffect>
+    <autoturnpitch>0.5</autoturnpitch>
+    <autorolllevel>2</autorolllevel>
+    <autopitchlevel>0.1</autopitchlevel>
+    <airbrakeseffect>3</airbrakeseffect>
+    <throttlechangespeed>0.3</throttlechangespeed>
+    <dragincreasefactor>0.001</dragincreasefactor>
+    <maxrollangle>80</maxrollangle>
+    <maxpitchangle>80</maxpitchangle>
+    <maxspeed>37</maxspeed>
+  </controller>
+  <input>
+    <autosave>True</autosave>
+    <centerxaxis>0</centerxaxis>
+    <minxaxis>100</minxaxis>
+    <maxxaxis>-100</maxxaxis>
+    <xdeadzone>0.01</xdeadzone>
+    <invertX>False</invertX>
+    <centeryaxis>0</centeryaxis>
+    <minyaxis>100</minyaxis>
+    <maxyaxis>-100</maxyaxis>
+    <ydeadzone>0.05</ydeadzone>
+    <invertY>False</invertY>
+  </input>
+  <rfid>
+    <comport>COM3</comport>
+    <baurate>9600</baurate>
+    <parity>none</parity>
+    <stopbits>One</stopbits>
+    <databits>8</databits>
+  </rfid>
+</config>
