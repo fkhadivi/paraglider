@@ -191,6 +191,26 @@ public class smoothVector3{
 		}
 	}
 
+	public static Vector3 angularLerp(Vector3 from, Vector3 to, float t)
+	{
+		return new Vector3(	Mathf.LerpAngle(from.x,to.x,t),
+							Mathf.LerpAngle(from.y,to.y,t),
+							Mathf.LerpAngle(from.z,to.z,t));
+	}
+
+	public static float smooth01(float t)
+	{
+		return Mathf.Clamp01(Mathf.SmoothStep(0,1,t));
+	}
+
+	public static float smooth01trigonometrically(float t)
+	{
+		//uses cosinus shape between, input 0..1, output 0..1
+		//return Mathf.Clamp01((1-Mathf.Cos(t*Mathf.PI))/2);
+		return Mathf.Clamp01(Mathf.InverseLerp(1,-1, Mathf.Cos(t*Mathf.PI)));
+	}
+
+
 	public int[] randomIntArray(int min, int max, int count)
 	{
 		if(count>max-min)
@@ -222,6 +242,30 @@ public class smoothVector3{
 	        }
 	    }
 		
+	}
+
+	static public GameObject[] cleanUpArray(GameObject[] Array)
+	{
+		
+		int j=0;
+		for(int i = 0;i<Array.Length;i++)
+		{
+			if (Array[i]!=null)
+			{
+				if(j<i)
+				{
+					Array[j]=Array[i];
+					Array[i]=null;
+				}
+				j++;
+			}
+		}
+		GameObject[] Output = new GameObject[j];
+		for(int i = 0;i<Output.Length;i++)
+		{
+			Output[i]=Array[i];
+		}
+		return Output;
 	}
 
 	public static Vector3 ClosestPointToIntersect( Vector3 linePoint1, Vector3 lineVec1, Vector3 linePoint2, Vector3 lineVec2){

@@ -12,15 +12,19 @@ public class billboardBkShaderRotation : MonoBehaviour {
     // Use this for initialization
     void Start () {
         Matty = GetComponent<MeshRenderer>().sharedMaterial;
-        if (Matty.shader.name == shaderName)
+		if(Matty ==null)
+		{
+			Debug.LogError("no Material on " + gameObject.name+"'. This script needs the shader '"+ shaderName+"' to make it a billboard");
+		}
+		else if (Matty.shader.name != shaderName)
         {
-            hasBillboardShader = true;
-            Matty = GetComponent<MeshRenderer>().material;
-            rotationOffset = Matty.GetFloat(Shader.PropertyToID("_Rotation"));
+			Debug.LogWarning("Wrong shader in " + gameObject.name+ ": the Material "+ Matty.name + " uses the shader '"+ Matty.shader.name +"'. This script needs the shader '"+ shaderName+"' to make it a billboard");
         }
         else
         {
-            Debug.LogWarning("Wrong shader in " + gameObject.name+ ": the Material "+ Matty.name + " uses the shader '"+ Matty.shader.name +"'. This script needs the shader '"+ shaderName+"' to make it a billboard");
+			hasBillboardShader = true;
+            Matty = GetComponent<MeshRenderer>().material;
+            rotationOffset = Matty.GetFloat(Shader.PropertyToID("_Rotation"));
         }
     }
 

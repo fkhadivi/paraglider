@@ -14,20 +14,25 @@ public class ParagliderLevelControl : MonoBehaviour {
 
     public delegate void Delegate();
     public Delegate onPreloadDone;
+	public Delegate onLevelAwake;
 
     private void Start()
     {
         SceneManager.sceneLoaded += OnLevelLoaded;
-        Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        Debug.Log("starting LEVEL CONTROL");
     }
 
   
-
-    public ParagliderLevel levelInfo()
+	public ParagliderLevel levelInfo(int level)
     {
         if (level > 0)
         return levelInfos[level];
         return null;
+    }
+
+    public ParagliderLevel levelInfo()
+    {
+			return levelInfo(level);
     }
 
     public ParagliderLevel getLevelInfo(Scene scene)
@@ -52,7 +57,7 @@ public class ParagliderLevelControl : MonoBehaviour {
 
     public void preloadAllLevels()
     {
-        Debug.Log("preloading levels");
+        Debug.Log(">>>>>>>>>>>>>> PRELOADING LEVELS");
         if (!(levels.Length == levelNames.Length))
         {
             levels = new Scene[levelNames.Length];
@@ -100,14 +105,19 @@ public class ParagliderLevelControl : MonoBehaviour {
 
     void OnLevelLoaded(Scene scene, LoadSceneMode mode)
     {
-        Debug.Log("level " + scene.name + " loaded");
+        Debug.Log(">>> level " + scene.name + " loaded");
         levels[preloadingLevel] = scene;
-        levelInfos[preloadingLevel] = getLevelInfo(levels[preloadingLevel]);
-        if (levelInfos[preloadingLevel].terrain != null)
-        {
-            levelInfos[preloadingLevel].terrain.SetActive(false);
-        }
-        managePreloading();
+        levelInfos[preloadingLevel] = getLevelInfo(levels[preloadingLevel]).Setup();
+        //the level has been loaded and the levelInfo will do setup now, 
+		//this will take some frames though, so we need to wait till setup has finished
+		levelInfos[preloadingLevel].onSetupFinished = onLevelSetupFinished;
+    }
+
+    void onLevelSetupFinished()
+    {
+		Debug.Log(">>> level " + levels[preloadingLevel].name + " setup finished");
+		//level is good to go, lets go for the next level
+		managePreloading();
     }
 
     public bool preload(int l)
@@ -118,7 +128,7 @@ public class ParagliderLevelControl : MonoBehaviour {
             return false;
         }
         SceneManager.LoadSceneAsync(levelNames[l], LoadSceneMode.Additive);
-        Debug.Log("loading level " + l + " (" + levelNames[l] + ")");
+        Debug.Log(">>> loading level " + l + " (" + levelNames[l] + ")");
         return true;
     }
 
@@ -152,6 +162,35 @@ public class ParagliderLevelControl : MonoBehaviour {
         }
         //start current level
     }
+
+    public void wakeLevel()
+    {
+		if(levelInfo()==null)
+			return;
+		
+		if(level>0)
+		{	
+			int nextLevel =incrementLevel(level);
+			if(nextLevel>0)
+				levelInfo().finish.wake(levelInfo(nextLevel).previewTexture);
+			else
+				levelInfo().finish.wake(null);
+
+			levelInfo().wake();
+			levelInfo().onLevelAwake = this.levelAwake;
+		}
+		else
+		{
+			levelAwake();
+		}
+    }
+
+    public void levelAwake()
+    {
+		onLevelAwake();
+	}
+
+
 
     public int incrementLevel(int currentLevel)
     {

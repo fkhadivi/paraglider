@@ -4,6 +4,7 @@
 	{
 		_TintColor("Tint Color", Color) = (0.5,0.5,0.5,0.5)
 		_MainTex("Particle Texture", 2D) = "white" {}
+		_AlphaTex("Alpha Texture", 2D) = "white" {}
 		_Scale("Scale", float) = 1.0
 		_Rotation("Rotation ", Float) = 0.0
 		_Xoffset("x offset ", Float) = 0.0
@@ -31,6 +32,7 @@
 #include "UnityCG.cginc"
 
 		sampler2D _MainTex;
+		sampler2D _AlphaTex;
 	fixed4 _TintColor;
 	float _Scale;
 	float _Xoffset;
@@ -90,7 +92,9 @@
 
 	fixed4 frag(v2f i) : COLOR
 	{
-		return 2.0f * i.color * _TintColor * tex2D(_MainTex, i.texcoord);
+		fixed4 c = 2.0f * i.color * _TintColor * tex2D(_MainTex, i.texcoord);
+		c.a *= (tex2D(_AlphaTex, i.texcoord).r+tex2D(_AlphaTex, i.texcoord).g+tex2D(_AlphaTex, i.texcoord).b)/3;
+		return c;
 	}
 		ENDCG
 	}

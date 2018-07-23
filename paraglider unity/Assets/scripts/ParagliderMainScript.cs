@@ -6,9 +6,11 @@ using UnityEngine.SceneManagement;
 public class ParagliderMainScript : MonoBehaviour {
 
 
+	public bool dontDestroyOnLoad = false;
     private static bool created = false;
     ParagliderLevelControl levelControl;
 	public ParagliderControler glider;			//script für paraglider interaktionen mit umgebung
+	Rigidbody gliderRig;						//rigidbody of glider
 	public GameMap_benja Map;					//steuert die karte
 	public ALtimeter_benja Altimeter;			//steuert den höhenmesser
     public DebugInfo_benja debugInfo;			// gibt debug daten auf dem Bildschirm aus
@@ -22,10 +24,7 @@ public class ParagliderMainScript : MonoBehaviour {
     public float maxInactivityTime = 30f;		//max zeit ohne input bevor standby eingeleitet
 	public float currentInactivityTime = 30f;	//zeit ohne bis standby eingeleitet wenn kein inpout
 
-    public float gliderSpeed;		//geschwindigkeit des gliders in m/s
-	public Vector3 gliderPosition;	//
-	public float gliderAlt;			//aktuellle höhe
-	public float gliderAltChange;	//änderung der höhe
+
 
 	public Texture2D mapTexture; //wird aus level info des levels übernommen und an map übergeben
 
@@ -37,7 +36,7 @@ public class ParagliderMainScript : MonoBehaviour {
     public bool respawnEnabled = false;		//auto respawn nach crash
 
 	public bool debug = false;				// sollen debug daten erscheinen
-	public bool finishing = false;			// übergang ins nächste level ist eingeleitet	
+	//public bool finishing = false;			// übergang ins nächste level ist eingeleitet	
     public bool finishGame = false;			// spiel wird beendet, kein weitere spawning
     
 	/*
@@ -79,7 +78,7 @@ public class ParagliderMainScript : MonoBehaviour {
 
     void Start()
     {
-        if (!created)
+        if (!created && dontDestroyOnLoad)
         {
             DontDestroyOnLoad(this.gameObject);
             created = true;
@@ -90,21 +89,26 @@ public class ParagliderMainScript : MonoBehaviour {
 		gliderRig=glider.GetComponent<Rigidbody>();
 		ParagliderCrashDetection CrashDetect = glider.GetComponent<ParagliderCrashDetection>();
 		glider.onCrash = onCrash;
-		glider.onFog = onFog;
-		glider.onFinish = onFinish;
+		//glider.onFog = onFog;
+		glider.onFinishReached = onFinish;
         glider.onThermicDown = onThermicDown;
         glider.onThermicUp = onThermicUp;
         glider.onThermicLeave = onThermicLeave;
         glider.onSpawn = onSpawn;
+        glider.onDocking = onDocking;
         levelControl = GetComponent<ParagliderLevelControl>();
         //reset();
     }
 
 
-
     void reset()
     {
+		debug=false;
+    	onDebugChange(false);
+    	//onDoldrums();
+    	glider.togglePhysics(false);
         levelControl.onPreloadDone = onLevelsLoaded;
+        levelControl.onLevelAwake = onLevelawake;
     	gameTime = maxGameTime;
         levelControl.goToLevel(0);
         levelControl.preloadAllLevels();
@@ -118,9 +122,9 @@ public class ParagliderMainScript : MonoBehaviour {
         currentInactivityTime = maxInactivityTime;
     }
 
-    
 
-    Rigidbody gliderRig;
+
+
 
     void Update()
     {
@@ -132,15 +136,11 @@ public class ParagliderMainScript : MonoBehaviour {
         BenjasMath.countdownToZero(ref currentInactivityTime);
         debugInfo.log("time until standby", currentInactivityTime);
 
-        gliderPosition =glider.transform.position;
-    	gliderSpeed = gliderRig.velocity.magnitude;
-        gliderAlt = glider.transform.position.y;
-    	gliderAltChange = gliderRig.velocity.y;
-        debugInfo.log("speed", gliderSpeed);
-        debugInfo.log("altitude", gliderAlt);
-        debugInfo.log("alt change", gliderAltChange);
+        debugInfo.log("speed", glider.speed);
+        debugInfo.log("altitude", glider.altitude);
+        debugInfo.log("alt change", glider.altChange);
 
-        Map.updateMap(gliderPosition,glider.transform.eulerAngles);
+        Map.updateMap(glider.position,glider.transform.eulerAngles);
 
         if (BenjasMath.countdownToZero(ref timeToSpawn) && spawnByTime)
         {
@@ -170,12 +170,15 @@ public class ParagliderMainScript : MonoBehaviour {
         levelControl.NextLevel();
 		if (levelControl.level>0)
 		{
-			glider.spawn(levelControl.levelInfo().startPoint.transform);
 			Map.Setup(		levelControl.levelInfo().map,
 							levelControl.levelInfo().markerNE.transform.position,
 							levelControl.levelInfo().markerSW.transform.position
 							);
-			levelControl.levelInfo().terrain.SetActive(true);
+			glider.spawn(levelControl.levelInfo().startPoint.transform);
+			glider.togglePhysics(false);
+
+			levelControl.wakeLevel();
+
 	    	Map.gameObject.SetActive(true);
 	    	Altimeter.gameObject.SetActive(true);
     	}
@@ -188,8 +191,15 @@ public class ParagliderMainScript : MonoBehaviour {
 
 		Debug.Log("level "+levelControl.level+" started");
         debugInfo.log("level", "" + levelControl.level);
+		onDoldrums();
 	}
 
+	void onLevelawake()
+    {
+        debugInfo.log("last big event", "level running");
+		glider.togglePhysics(true);
+		onStiffBreeze();
+    }
 
 
 	/*
@@ -216,13 +226,19 @@ public class ParagliderMainScript : MonoBehaviour {
 
 	public void onFinish()
     {
-        debugInfo.log("collider info", "finish");
-        if (!finishGame && !finishing)
+        debugInfo.log("collider info", "finish reached");
+		Debug.Log("level "+levelControl.level+" finish reached");
+        if (!finishGame )
     	{
     		NextLevel();
-    		finishing=true;
     	}
     }
+
+	void onDocking()
+    {
+		debugInfo.log("last big event", "started docking to level frame for level change");
+    }
+
 
 	public void onSpawn()
 	{
@@ -276,6 +292,7 @@ public class ParagliderMainScript : MonoBehaviour {
     public void onDoldrums() //FLAUTE
     {
     	thermics=false;
+		Debug.Log("thermics "+thermics.ToString());
 		debugInfo.log("thermics",thermics.ToString());
 		glider.onThermicDisappear(); 
     }                                
@@ -283,7 +300,7 @@ public class ParagliderMainScript : MonoBehaviour {
     public void onStiffBreeze() //STEIFE BRIESE ;)
     {
 		thermics=true;
-		debugInfo.log("thermics",thermics.ToString());
+		Debug.Log("thermics "+thermics.ToString());
 		glider.onThermicAppear();
 
     }
@@ -309,7 +326,9 @@ public class ParagliderMainScript : MonoBehaviour {
             debugInfo.log("key L", "next level");
             debugInfo.log("key X", "reset game");
             debugInfo.log("key g", "toggle godmode");
-			debugInfo.log("key o/p", "doldrums<>stiff breeze  ");
+			debugInfo.log("key p", "toggle physics");
+			debugInfo.log("key q/w", "quiet<>windy ");
+			debugInfo.log("key space", "superspeed");
 			debugInfo.log(": :",": : : : :");
         }
         if(Input.anyKey)
@@ -342,15 +361,29 @@ public class ParagliderMainScript : MonoBehaviour {
             godmode = !godmode;
             debugInfo.log("godmode", godmode ? "ensbled" : "disabled");
         }
-		if (Input.GetKeyDown("p"))
+		if (Input.GetKeyDown("w"))
         {
         	onStiffBreeze();
         }
-		if (Input.GetKeyDown("o"))
+		if (Input.GetKeyDown("q"))
         {
 			onDoldrums();
         }
-    }
+        if (Input.GetKeyDown("p"))
+        {
+        	glider.togglePhysics();
+				debugInfo.log("physics", glider.physicsEnabled()? "enabled" : "disabled");
+        }
+		if (!glider.physicsEnabled())
+		{
+		if (Input.GetKey("space")) glider.transform.position += glider.transform.forward*10;
+		if (Input.GetKey("up")) glider.transform.eulerAngles += new Vector3(+3,0,0);
+			if (Input.GetKey("down")) glider.transform.eulerAngles += new Vector3(-3,0,0);
+			if (Input.GetKey("left")) glider.transform.eulerAngles += new Vector3(0,-3,0);
+			if (Input.GetKey("right")) glider.transform.eulerAngles += new Vector3(0,+3,0);
+		}
+
+	}
 
     public delegate void boolDelegate(bool b);
     public boolDelegate onDebugChange;

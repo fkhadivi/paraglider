@@ -13,6 +13,7 @@ public class ParagliderLevel : MonoBehaviour {
 	[Header("Terrain Settings")]
 	public GameObject terrain;
 	public GameObject startPoint;
+	public ParagliderLevelPreview levelPreview;
 	public ParagliderFinish finish;
 	public GameObject markerNE;
 	public GameObject markerSW;
@@ -25,6 +26,11 @@ public class ParagliderLevel : MonoBehaviour {
 	public mobileObstacle[] flyingObstacles = new mobileObstacle[12] ;
 	public staticObstacle[] staticObstacles = new staticObstacle[12] ;
 	public List<ParagliderFlyingObstacle> availableMobilObstacles;
+	public RenderTexture previewTexture;
+
+	public delegate void Delegate();
+    public Delegate onSetupFinished;
+	public Delegate onLevelAwake;
 
 
 
@@ -161,29 +167,7 @@ public class ParagliderLevel : MonoBehaviour {
 
 
 
-	static public GameObject[] cleanUpArray(GameObject[] Array)
-	{
-		
-		int j=0;
-		for(int i = 0;i<Array.Length;i++)
-		{
-			if (Array[i]!=null)
-			{
-				if(j<i)
-				{
-					Array[j]=Array[i];
-					Array[i]=null;
-				}
-				j++;
-			}
-		}
-		GameObject[] Output = new GameObject[j];
-		for(int i = 0;i<Output.Length;i++)
-		{
-			Output[i]=Array[i];
-		}
-		return Output;
-	}
+
 
 	public void distributeStatObst()
 	{
@@ -194,14 +178,79 @@ public class ParagliderLevel : MonoBehaviour {
 	}
 
 
+
+	public void makeLevelPreview()
+	{
+		//put the level preview (with cam) to the point where the paraglider will appear
+		if(startPoint == null)
+		Debug.LogError(level+"has no start point, put gameobject in from inspector");
+		if(levelPreview == null)
+		return;
+		levelPreview.transform.position=startPoint.transform.position;
+		levelPreview.transform.rotation=startPoint.transform.rotation;
+		previewTexture = levelPreview.getPreviewTexture();
+	}
+
 	// Use this for initialization
-	void Start () {
+	public ParagliderLevel Setup () {
 		Debug.Log(">>>>>>>>>>> setting up Level ("+gameObject.name+") <<<<<<<<<<<<<<<");
+
+		if (terrain != null)
+        {
+			terrain.SetActive(true);
+        }
+		waitForDelayedSetup = true;
+        return this;
+	}
+
+	//wait for all scripts to run and settle down
+	public int delayFrames = 4; 
+	bool waitForDelayedSetup = false;
+
+	public void delayedSetup()
+	{
+		waitForDelayedSetup=false;
 		distributeStatObst();
 		orderMobileObstacles(flyingObstacles);
+		if (terrain != null)
+        {
+			makeLevelPreview();
+            terrain.SetActive(false);
+            onSetupFinished();
+        }
 	}
-	// Update is called once per frame
-	void Update () {
 
+	bool waitForWake = false;
+
+	public void wake()
+	{
+		Debug.Log("public void wake(RenderTexture previewTexture)");
+		terrain.SetActive(true);
+		waitForWake = true;
+		delayFrames = 2;
+	}
+
+	public void delayedAwake()
+	{
+		if(levelPreview!= null)
+		{
+			levelPreview.gameObject.SetActive(false);
+		}
+
+		onLevelAwake();
+	}
+
+	// Update is called once per frame
+	void Update () 
+	{
+		if (waitForDelayedSetup && delayFrames-- <0)
+		{
+			delayedSetup();
+		}
+		else if (waitForWake && delayFrames-- <0) 
+		{
+			waitForWake = false;
+			delayedAwake();
+		}
 	}
 }

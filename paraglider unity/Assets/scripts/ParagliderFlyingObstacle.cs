@@ -17,8 +17,9 @@ public class ParagliderFlyingObstacle : MonoBehaviour {
 	void Start () {
 		player = findGlider();
 		debugColor = new Color(Random.value,Random.value,Random.value);
-		rigi = gameObject.AddComponent<Rigidbody>();
         rigi = gameObject.GetComponent<Rigidbody>();
+        if (rigi == null)
+			rigi = gameObject.AddComponent<Rigidbody>();
 		rigi.useGravity=false;
 		rigi.mass = 1000;
 	}

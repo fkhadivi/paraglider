@@ -23,7 +23,7 @@ public class remove : MonoBehaviour {
 			int i;
 			for (i=0;i<Materials.Length;i++)
 			{
-				Debug.Log(GetComponent<MeshRenderer>().sharedMaterial +" =? "+Materials[i]);
+				//Debug.Log(GetComponent<MeshRenderer>().sharedMaterial +" =? "+Materials[i]);
 				if(GetComponent<MeshRenderer>().sharedMaterial == Materials[i])
 				{
 					doIt();

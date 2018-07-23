@@ -11,7 +11,7 @@ public class DebugOnly_benja : MonoBehaviour {
 	void Awake () {
 		mainScript = FindObjectOfType<ParagliderMainScript>();
 		//Debug.Log("main script " + mainScript.name);
-        onDebugChange(mainScript.debug);
+		onDebugChange(false);
         connect(true);
     }
 
@@ -35,13 +35,19 @@ public class DebugOnly_benja : MonoBehaviour {
 
 
     void onDebugChange(bool debug)
-    {
+    {/*
         isDebug = debug;
 		for (int ID = 0; ID < this.transform.childCount; ID++)
 	     {
         	this.transform.GetChild(ID).gameObject.SetActive(debug);
     	 }
     	 this.gameObject.SetActive(debug);
+     */
+     Renderer[] renderers = GetComponentsInChildren<Renderer>();
+		foreach(Renderer rendi in renderers)
+		{
+			rendi.enabled=debug;
+		}
     }
 
 }
