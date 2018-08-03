@@ -51,7 +51,10 @@ public class GameManager : MonoBehaviour {
 			{
 				TextProvider.Load("text.csv");
 			}
+
         }
+        TextProvider.lang = "en";
+        Debug.Log(">>>>>>>>>>>>>>>>" + TextProvider.GetText("0404.MT.0100.HL0"));
 
         TextProvider.lang = languageCode;
     }
