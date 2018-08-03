@@ -254,12 +254,12 @@ public class ParagliderMainScript : MonoBehaviour {
     }
 
 
-/*
-	 ▀▀█▀▀  █  █  █▀▀▀  █▀▀▄  █▄ ▄█  ▀█▀  ▄▀▀▄  ▄▀▀▀ 
-	   █    █▀▀█  █▀▀   █▀▀▄  █▀▄▀█   █   █     ▀▀▀▄ 
-	   █    █  █  █▄▄▄  █  █  █ █ █  ▄█▄  ▀▄▄▀  ▀▄▄▀ 
-*/
-     
+    /*
+         ▀▀█▀▀  █  █  █▀▀▀  █▀▀▄  █▄ ▄█  ▀█▀  ▄▀▀▄  ▄▀▀▀ 
+           █    █▀▀█  █▀▀   █▀▀▄  █▀▄▀█   █   █     ▀▀▀▄ 
+           █    █  █  █▄▄▄  █  █  █ █ █  ▄█▄  ▀▄▄▀  ▀▄▄▀ 
+    */
+
     public void onThermicUp()
     {
         debugInfo.log("thermic", "up entered");
@@ -295,7 +295,7 @@ public class ParagliderMainScript : MonoBehaviour {
 		Debug.Log("thermics "+thermics.ToString());
 		debugInfo.log("thermics",thermics.ToString());
 		glider.onThermicDisappear(); 
-    }                                
+    }        
 
     public void onStiffBreeze() //STEIFE BRIESE ;)
     {

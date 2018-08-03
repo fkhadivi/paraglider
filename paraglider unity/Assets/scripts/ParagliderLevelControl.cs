@@ -19,7 +19,7 @@ public class ParagliderLevelControl : MonoBehaviour {
     private void Start()
     {
         SceneManager.sceneLoaded += OnLevelLoaded;
-        Debug.Log("starting LEVEL CONTROL");
+        //Debug.Log("starting LEVEL CONTROL");
     }
 
   
