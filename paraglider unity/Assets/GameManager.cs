@@ -43,10 +43,14 @@ public class GameManager : MonoBehaviour {
         udpListener.MessageReceived += OnMessageReceived;
         udpListener.Start(listnerPort);
 
-        bool loaded = TextProvider.Load("text.xlsx");
+        bool loaded = TextProvider.Load("text_9681.xlsx");
         if (!loaded)
         {
-            TextProvider.Load("text.csv");
+            loaded = TextProvider.Load("text.xlsx");
+			if (!loaded)
+			{
+				TextProvider.Load("text.csv");
+			}
         }
 
         TextProvider.lang = languageCode;
