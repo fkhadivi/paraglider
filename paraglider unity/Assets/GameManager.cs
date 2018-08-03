@@ -76,6 +76,12 @@ public class GameManager : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
+
+        if (Input.GetKeyDown(KeyCode.N))
+        {
+            Debug.Log("Text: " + TextProvider.GetText("0404.MT.0100.HL0"));
+        }
+
         if (Input.GetKeyDown(KeyCode.M))
         {
             UDPSender.SendUDPStringUTF8(ip,senderPort,"Hello World!!!");
