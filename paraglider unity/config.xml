@@ -5,22 +5,21 @@
     <crashscreentimeout timeunit="sec">1</crashscreentimeout>
   </game>
   <controller>
-    <maxenginepower>8</maxenginepower>
+    <maxEnginePower>8</maxEnginePower>
     <lift>0.015</lift>
-    <zeroliftspeed>70</zeroliftspeed>
-    <rolleffect>0.5</rolleffect>
-    <pitcheffect>1</pitcheffect>
-    <yaweffect>-0.0033</yaweffect>
-    <bankedturneffect>5.5</bankedturneffect>
-    <autoturnpitch>0.5</autoturnpitch>
-    <autorolllevel>2</autorolllevel>
-    <autopitchlevel>0.1</autopitchlevel>
-    <airbrakeseffect>3</airbrakeseffect>
-    <throttlechangespeed>0.3</throttlechangespeed>
-    <dragincreasefactor>0.001</dragincreasefactor>
-    <maxrollangle>80</maxrollangle>
-    <maxpitchangle>80</maxpitchangle>
-    <maxspeed>37</maxspeed>
+    <zeroLiftSpeed>70</zeroLiftSpeed>
+    <rollEffect>0.5</rollEffect>
+    <pitchEffect>1</pitchEffect>
+    <yawEffect>-0.0033</yawEffect>
+    <bankedTurnEffect>5.5</bankedTurnEffect>
+    <autoTurnPitch>0.5</autoTurnPitch>
+    <autoRollLevel>2</autoRollLevel>
+    <autoPitchLevel>0.1</autoPitchLevel>
+    <airBrakesEffect>3</airBrakesEffect>
+    <throttleChangeSpeed>0.3</throttleChangeSpeed>
+    <dragIncreaseFactor>0.001</dragIncreaseFactor>
+    <maxRollAngle>80</maxRollAngle>
+    <maxPitchAngle>80</maxPitchAngle>
   </controller>
   <input>
     <autosave>True</autosave>

@@ -41,28 +41,23 @@ public class AeroplaneController : MonoBehaviour
 
 	void Start ()
     {
-        Configuration config = GetComponent<Configuration>(); // transform.parent.GetComponent<Configuration>();
-        if (config)
-        {
-            string node = config.head_tag + "/" + config.controller_tag;
-            maxEnginePower      = float.Parse(config.GetInnerTextOfSelectedNodes(node +"/"+config.maxEnginePower_tag, 0));
-            lift                = float.Parse(config.GetInnerTextOfSelectedNodes(node + "/" + config.lift_tag, 0));
-            zeroLiftSpeed       = float.Parse(config.GetInnerTextOfSelectedNodes(node + "/" + config.zeroliftspeed_tag , 0));
-            rollEffect          = float.Parse(config.GetInnerTextOfSelectedNodes(node + "/" + config.rolleffect_tag , 0));
-            pitchEffect         = float.Parse(config.GetInnerTextOfSelectedNodes(node + "/" + config.pitcheffect_tag , 0));
-            yawEffect           = float.Parse(config.GetInnerTextOfSelectedNodes(node + "/" + config.yaweffect_tag , 0));
-            bankedTurnEffect    = float.Parse(config.GetInnerTextOfSelectedNodes(node + "/" + config.bankedturneffect_tag , 0));
-            //aerodynamicEffect   = float.Parse(config.GetInnerTextOfSelectedNodes(node + "/" + config.aerodynamicEffect_tag , 0));
-            autoTurnPitch       = float.Parse(config.GetInnerTextOfSelectedNodes(node + "/" + config.autoTurnPitch_tag , 0));
-            autoRollLevel       = float.Parse(config.GetInnerTextOfSelectedNodes(node + "/" + config.autoRollLevel_tag , 0));
-            autoPitchLevel      = float.Parse(config.GetInnerTextOfSelectedNodes(node + "/" + config.autoPitchLevel_tag , 0));
-            airBrakesEffect     = float.Parse(config.GetInnerTextOfSelectedNodes(node + "/" + config.airbrakeseffect_tag , 0));
-            throttleChangeSpeed = float.Parse(config.GetInnerTextOfSelectedNodes(node + "/" + config.throttleChangeSpeed_tag , 0));
-            dragIncreaseFactor  = float.Parse(config.GetInnerTextOfSelectedNodes(node + "/" + config.dragIncreaseFactor_tag  , 0));
-            maxSpeed = float.Parse(config.GetInnerTextOfSelectedNodes(node + "/" + config.maxSpeed_tag, 0));
-        }
-		// Store original drag settings, these are modified during flight.
-		originalDrag = GetComponent<Rigidbody>().drag;
+        maxEnginePower      = (float)Configuration.GetInnerTextByTagName("maxEnginePower", maxEnginePower);
+        lift                = (float)Configuration.GetInnerTextByTagName("lift", lift);
+        zeroLiftSpeed       = (float)Configuration.GetInnerTextByTagName("zeroLiftSpeed", zeroLiftSpeed);
+        rollEffect          = (float)Configuration.GetInnerTextByTagName("rollEffect", rollEffect);
+        pitchEffect         = (float)Configuration.GetInnerTextByTagName("pitchEffect", pitchEffect);
+        yawEffect           = (float)Configuration.GetInnerTextByTagName("yawEffect", yawEffect);
+        bankedTurnEffect    = (float)Configuration.GetInnerTextByTagName("bankedTurnEffect", bankedTurnEffect);
+        aerodynamicEffect   = (float)Configuration.GetInnerTextByTagName("aerodynamicEffect", aerodynamicEffect);
+        autoTurnPitch       = (float)Configuration.GetInnerTextByTagName("autoTurnPitch", autoTurnPitch);
+        autoRollLevel       = (float)Configuration.GetInnerTextByTagName("autoRollLevel", autoRollLevel);
+        autoPitchLevel      = (float)Configuration.GetInnerTextByTagName("autoPitchLevel", autoPitchLevel);
+        airBrakesEffect     = (float)Configuration.GetInnerTextByTagName("airBrakesEffect", airBrakesEffect);
+        throttleChangeSpeed = (float)Configuration.GetInnerTextByTagName("throttleChangeSpeed", throttleChangeSpeed);
+        dragIncreaseFactor  = (float)Configuration.GetInnerTextByTagName("dragIncreaseFactor", dragIncreaseFactor);
+
+        // Store original drag settings, these are modified during flight.
+        originalDrag = GetComponent<Rigidbody>().drag;
 		originalAngularDrag = GetComponent<Rigidbody>().angularDrag;
 	}
 
@@ -146,12 +141,17 @@ public class AeroplaneController : MonoBehaviour
 	{
 		// Forward speed is the speed in the planes's forward direction (not the same as its velocity, eg if falling in a stall)
 		var localVelocity = transform.InverseTransformDirection (GetComponent<Rigidbody>().velocity);
+
+        /*
         if (maxSpeed == 0)
             ForwardSpeed = Mathf.Max(0, localVelocity.z);
         else ForwardSpeed = maxSpeed;
-	}
+        */
+        ForwardSpeed = Mathf.Max(0, localVelocity.z);
 
-	void ControlThrottle ()
+    }
+
+    void ControlThrottle ()
 	{
 		// override throttle if immobilized
 		if (immobilized)

@@ -21,14 +21,9 @@ public class AeroplaneUserControl : MonoBehaviour
     }
 
     void Start()
-    {
-        Configuration config = GetComponent<Configuration>();
-        if (config)
-        {
-            string node = config.head_tag + "/" + config.controller_tag;
-            maxRollAngle = float.Parse(config.GetInnerTextOfSelectedNodes(node + "/" + config.rolleffect_tag, 0));
-            maxPitchAngle = float.Parse(config.GetInnerTextOfSelectedNodes(node + "/" + config.pitcheffect_tag, 0));
-        }
+    {        
+        maxRollAngle = (float)Configuration.GetInnerTextByTagName("maxRollAngle", maxRollAngle);
+        maxPitchAngle = (float)Configuration.GetInnerTextByTagName("maxPitchAngle", maxPitchAngle);
     }
 
     void FixedUpdate()
