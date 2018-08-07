@@ -1,4 +1,4 @@
-﻿    using UnityEditor;
+﻿using UnityEditor;
     using UnityEngine;
     using UnityEngine.Rendering;
     using System;
@@ -315,8 +315,8 @@ public class ApplyLightmap_benja : MonoBehaviour {
      
         private void CopyTextureImporterProperties (Texture2D fromTexture, Texture2D toTexture)
         {
-            UnityEditor.TextureImporter fromTextureImporter = GetTextureImporter (fromTexture);
-            UnityEditor.TextureImporter toTextureImporter = GetTextureImporter (toTexture);
+            TextureImporter fromTextureImporter = GetTextureImporter (fromTexture);
+            TextureImporter toTextureImporter = GetTextureImporter (toTexture);
      
             toTextureImporter.wrapMode = fromTextureImporter.wrapMode;
             toTextureImporter.anisoLevel = fromTextureImporter.anisoLevel;
@@ -325,7 +325,7 @@ public class ApplyLightmap_benja : MonoBehaviour {
             toTextureImporter.textureCompression = fromTextureImporter.textureCompression;
         }
      
-        private UnityEditor.TextureImporter GetTextureImporter (Texture2D texture)
+        private TextureImporter GetTextureImporter (Texture2D texture)
         {
             string newTexturePath =  AssetDatabase.GetAssetPath (texture);
             TextureImporter importer = AssetImporter.GetAtPath (newTexturePath) as TextureImporter;
