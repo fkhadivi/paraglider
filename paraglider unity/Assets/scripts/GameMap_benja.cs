@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameMap_benja : MonoBehaviour {
 
-	public MeshRenderer mapQuad;
-	public Transform mapPointer;
+	public Image mapImage;
+	public RectTransform mapPointer;
 	// Use this for initialization
 
 
@@ -37,7 +38,7 @@ public class GameMap_benja : MonoBehaviour {
 	// and now ask your colleges if they want a coffee too
 	public void Setup(Texture2D MapTexture,Vector3 northeast, Vector3 southwest)
 	{
-		mapQuad.material.mainTexture = MapTexture;
+		mapImage.material.mainTexture = MapTexture;
 		NEworld = northeast;
 		SWworld = southwest;
 		Vector2 scale = new Vector2(mapPointer.localScale.x/2,mapPointer.localScale.y/2);

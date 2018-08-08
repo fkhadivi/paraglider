@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: ca1cd67b63b684b45bff2918227fa0b5
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: DIN OT
+  fontNames:
+  - DIN OT
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: c4f342a411eed554ebe18e78165e2aad, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

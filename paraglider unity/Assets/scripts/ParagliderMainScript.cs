@@ -12,14 +12,15 @@ public class ParagliderMainScript : MonoBehaviour {
 	public ParagliderControler glider;			//script für paraglider interaktionen mit umgebung
 	Rigidbody gliderRig;						//rigidbody of glider
 	public GameMap_benja Map;					//steuert die karte
-	public ALtimeter_benja Altimeter;			//steuert den höhenmesser
+	public paragliderHUD HUD;			        //steuert den höhenmesser etc
+    public compassStrip_benja compass;
     public DebugInfo_benja debugInfo;			// gibt debug daten auf dem Bildschirm aus
 												// DebugInfo.Log("Zeile","WERT") Befehl erstellt beim ersten Aufruf 
 												// die Zeile "Zeile" und danach überschreibt es bei jedem aufruf 
 												//den wert dieser Zeile
 
 	public float maxGameTime= 180.0f;			//maximale zeit des spiels 
-	public float gameTime;						//zeit des spiels (countdown)
+	public float gameTime =0;						//zeit des spiels (countdown)
 
     public float maxInactivityTime = 30f;		//max zeit ohne input bevor standby eingeleitet
 	public float currentInactivityTime = 30f;	//zeit ohne bis standby eingeleitet wenn kein inpout
@@ -109,10 +110,11 @@ public class ParagliderMainScript : MonoBehaviour {
     	glider.togglePhysics(false);
         levelControl.onPreloadDone = onLevelsLoaded;
         levelControl.onLevelAwake = onLevelawake;
-    	gameTime = maxGameTime;
+    	gameTime = 0;
         levelControl.goToLevel(0);
         levelControl.preloadAllLevels();
         debugInfo.log("last big event", "game reset started");
+        //HUD.setGameTime(0);
     }
 
 
@@ -124,14 +126,32 @@ public class ParagliderMainScript : MonoBehaviour {
 
 
 
-
+    public float pie = 0;
 
     void Update()
     {
 		
 		cheatkeys();
-        BenjasMath.countdownToZero(ref gameTime);
-        debugInfo.log("time", gameTime);
+
+
+
+
+        if (levelControl.level>0)
+        {
+            //BUG BUG BUG
+            //only update compass after level have been loaded, ner during load
+            BenjasMath.countdownToZero(ref gameTime);
+            debugInfo.log("time", gameTime);
+            //the finish looks same in all directions 
+            // so i can misuse that to get the angle towards the glider 
+            levelControl.levelInfo().finish.transform.LookAt(glider.transform.position);
+            //and then rotate it 180 to get the direction towards the finish
+            compass.setBacon(levelControl.levelInfo().finish.transform.eulerAngles.y + 180-glider.transform.eulerAngles.y);
+            HUD.setGameTime(1 - gameTime / maxGameTime);
+            compass.setCompass(glider.transform.eulerAngles.y);
+            debugInfo.log("compass angle", glider.transform.eulerAngles.y);
+        }
+
 
         BenjasMath.countdownToZero(ref currentInactivityTime);
         debugInfo.log("time until standby", currentInactivityTime);
@@ -149,6 +169,7 @@ public class ParagliderMainScript : MonoBehaviour {
             spawnByTime = false;
             spawnByCollider = true;
         }
+
         //debugInfo.log("time", levelControl.levelInfo().terrain.activeInHierarchy?"visible":"invisible");
     }
 
@@ -163,7 +184,7 @@ public class ParagliderMainScript : MonoBehaviour {
         debugInfo.log("last big event", "all levels preloaded");
     }
 
-	public void NextLevel()
+    public void NextLevel()
 	{
         Debug.Log("████████████  LEVEL UP  ████████████");
         debugInfo.log("last big event", "level started");
@@ -174,19 +195,27 @@ public class ParagliderMainScript : MonoBehaviour {
 							levelControl.levelInfo().markerNE.transform.position,
 							levelControl.levelInfo().markerSW.transform.position
 							);
+            HUD.setLevelString("Welt " + levelControl.level.ToString() + "/4");
 			glider.spawn(levelControl.levelInfo().startPoint.transform);
 			glider.togglePhysics(false);
 
 			levelControl.wakeLevel();
 
 	    	Map.gameObject.SetActive(true);
-	    	Altimeter.gameObject.SetActive(true);
+	    	HUD.appear(true);
+            if(levelControl.level==1)
+            {
+                gameTime = maxGameTime;
+                
+            }
     	}
     	else
     	{
     		//this is standby level
 			Map.gameObject.SetActive(false);
-			Altimeter.gameObject.SetActive(false);
+            HUD.setLevelString("");
+
+            HUD.appear(false);
     	}
 
 		Debug.Log("level "+levelControl.level+" started");

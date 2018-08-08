@@ -268,7 +268,33 @@ public class smoothVector3{
 		return Output;
 	}
 
-	public static Vector3 ClosestPointToIntersect( Vector3 linePoint1, Vector3 lineVec1, Vector3 linePoint2, Vector3 lineVec2){
+    public static float map(float value, float valMin, float valMax, float outMin, float OutMax, bool clamp = false)
+    {
+        value = Mathf.InverseLerp(valMin, valMax, value);
+        if (clamp) value = Mathf.Clamp01(value);
+        return Mathf.Lerp(outMin, OutMax, value);
+    }
+
+    public static float keepAngle0to360(float Angle)
+    {
+        while(Angle<0)
+        { Angle += 360; }
+        while (Angle > 360)
+        { Angle -= 360; }
+        return Angle;
+    }
+
+    public static float keepAngleBetween(float Angle, float Min, float Max)
+    {
+        float temp = Mathf.Lerp(Min, Max, 0.5f);
+        while (Angle < Min-360)
+        { Angle += 360; }
+        while (Angle >  Max + 360)
+        { Angle -= 360; }
+        return Angle;
+    }
+
+    public static Vector3 ClosestPointToIntersect( Vector3 linePoint1, Vector3 lineVec1, Vector3 linePoint2, Vector3 lineVec2){
 
 		float a = Vector3.Dot(lineVec1, lineVec1);
 		float b = Vector3.Dot(lineVec1, lineVec2);
