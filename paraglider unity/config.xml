@@ -1,44 +1,36 @@
 <config>
-  <game>
-    <timeout timeunit="sec">120</timeout>
-    <countdown timeunit="sec">3</countdown>
-    <crashscreentimeout timeunit="sec">1</crashscreentimeout>
-  </game>
-  <controller>
-    <maxEnginePower>8</maxEnginePower>
-    <lift>0.015</lift>
-    <zeroLiftSpeed>70</zeroLiftSpeed>
-    <rollEffect>0.5</rollEffect>
-    <pitchEffect>1</pitchEffect>
-    <yawEffect>-0.0033</yawEffect>
-    <bankedTurnEffect>5.5</bankedTurnEffect>
-    <autoTurnPitch>0.5</autoTurnPitch>
-    <autoRollLevel>2</autoRollLevel>
-    <autoPitchLevel>0.1</autoPitchLevel>
-    <airBrakesEffect>3</airBrakesEffect>
-    <throttleChangeSpeed>0.3</throttleChangeSpeed>
-    <dragIncreaseFactor>0.001</dragIncreaseFactor>
-    <maxRollAngle>80</maxRollAngle>
-    <maxPitchAngle>80</maxPitchAngle>
-  </controller>
-  <input>
-    <autosave>True</autosave>
-    <centerxaxis>0</centerxaxis>
-    <minxaxis>100</minxaxis>
-    <maxxaxis>-100</maxxaxis>
-    <xdeadzone>0.01</xdeadzone>
-    <invertX>False</invertX>
-    <centeryaxis>0</centeryaxis>
-    <minyaxis>100</minyaxis>
-    <maxyaxis>-100</maxyaxis>
-    <ydeadzone>0.05</ydeadzone>
-    <invertY>False</invertY>
-  </input>
-  <rfid>
-    <comport>COM3</comport>
-    <baurate>9600</baurate>
-    <parity>none</parity>
-    <stopbits>One</stopbits>
-    <databits>8</databits>
-  </rfid>
+	<debug>true</debug>
+	<game>
+		<timeout timeunit="sec">120</timeout>
+	</game>
+	<controller>
+		<maxEnginePower>8</maxEnginePower>
+		<lift>0.015</lift>
+		<zeroLiftSpeed>70</zeroLiftSpeed>
+		<rollEffect>0.5</rollEffect>
+		<pitchEffect>1</pitchEffect>
+		<yawEffect>-0.0033</yawEffect>
+		<bankedTurnEffect>5.5</bankedTurnEffect>
+		<autoTurnPitch>0.5</autoTurnPitch>
+		<autoRollLevel>2</autoRollLevel>
+		<autoPitchLevel>0.1</autoPitchLevel>
+		<airBrakesEffect>3</airBrakesEffect>
+		<throttleChangeSpeed>0.3</throttleChangeSpeed>
+		<dragIncreaseFactor>0.001</dragIncreaseFactor>
+		<maxRollAngle>80</maxRollAngle>
+		<maxPitchAngle>80</maxPitchAngle>
+	</controller>
+	<input>
+		<ripcord	port="1" line="0" ></ripcord>
+		<leftgrip	port="1" line="1" ></leftgrip>
+		<rightgrip	port="1" line="2" ></rightgrip>
+		<minRawValue_leftgrip>0</minRawValue_leftgrip>
+		<minRawValue_rightgrip>0</minRawValue_rightgrip>
+		<minRawVal_ripcord>0</minRawVal_ripcord>
+		<maxRawValue_leftgrip>100</maxRawValue_leftgrip>
+		<maxRawValue_rightgrip>100</maxRawValue_rightgrip>
+		<maxRawVal_ripcord>100</maxRawVal_ripcord>
+		<threshold_move>0.1</threshold_move>
+		<threshold_pull>0.5</threshold_pull>
+	</input>
 </config>
