@@ -16,8 +16,8 @@ public class GameMap_benja : MonoBehaviour {
 
 	Vector3 NEworld;
 	Vector3 SWworld;
-	Vector3 NEmap;
-	Vector3 SWmap;
+	//RectTransform NEmap;
+	//RectTransform SWmap;
 	public Vector2 mapMin = new Vector2(-0.5f,-0.5f);
 	public Vector2 mapMax = new Vector2(0.5f,0.5f);
 	Vector2 clampMin;
@@ -36,16 +36,14 @@ public class GameMap_benja : MonoBehaviour {
 	// to enable the map to map correctly 
 	// also provide the map data as a texture2D
 	// and now ask your colleges if they want a coffee too
-	public void Setup(Texture2D MapTexture,Vector3 northeast, Vector3 southwest)
+	public void Setup(Sprite MapTexture,Vector3 northeast, Vector3 southwest)
 	{
-		mapImage.material.mainTexture = MapTexture;
+		mapImage.sprite = MapTexture;
 		NEworld = northeast;
 		SWworld = southwest;
 		Vector2 scale = new Vector2(mapPointer.localScale.x/2,mapPointer.localScale.y/2);
 		clampMin = mapMin+scale;
 		clampMax = mapMax-scale;
-
-
 	}
 
 	public void updateMap(Vector3 coordinates)
@@ -72,7 +70,7 @@ public class GameMap_benja : MonoBehaviour {
 		updateMap(coordinates);
 		rotationWorld =direction;
 		rotationMap = mapPointer.localRotation.eulerAngles;
-		rotationMap.z = 180-direction.y;
+		rotationMap.z = -direction.y;
 		mapPointer.localRotation = Quaternion.Euler(rotationMap);
 	}
 	

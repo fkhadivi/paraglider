@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using UnityEditor;
 
 //[ExecuteInEditMode]
@@ -18,7 +19,7 @@ public class ParagliderLevel : MonoBehaviour {
 	public GameObject markerNE;
 	public GameObject markerSW;
 
-	public Texture2D map;
+	public Sprite map;
 	public Vector2 scale;
 	//public List<Obstacle> obstacles = new List<Obstacle>();
 	[Header("Obstacles")]

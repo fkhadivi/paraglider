@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class ParagliderMainScript : MonoBehaviour {
 
@@ -27,7 +28,7 @@ public class ParagliderMainScript : MonoBehaviour {
 
 
 
-	public Texture2D mapTexture; //wird aus level info des levels übernommen und an map übergeben
+	public Sprite mapTexture; //wird aus level info des levels übernommen und an map übergeben
 
     public bool spawnByCollider = false;	//dürfen collider spawn von Hindernissen auslösen
     public bool spawnByTime = false;		//wird automatisch nach einer gewissen Zeit ein Hinderniss gespawned
