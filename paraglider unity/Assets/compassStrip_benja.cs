@@ -9,14 +9,17 @@ public class compassStrip_benja : MonoBehaviour {
     public RectTransform baconOne;
     public float xPosAtZero;
     public float xPosAt360;
-    public float clampBaconLeft;
-    public float clampBaconRight;
+    public float clampBaconAt;
+    public float clampBaconAngleAt;
     public float latitudeCompass;
+    public float xposCompass = 0;
+    public float angleBacon = 0;
+    public float xposBacon = 0;
 
     // Use this for initialization
     void Start () {
-		
-	}
+
+    }
 
 
 
@@ -25,7 +28,8 @@ public class compassStrip_benja : MonoBehaviour {
     //only update compass after level have been loaded, ner during load
 
 
-    public float xposCompass = 0;
+
+
     public void setCompass(float Angle)
     {
         Vector3 pos = compassStrip.anchoredPosition3D ;
@@ -35,23 +39,17 @@ public class compassStrip_benja : MonoBehaviour {
         compassStrip.anchoredPosition3D  = pos;
     }
 
-    public float latitudeBacon = 0;
-    public float xposBacon = 0;
+
 
     public void setBacon(float Angle)
     {
         Vector3 pos = baconOne.anchoredPosition3D ;
-        latitudeBacon = BenjasMath.keepAngle0to360(Angle);
+        angleBacon = BenjasMath.keepAngleBetween(Angle,-180, 180);
 
-        xposBacon = BenjasMath.map(latitudeBacon, 0, 360, xPosAtZero, xPosAt360);
+        xposBacon = BenjasMath.map(angleBacon, -clampBaconAngleAt, clampBaconAngleAt, -clampBaconAt, clampBaconAt,true);
         //center around 0 degrees
-        if (xposBacon > Mathf.Lerp(0.5f, xPosAtZero, xPosAt360))
-        {
-            xposBacon -= xPosAt360 - xPosAtZero;
-        }
-        xposBacon = Mathf.Clamp(xposBacon, clampBaconLeft, clampBaconRight);
         pos.x = xposBacon;
-        compassStrip.anchoredPosition3D  = pos;
+        baconOne.anchoredPosition3D  = pos;
     }
 
 
