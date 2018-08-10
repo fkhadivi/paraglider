@@ -142,11 +142,11 @@ public class AeroplaneController : MonoBehaviour
 		// Forward speed is the speed in the planes's forward direction (not the same as its velocity, eg if falling in a stall)
 		var localVelocity = transform.InverseTransformDirection (GetComponent<Rigidbody>().velocity);
 
-        /*
+        
         if (maxSpeed == 0)
             ForwardSpeed = Mathf.Max(0, localVelocity.z);
         else ForwardSpeed = maxSpeed;
-        */
+       
         ForwardSpeed = Mathf.Max(0, localVelocity.z);
 
     }
