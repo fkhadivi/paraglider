@@ -17,7 +17,7 @@ public class AeroplaneUserControl : MonoBehaviour
     {
         // Set up the reference to the aeroplane controller.
         aeroplane = GetComponent<AeroplaneController>();
-        inputmanager = GetComponent<InputManager>();
+        inputmanager = transform.parent.GetComponentInChildren<InputManager>();
     }
 
     void Start()
@@ -38,19 +38,10 @@ public class AeroplaneUserControl : MonoBehaviour
         {
             if (isPlaying)
             {
-                roll = inputmanager.xValue;
-                pitch = inputmanager.yValue;
+                roll = inputmanager.GetHorinatalAxes();
+                pitch = inputmanager.GetVerticalAxes();
             }
         }
-        else
-        {
-            //roll = CrossPlatformInput.GetAxis("Mouse X");
-            //pitch = CrossPlatformInput.GetAxis("Mouse Y");
-            //yaw = CrossPlatformInput.GetAxis("Horizontal");
-            //throttle = CrossPlatformInput.GetAxis("Vertical");
-        }
-
-        
 
         AdjustInputForMobileControls(ref roll, ref pitch, ref throttle);
 		

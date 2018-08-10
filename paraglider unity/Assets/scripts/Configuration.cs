@@ -151,6 +151,9 @@ public class Configuration
 
     static public string GetAttricuteByTagName(string tagname, string attribute, int count = 0)
     {
+        if (configXML == null)
+            LoadConfig();
+
         return configXML.GetElementsByTagName(tagname)[count].Attributes[attribute].Value;
     }
 
