@@ -5,120 +5,189 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour {
+    InputManager inputManager;
+    UDPListener listener;
+    static GameManager instance;
 
-    UDPListener udpListener;
     string ip = "127.0.0.1";
-    int listnerPort = 5000;
-    int senderPort = 6000;
-    string languageCode = "en";
+    int port = 6000;
+    int listenerPort = 5000;
 
-    Dictionary<string, string> messageDict = new Dictionary<string, string>();
+    string languageCode = "de";
 
-    enum STATES
+    bool pulledReipcord = false;
+    bool controlledGrips = false;
+    bool leavedGrips = false;
+
+    string endtime = "";
+    bool goToStandbyModusNow = false;
+
+    STATE state;
+
+    enum STATE
     {
-        SCREENSAVER,
-        INSTRUCTION,
-        COUNTDOWN,
-        PLAYING,
-        GAMEOVER,
+        STANDBYMODUS,
+        INTRO,
+        GAME,
+        ABORT,
+        INACTIVITY,
         RESULT,
-        PAUSE
+        GAMEOVER
     }
 
-    public enum GameOverTypes
+    public static GameManager GetInstance()
     {
-        WIN,
-        LOSE,
-        TIMEOUT
+        return instance;
+    } 
+
+    void Awake()
+    {
+        instance = this;
     }
 
     // Use this for initialization
-
     void Start () {
+        ip           = Configuration.GetInnerTextByTagName("ip", ip);
+        port         = (int)Configuration.GetInnerTextByTagName("senderPort", port);
+        listenerPort = (int)Configuration.GetInnerTextByTagName("listenerPort", listenerPort);
 
-        listnerPort = (int)Configuration.GetInnerTextByTagName("listnerPort", listnerPort);
-        ip = Configuration.GetInnerTextByTagName("ip", ip);
+        listener = new UDPListener();
+        listener.MessageReceived += OnMessage;
 
-        udpListener = new UDPListener();
-        udpListener.MessageReceived += OnMessageReceived;
-        udpListener.Start(listnerPort);
+        listener.Start(listenerPort);
 
-        bool loaded = TextProvider.Load("text_9681.xlsx");
-        if (!loaded)
-        {
-            loaded = TextProvider.Load("text.xlsx");
-			if (!loaded)
-			{
-				TextProvider.Load("text.csv");
-			}
+        inputManager = InputManager.GetInstance();
 
-        }
+        TextProvider.Load("text_9681.xlsx");
         TextProvider.lang = languageCode;
-    }
 
-    void OnMessageReceived(object sender, string message)
-    {
-        //Debug.Log("message " + message);
-        messageDict.Clear();
-        string[] aKeysValues = message.Split(';');
-
-        for (var i = 0; i < aKeysValues.Length; i++)
-        {
-            var aKeyValuePairs = aKeysValues[i].Split('=');
-            messageDict[aKeyValuePairs[0]] = aKeyValuePairs[1];
-        }
-
-        if(messageDict["countdown"] != null)
-        {
-            string curNum = messageDict["countdown"];
-        }
+        StartStandbymodus(); 
     }
 
     // Update is called once per frame
     void Update () {
-
-        if (Input.GetKeyDown(KeyCode.N))
-        {
-            Debug.Log("Text: " + TextProvider.GetText("0404.MT.0100.HL0"));
-        }
-
+        // Test --------------------------
         if (Input.GetKeyDown(KeyCode.M))
         {
-            UDPSender.SendUDPStringUTF8(ip,senderPort,"Hello World!!!");
+            UDPSender.SendUDPStringUTF8(ip,port,"Hello World!");
         }
-	}
-
-    public void GameStart()
-    {
-        UDPSender.SendUDPStringUTF8(ip, senderPort, "state=game,action=start");
-    }
-
-    public void OnPause()
-    {
-        UDPSender.SendUDPStringUTF8(ip, senderPort, "state=game,action=pause");
-    }
-
-    public void GameOver(bool isPlayerDeath )
-    {
-        string action = "timeout";
-
-        if (isPlayerDeath)
+        if (Input.GetKeyDown(KeyCode.T))
         {
-            action = "lose";
+            OpenInactivity();
+        }
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            OpenAbort();
+        }
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            GameOver(false);
+        }
+        // --------------------------------
+
+        if (goToStandbyModusNow)
+        {
+            goToStandbyModusNow = false;
+            StartStandbymodus();
         }
 
-        UDPSender.SendUDPStringUTF8(ip, senderPort, "state=gameover,action=" + action);
+        // Ripcord
+        if (inputManager.PulledRipcord() && !pulledReipcord)
+        {
+            pulledReipcord = true;
+            if (state == STATE.STANDBYMODUS)
+            {
+                GoToIntro();
+            }
+            else if (state == STATE.INTRO)
+            {
+                ChangeLanguage();
+            }
+            else if (state == STATE.GAME)
+            {
+                OpenAbort();
+            }
+            else if (state == STATE.ABORT)
+            {
+                GoToIntro();
+            }
+            else if (state == STATE.INACTIVITY)
+            {
+                StartStandbymodus();
+            }
+        }
+        else if (!inputManager.PulledRipcord() && pulledReipcord)
+        {
+            pulledReipcord = false;
+        }
+
+        // two Grips
+        if (inputManager.ControlledGrips() && !controlledGrips)
+        {
+            controlledGrips = true;
+            if (state == STATE.STANDBYMODUS)
+            {
+                GoToIntro();
+            }
+            else if (state == STATE.INTRO)
+            {
+                StartGame();
+            }
+            else if (state == STATE.ABORT || state == STATE.INACTIVITY)
+            {
+                ResumeGame();
+            }
+        }
+        else if(!inputManager.ControlledGrips() && controlledGrips)
+        {
+            controlledGrips = false;
+        }
+
+        if (inputManager.LeavedGrips() && !leavedGrips)
+        {
+            leavedGrips = true;
+            if(state != STATE.INACTIVITY && state != STATE.STANDBYMODUS)
+            {
+                OpenInactivity();
+            }
+        }
+        else if (!inputManager.LeavedGrips() && leavedGrips)
+        {
+            leavedGrips = false;
+        }
     }
 
-    public void GameFinished()
+
+    private void OnMessage(object sender, string e)
     {
-        UDPSender.SendUDPStringUTF8(ip, senderPort, "state=gamefinished,action=win");
+        Debug.Log("Message: " + e);
+        if(e == "startscreensaver")
+        {
+            goToStandbyModusNow = true;
+        }
+    }
+    ///
+    /// See 180524_exp_ie_0404_fsb_paraglider_animkom_jn.pdf
+    ///
+    // 1.00 Standby Modus
+    public void StartStandbymodus()
+    {
+        state = STATE.STANDBYMODUS;
+        UDPSender.SendUDPStringUTF8(ip, port, "state=standbymodus");
     }
 
+    // 2.00 Aktivierung
+    public void GoToIntro()
+    {
+        state = STATE.INTRO;
+        UDPSender.SendUDPStringUTF8(ip, port, "state=activation;action=open;");
+    }
+
+    // 2.00 Aktivierung
     public void ChangeLanguage()
     {
         if(languageCode == "en") {
-            languageCode = "ar";
+            languageCode = "de";
         }
         else
         {
@@ -126,6 +195,108 @@ public class GameManager : MonoBehaviour {
         }
 
         TextProvider.lang = languageCode;
-        UDPSender.SendUDPStringUTF8(ip, senderPort, "language=" + languageCode);
+        UDPSender.SendUDPStringUTF8(ip, port, "state=activation;action=ripcord;value=" + languageCode);
     }
+
+    public void StartGame()
+    {
+        state = STATE.GAME;
+        UDPSender.SendUDPStringUTF8(ip, port, "state=game;action=start;");
+        //Todo: start game and turn on character control to be able to play
+    }
+
+    // 3.00: ID = 1
+    // 4.00: ID = 2
+    // 4.01: ID = 0
+    // 4.02: ID = 0
+    // 5.00: ID = 0
+    // 6.00: ID = 4 
+    public void ChangePromptInGame(int _id)
+    {
+        state = STATE.GAME;
+        string actionString = "";
+
+        switch (_id)
+        {
+            case 0:
+                actionString = "hideheadline";
+                break;
+            case 1:
+                actionString = "gamestart";
+                break;
+            case 2:
+                actionString = "control";
+                break;
+            case 3:
+                actionString = "obstacle";
+                break;
+            case 4:
+                actionString = "finish";
+                break;
+        }
+
+        UDPSender.SendUDPStringUTF8(ip, port, "state=game;action=" + actionString);
+    }
+
+    // 7.0 Spielende
+    public void SetScore(string time)
+    {
+        endtime = time;
+    }
+
+    // 7.0 Spielende
+    public void GoToResult()
+    {
+        state = STATE.RESULT;
+        UDPSender.SendUDPStringUTF8(ip, port, "state=result;action=time;score=" + endtime);
+    }
+
+    // 8.0 Unfall / Game Over 
+    // 9.0 Zeit abgelaufen
+    public void GameOver(bool isTimeout)
+    {
+        state = STATE.GAMEOVER;
+        string action = "crash";
+        if (isTimeout)
+        {
+            action = "timeout";
+        }
+
+        UDPSender.SendUDPStringUTF8(ip, port, "state=gamover;action="+ action);
+    }
+
+    // 10.0 Abbruch
+    public void OpenAbort()
+    {
+        state = STATE.ABORT;
+        UDPSender.SendUDPStringUTF8(ip, port, "state=abort;action=open");
+    }
+
+    // 10.0 Abbruch
+    public void ResumeGame()
+    {
+        state = STATE.GAME;
+        UDPSender.SendUDPStringUTF8(ip, port, "state=game;action=resume");
+    }
+
+    // 11.0 Inaktivität
+    public void OpenInactivity()
+    {
+        state = STATE.INACTIVITY;
+        UDPSender.SendUDPStringUTF8(ip, port, "state=inactivity;action=open");
+    }
+
+    void OnDestroy()
+    {
+#if UNITY_EDITOR
+        OnApplicationQuit();
+#endif
+    }
+
+    void OnApplicationQuit()
+    {
+        listener.Close();
+    }
+
 }
+

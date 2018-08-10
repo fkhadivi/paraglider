@@ -10,12 +10,12 @@ public class InputManager : MonoBehaviour {
     float rawVal_right      = 0;
     float rawVal_ripcord    = 0;
 
-    float normalizedVal_left = 0;
-    float normalizedVal_right = 0;
+    float normalizedVal_leftGrip = 0;
+    float normalizedVal_rightGrip = 0;
     float normalizedVal_ripcord = 0;
 
-    float oldNormalizedVal_left = 0;
-    float oldNormalizedVal_right = 0;
+    float resultLeftRightMinus1To1 = 0;
+    float resultUpDownMinus1To1 = 0;
 
     float minRawValue_leftgrip = 0;
     float maxRawValue_leftgrip = 5.14f;
@@ -26,11 +26,15 @@ public class InputManager : MonoBehaviour {
     float minRawVal_ripcord = 0;
     float maxRawVal_ripcord = 5.14f;
 
-    private float threshold_move = 0;
+    private float deadzone = 0;
     private float threshold_pull = 0;
-
+    private float threshold_control = 0;
+    private float threshold_idle = 0;
     private bool showInputGUI = false;
     private bool enableKeyboard = false;
+    private float timeout_idle = 30; // sec
+    private float time_idle;
+    bool usingGrips = false;
 
     int port_ripcord = 1;
     int port_leftGrip = 1;
@@ -39,8 +43,17 @@ public class InputManager : MonoBehaviour {
     int line_leftgrip = 1;
     int line_rightgrip = 1;
 
+    static InputManager instance;
+
+    public static InputManager GetInstance()
+    {
+        return instance;
+    }
+
     private void Awake()
     {
+        instance = this;
+
         Configuration.LoadConfig();
 
         sensor = new BmcmSensor("usb-ad");
@@ -68,8 +81,10 @@ public class InputManager : MonoBehaviour {
         minRawVal_ripcord = (float)Configuration.GetInnerTextByTagName("minRawVal_ripcord", minRawVal_ripcord);
         maxRawVal_ripcord = (float)Configuration.GetInnerTextByTagName("maxRawVal_ripcord", maxRawVal_ripcord);
 
-        threshold_move = (float)Configuration.GetInnerTextByTagName("threshold_move", threshold_move);
-        threshold_pull = (float)Configuration.GetInnerTextByTagName("threshold_pull", threshold_pull);
+        deadzone            = (float)Configuration.GetInnerTextByTagName("deadzone", deadzone);
+        threshold_pull       = (float)Configuration.GetInnerTextByTagName("threshold_pull", threshold_pull);
+        threshold_control   = (float)Configuration.GetInnerTextByTagName("threshold_control", threshold_control);
+        threshold_idle = (float)Configuration.GetInnerTextByTagName("threshold_idle", threshold_idle);
 
         enableKeyboard = Configuration.GetInnerTextByTagName("debug", false);
 
@@ -130,30 +145,35 @@ public class InputManager : MonoBehaviour {
             }
 
             //normalized Values
-            normalizedVal_left = Remap(rawVal_left, minRawValue_leftgrip, maxRawValue_leftgrip, -1, 1);
-            normalizedVal_right = Remap(rawVal_right, minRawValue_rightgrip, maxRawValue_rightgrip, -1, 1);
+            normalizedVal_leftGrip = Remap(rawVal_left, minRawValue_leftgrip, maxRawValue_leftgrip, -1, 1);
+            normalizedVal_rightGrip = Remap(rawVal_right, minRawValue_rightgrip, maxRawValue_rightgrip, -1, 1);
             normalizedVal_ripcord = Remap(rawVal_ripcord, minRawVal_ripcord, maxRawVal_ripcord, 0, 1);
 
-            //noise value filter
-            normalizedVal_left = ReduceResolution(normalizedVal_left, oldNormalizedVal_left);
-            normalizedVal_right = ReduceResolution(normalizedVal_right, oldNormalizedVal_right);
+            //Filter with Deadzone
+            resultLeftRightMinus1To1 = (normalizedVal_leftGrip - normalizedVal_rightGrip) * 0.5f;
+            resultLeftRightMinus1To1 = FilterValueWithDeadzone(resultLeftRightMinus1To1);
+            resultUpDownMinus1To1 = (normalizedVal_leftGrip + normalizedVal_rightGrip) * 0.5f;
+            resultUpDownMinus1To1 = FilterValueWithDeadzone(resultUpDownMinus1To1);
 
-            oldNormalizedVal_left = normalizedVal_left;
-            oldNormalizedVal_right = normalizedVal_right;
-        }         
-    }
 
-    float ReduceResolution(float newVal, float oldVal){
-        if (Mathf.Abs(normalizedVal_left - oldNormalizedVal_left) < threshold_move)
-        {
-            return oldVal;
+            if (normalizedVal_leftGrip < threshold_idle && normalizedVal_rightGrip < threshold_idle)
+            {
+                if (time_idle > timeout_idle)
+                {
+                    time_idle = 0;
+                    usingGrips = false;
+                }
+                else
+                {
+                    time_idle += Time.deltaTime;
+                }
+            }
+            else
+            {
+                time_idle = 0;
+                usingGrips = true;
+            }
         }
-        return newVal;
-     }
-
-    float Remap(float _val, float _minIn, float _maxIn, float _minOut, float _maxOut)
-    {
-        return _minOut + (_maxOut - _minOut) * (_val - _minIn) / (_maxIn - _minIn);
     }
 
     void OnGUI()
@@ -165,38 +185,65 @@ public class InputManager : MonoBehaviour {
             int y = 380;
 
             GUI.Box(new Rect(10, y, 200, 200), "");
-            GUI.Label(new Rect(x, y + (++yPos) * lineHeight, 500, 500), "USB-AD is "            + sensor.IsValid() );
-            GUI.Label(new Rect(x, y + (++yPos) * lineHeight, 500, 500), "raw Value left: "      + rawVal_left);
-            GUI.Label(new Rect(x, y + (++yPos) * lineHeight, 500, 500), "norm Value left: "     + normalizedVal_left);
-            GUI.Label(new Rect(x, y + (++yPos) * lineHeight, 500, 500), "raw Value right: "     + rawVal_right);
-            GUI.Label(new Rect(x, y + (++yPos) * lineHeight, 500, 500), "norm Value right: "    + normalizedVal_right);
-            GUI.Label(new Rect(x, y + (++yPos) * lineHeight, 500, 500), "norm Value ripcord: "  + normalizedVal_ripcord);
+            GUI.Label(new Rect(x, y + (++yPos) * lineHeight, 500, 500), "USB-AD is " + sensor.IsValid());
+            GUI.Label(new Rect(x, y + (++yPos) * lineHeight, 500, 500), "raw Value left: " + rawVal_left);
+            GUI.Label(new Rect(x, y + (++yPos) * lineHeight, 500, 500), "norm Value left: " + normalizedVal_leftGrip);
+            GUI.Label(new Rect(x, y + (++yPos) * lineHeight, 500, 500), "raw Value right: " + rawVal_right);
+            GUI.Label(new Rect(x, y + (++yPos) * lineHeight, 500, 500), "norm Value right: " + normalizedVal_rightGrip);
+            GUI.Label(new Rect(x, y + (++yPos) * lineHeight, 500, 500), "norm Value ripcord: " + normalizedVal_ripcord);
         }
     }
 
+    float FilterValueWithDeadzone(float curVal)
+    {
+        if (Math.Abs(curVal) > deadzone)
+        {
+            curVal = (curVal - deadzone) / (1.0f - deadzone);
+        }
+        else
+        {
+            curVal = 0;
+        }
+
+        return curVal;
+    }
+
+    float ReduceNoise(float newVal, float oldVal){
+        if (Mathf.Abs(newVal - oldVal) < deadzone)
+        {
+            return oldVal;
+        }
+        return newVal;
+     }
+
+    float Remap(float _val, float _minIn, float _maxIn, float _minOut, float _maxOut)
+    {
+        return _minOut + (_maxOut - _minOut) * (_val - _minIn) / (_maxIn - _minIn);
+    }
+
     // move to left or right
-    public float GetHorinatalAxes()
+    public float GetResultLeftRightMinus1To1()
     {
         if (enableKeyboard)
         {
             return Input.GetAxis("Horizontal");
         }
 
-        return (normalizedVal_left - normalizedVal_right) * 0.5f;
+        return resultLeftRightMinus1To1;
     }
 
     // move to up or down
-    public float GetVerticalAxes()
+    public float GetResultUpDownMinus1To1()
     {
         if (enableKeyboard)
         {
             return Input.GetAxis("Vertical");
         }
 
-        return (normalizedVal_left + normalizedVal_right) * 0.5f;
+        return resultUpDownMinus1To1;
     }
 
-    public bool PullRipcord()
+    public bool PulledRipcord()
     {
         if (enableKeyboard)
         {
@@ -209,6 +256,21 @@ public class InputManager : MonoBehaviour {
         }
 
         return false;
+    }
+
+    public bool ControlledGrips()
+    {
+        if (GetResultUpDownMinus1To1() > threshold_control)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    public bool LeavedGrips()
+    {
+        return !usingGrips;
     }
 
 }

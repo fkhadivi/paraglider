@@ -38,8 +38,8 @@ public class AeroplaneUserControl : MonoBehaviour
         {
             if (isPlaying)
             {
-                roll = inputmanager.GetHorinatalAxes();
-                pitch = inputmanager.GetVerticalAxes();
+                roll = inputmanager.GetResultLeftRightMinus1To1();
+                pitch = inputmanager.GetResultUpDownMinus1To1();
             }
         }
 
