@@ -19,6 +19,7 @@
 		<dragIncreaseFactor>0.001</dragIncreaseFactor>
 		<maxRollAngle>80</maxRollAngle>
 		<maxPitchAngle>80</maxPitchAngle>
+		<maxSpeed>37</maxSpeed>
 	</controller>
 	<input>
 		<ripcord	port="1" line="0" ></ripcord>

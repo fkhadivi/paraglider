@@ -55,7 +55,7 @@ public class AeroplaneController : MonoBehaviour
         airBrakesEffect     = (float)Configuration.GetInnerTextByTagName("airBrakesEffect", airBrakesEffect);
         throttleChangeSpeed = (float)Configuration.GetInnerTextByTagName("throttleChangeSpeed", throttleChangeSpeed);
         dragIncreaseFactor  = (float)Configuration.GetInnerTextByTagName("dragIncreaseFactor", dragIncreaseFactor);
-
+        maxSpeed             = (float)Configuration.GetInnerTextByTagName("maxSpeed", maxSpeed);
         // Store original drag settings, these are modified during flight.
         originalDrag = GetComponent<Rigidbody>().drag;
 		originalAngularDrag = GetComponent<Rigidbody>().angularDrag;
