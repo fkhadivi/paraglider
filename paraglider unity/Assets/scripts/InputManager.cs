@@ -64,7 +64,7 @@ public class InputManager : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
-        port_rightGrip  = Convert.ToInt32(Configuration.GetAttricuteByTagName("ripcord", "port"));
+        port_ripcord = Convert.ToInt32(Configuration.GetAttricuteByTagName("ripcord", "port"));
         port_leftGrip   = Convert.ToInt32(Configuration.GetAttricuteByTagName("leftgrip", "port"));
         port_rightGrip = Convert.ToInt32(Configuration.GetAttricuteByTagName("rightgrip", "port"));
 
@@ -113,7 +113,7 @@ public class InputManager : MonoBehaviour {
 
         if (sensor.IsValid())
         {
-            float rawVal_ripcord    = sensor.GetAnalogIn(port_rightGrip, line_ripcord);
+            float rawVal_ripcord    = sensor.GetAnalogIn(port_ripcord, line_ripcord);
             float rawVal_left       = sensor.GetAnalogIn(port_leftGrip, line_leftgrip);
             float rawVal_right      = sensor.GetAnalogIn(port_rightGrip, line_rightgrip);
 
