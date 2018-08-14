@@ -113,9 +113,9 @@ public class InputManager : MonoBehaviour {
 
         if (sensor.IsValid())
         {
-            float rawVal_ripcord    = sensor.GetAnalogIn(port_ripcord, line_ripcord);
-            float rawVal_left       = sensor.GetAnalogIn(port_leftGrip, line_leftgrip);
-            float rawVal_right      = sensor.GetAnalogIn(port_rightGrip, line_rightgrip);
+            rawVal_ripcord    = sensor.GetAnalogIn(port_ripcord, line_ripcord);
+            rawVal_left       = sensor.GetAnalogIn(port_leftGrip, line_leftgrip);
+            rawVal_right      = sensor.GetAnalogIn(port_rightGrip, line_rightgrip);
 
             if (Input.GetKey(KeyCode.C))
             {
@@ -150,11 +150,11 @@ public class InputManager : MonoBehaviour {
             normalizedVal_ripcord = Remap(rawVal_ripcord, minRawVal_ripcord, maxRawVal_ripcord, 0, 1);
 
             //Filter with Deadzone
-            resultLeftRightMinus1To1 = (normalizedVal_leftGrip - normalizedVal_rightGrip) * 0.5f;
-            resultLeftRightMinus1To1 = FilterValueWithDeadzone(resultLeftRightMinus1To1);
-            resultUpDownMinus1To1 = (normalizedVal_leftGrip + normalizedVal_rightGrip) * 0.5f;
-            resultUpDownMinus1To1 = FilterValueWithDeadzone(resultUpDownMinus1To1);
+            normalizedVal_leftGrip = FilterValueWithDeadzone(normalizedVal_leftGrip);
+            normalizedVal_rightGrip = FilterValueWithDeadzone(normalizedVal_rightGrip);
 
+            resultLeftRightMinus1To1 = (normalizedVal_leftGrip - normalizedVal_rightGrip) * 0.5f;
+            resultUpDownMinus1To1 = (normalizedVal_leftGrip + normalizedVal_rightGrip) * 0.5f;
 
             if (normalizedVal_leftGrip < threshold_idle && normalizedVal_rightGrip < threshold_idle)
             {
@@ -196,9 +196,14 @@ public class InputManager : MonoBehaviour {
 
     float FilterValueWithDeadzone(float curVal)
     {
-        if (Math.Abs(curVal) > deadzone)
+        if (curVal > deadzone)
         {
+
             curVal = (curVal - deadzone) / (1.0f - deadzone);
+        }
+        else if (curVal < deadzone)
+        {
+            curVal = (curVal + deadzone) / (1.0f - deadzone);
         }
         else
         {
@@ -207,14 +212,6 @@ public class InputManager : MonoBehaviour {
 
         return curVal;
     }
-
-    float ReduceNoise(float newVal, float oldVal){
-        if (Mathf.Abs(newVal - oldVal) < deadzone)
-        {
-            return oldVal;
-        }
-        return newVal;
-     }
 
     float Remap(float _val, float _minIn, float _maxIn, float _minOut, float _maxOut)
     {
