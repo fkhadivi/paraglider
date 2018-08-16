@@ -30,10 +30,10 @@ public class InputManager : MonoBehaviour {
     private float threshold_pull = 0;
     private float threshold_control = 0;
     private float threshold_idle = 0;
-    private bool showInputGUI = false;
-    private bool enableKeyboard = false;
-    private float timeout_idle = 30; // sec
-    private float time_idle;
+    public bool showInputGUI = false;
+    public bool enableKeyboard = false;
+    public float timeout_idle = 30; // sec
+    public float time_idle;
     bool usingGrips = false;
 
     int port_ripcord = 1;
@@ -247,7 +247,7 @@ public class InputManager : MonoBehaviour {
     {
         if (enableKeyboard)
         {
-            return Input.GetKeyDown(KeyCode.Space);
+            return Input.GetKeyDown(KeyCode.Return);
         }
 
         if (normalizedVal_ripcord > threshold_pull)

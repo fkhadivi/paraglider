@@ -21,6 +21,7 @@ public class ParagliderFlyingObstacle : MonoBehaviour {
         if (rigi == null)
 			rigi = gameObject.AddComponent<Rigidbody>();
 		rigi.useGravity=false;
+        rigi.isKinematic = true;
 		rigi.mass = 1000;
 	}
 

@@ -46,9 +46,9 @@ public class QuickAnimation_benja : MonoBehaviour {
             }
             if (target >= Transforms.Length) target = 0;
 			float t;
-			t= BenjasMath.smooth01trigonometrically(1f- timeToNext/factor);
+			t= BenjasMath.easeInOut(1f- timeToNext/factor);
 			transform.position = Vector3.Lerp(Transforms[origin].position, Transforms[target].position, t);
-			t = BenjasMath.smooth01trigonometrically(1f-rotationSpeedup*timeToNext/ factor);
+			t = BenjasMath.easeInOut(1f-rotationSpeedup*timeToNext/ factor);
 			transform.eulerAngles = BenjasMath.angularLerp(Transforms[origin].eulerAngles, Transforms[target].eulerAngles, t);
         }
         else this.enabled = false;    

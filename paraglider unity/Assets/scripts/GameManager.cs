@@ -22,16 +22,26 @@ public class GameManager : MonoBehaviour {
     string endtime = "";
     bool goToStandbyModusNow = false;
 
-    STATE state;
+    public float maxTimeInGame = 180.0f;          //maximale zeit des spiels 
+  		  
 
-    enum STATE
+    public float maxTimeUntilInactivity = 30f;         //max time of inactivity until state changes to inactivity
+
+    public float maxTimeUntilStandby = 180.0f;    //time until switched to standby mode 
+    public float timeUntilStandby = 0;
+
+
+    public STATE state;
+
+    public enum STATE
     {
         STANDBYMODUS,
         INTRO,
         GAME,
-        ABORT,
+        ABORT,   
         INACTIVITY,
         RESULT,
+        TIMEOUT,
         GAMEOVER
     }
 
@@ -57,6 +67,7 @@ public class GameManager : MonoBehaviour {
         listener.Start(listenerPort);
 
         inputManager = InputManager.GetInstance();
+        inputManager.timeout_idle = maxTimeUntilInactivity;
 
         TextProvider.Load("text_9681.xlsx");
         TextProvider.lang = languageCode;
@@ -92,70 +103,80 @@ public class GameManager : MonoBehaviour {
         }
 
         // Ripcord
-        if (inputManager.PulledRipcord() && !pulledReipcord)
+        if (inputManager.PulledRipcord() != pulledReipcord)
         {
-            pulledReipcord = true;
+            pulledReipcord = inputManager.PulledRipcord();
+            if(pulledReipcord)
+
             if (state == STATE.STANDBYMODUS)
             {
                 GoToIntro();
             }
+
             else if (state == STATE.INTRO)
             {
                 ChangeLanguage();
             }
+
             else if (state == STATE.GAME)
             {
                 OpenAbort();
             }
+
             else if (state == STATE.ABORT)
             {
                 GoToIntro();
             }
+
             else if (state == STATE.INACTIVITY)
             {
                 StartStandbymodus();
             }
         }
-        else if (!inputManager.PulledRipcord() && pulledReipcord)
-        {
-            pulledReipcord = false;
-        }
 
         // two Grips
-        if (inputManager.ControlledGrips() && !controlledGrips)
+        if (inputManager.ControlledGrips() != controlledGrips)
         {
-            controlledGrips = true;
-            if (state == STATE.STANDBYMODUS)
+            controlledGrips = inputManager.ControlledGrips();
+            if (controlledGrips)
             {
-                GoToIntro();
+                if (state == STATE.STANDBYMODUS)
+                {
+                    GoToIntro();
+                }
+
+                else if (state == STATE.INTRO)
+                {
+                    StartGame();
+                }
+
+                else if (state == STATE.ABORT || state == STATE.INACTIVITY)
+                {
+                    ResumeGame();
+                }
             }
-            else if (state == STATE.INTRO)
-            {
-                StartGame();
-            }
-            else if (state == STATE.ABORT || state == STATE.INACTIVITY)
-            {
-                ResumeGame();
-            }
-        }
-        else if(!inputManager.ControlledGrips() && controlledGrips)
-        {
-            controlledGrips = false;
         }
 
-        if (inputManager.LeavedGrips() && !leavedGrips)
+        if (inputManager.LeavedGrips() != !leavedGrips)
         {
-            leavedGrips = true;
-            if(state != STATE.INACTIVITY && state != STATE.STANDBYMODUS)
+            leavedGrips = inputManager.LeavedGrips();
+
+            if (leavedGrips)
             {
-                OpenInactivity();
+                if (state != STATE.INACTIVITY && state != STATE.STANDBYMODUS)
+                {
+                    OpenInactivity();
+                }
             }
         }
-        else if (!inputManager.LeavedGrips() && leavedGrips)
-        {
-            leavedGrips = false;
-        }
     }
+
+
+    public void resetStandbyTimer()
+    {
+        timeUntilStandby = maxTimeUntilStandby;
+    }
+
 
 
     private void OnMessage(object sender, string e)

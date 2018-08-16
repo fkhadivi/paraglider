@@ -15,6 +15,7 @@ public class ParagliderMainScript : MonoBehaviour {
 	public GameMap_benja Map;					//steuert die karte
 	public paragliderHUD HUD;			        //steuert den höhenmesser etc
     public compassStrip_benja compass;
+    public GameManager gameManager;
     public DebugInfo_benja debugInfo;			// gibt debug daten auf dem Bildschirm aus
 												// DebugInfo.Log("Zeile","WERT") Befehl erstellt beim ersten Aufruf 
 												// die Zeile "Zeile" und danach überschreibt es bei jedem aufruf 
@@ -23,11 +24,6 @@ public class ParagliderMainScript : MonoBehaviour {
 	public float maxGameTime= 180.0f;			//maximale zeit des spiels 
 	public float gameTime =0;						//zeit des spiels (countdown)
 
-    public float maxInactivityTime = 30f;		//max zeit ohne input bevor standby eingeleitet
-	public float currentInactivityTime = 30f;	//zeit ohne bis standby eingeleitet wenn kein inpout
-
-
-
 	public Sprite mapTexture; //wird aus level info des levels übernommen und an map übergeben
 
     public bool spawnByCollider = false;	//dürfen collider spawn von Hindernissen auslösen
@@ -35,19 +31,17 @@ public class ParagliderMainScript : MonoBehaviour {
     public float maxTimeToSpawn = 6.0f;		//mindestzeit zwischen dem spawnen zweier hindernisse, vor ablauf werden collider ignoriert
 	public float timeToSpawn = 6.0f;		//Zeit bis zum nächsten spawn
 
-    public bool respawnEnabled = false;		//auto respawn nach crash
-
 	public bool debug = false;				// sollen debug daten erscheinen
 	//public bool finishing = false;			// übergang ins nächste level ist eingeleitet	
-    public bool finishGame = false;			// spiel wird beendet, kein weitere spawning
-    
-	/*
+    public bool finishGame = false;         // spiel wird beendet, kein weitere spawning
+
+    /*
 
 	METHODEN
 
 	ALLGEMEIN
 
-    void reset() setzt das spiel auf null und läd verbrauchte levels nach
+    void gameReset() setzt das spiel auf null und läd verbrauchte levels nach
     void onInput() setzt den iput imer zurück
 
 	DebugInfo.Log("Zeile","WERT") Befehl erstellt beim ersten Aufruf 
@@ -76,6 +70,25 @@ public class ParagliderMainScript : MonoBehaviour {
     Hotkeys siehe ganz unten oder debug info
 
 */
+    public STATE state;
+
+    public enum STATE
+    {
+        NONE,
+        RESETTING,
+        READY,
+        ATSTART,
+        PLAYING,
+        CRASH,
+        FINISH,
+        TIMEOUT
+    }
+
+    void changestate(STATE newState)
+    {
+        state = newState;
+        debugInfo.log("state", state.ToString());
+    }
 
 
     void Start()
@@ -99,11 +112,11 @@ public class ParagliderMainScript : MonoBehaviour {
         glider.onSpawn = onSpawn;
         glider.onDocking = onDocking;
         levelControl = GetComponent<ParagliderLevelControl>();
-        //reset();
+        //gameReset();
     }
 
 
-    void reset()
+    void gameReset()
     {
 		debug=false;
     	onDebugChange(false);
@@ -116,52 +129,77 @@ public class ParagliderMainScript : MonoBehaviour {
         levelControl.preloadAllLevels();
         debugInfo.log("last big event", "game reset started");
         //HUD.setGameTime(0);
+        HUD.appearHIDDEN();
+        gamePause(true);
+        changestate(STATE.RESETTING);
     }
 
 
-
-    void onInput()
+    public void gameStart()
     {
-        currentInactivityTime = maxInactivityTime;
+        HUD.appearCOMPLETE();
+        NextLevel();
+        gamePause(true);
+        changestate(STATE.ATSTART);
     }
 
-
-
-    public float pie = 0;
-
-    void Update()
+    public void gameStartPlaying()
     {
-		
-		cheatkeys();
+        HUD.appearNOINFO();
+        gamePause(false);
+        changestate(STATE.PLAYING);
+    }
 
+    public bool pausing = false;
 
+    public void gamePause(bool doPause = true)
+    {
+        pausing = doPause;
+        glider.togglePhysics(!pausing);
+    }
 
-
-        if (levelControl.level>0)
+    public void updateHUD(bool reset =false)
+    {
+        if(reset)
+        { }
+        else
         {
-            //BUG BUG BUG
-            //only update compass after level have been loaded, ner during load
+
             BenjasMath.countdownToZero(ref gameTime);
             debugInfo.log("time", gameTime);
             //the finish looks same in all directions 
             // so i can misuse that to get the angle towards the glider 
             levelControl.levelInfo().finish.transform.LookAt(glider.transform.position);
             //and then rotate it 180 to get the direction towards the finish
-            compass.setBacon(levelControl.levelInfo().finish.transform.eulerAngles.y + 180-glider.transform.eulerAngles.y);
-            HUD.setGameTime(1 - gameTime / maxGameTime);
+            compass.setBacon(levelControl.levelInfo().finish.transform.eulerAngles.y + 180 - glider.transform.eulerAngles.y);
             compass.setCompass(glider.transform.eulerAngles.y);
+            HUD.setGameTime(1 - gameTime / maxGameTime);
+            Map.updateMap(glider.position, glider.transform.eulerAngles);
+
             debugInfo.log("compass angle", glider.transform.eulerAngles.y);
+            debugInfo.log("speed", glider.speed);
+            debugInfo.log("altitude", glider.altitude);
+            debugInfo.log("alt change", glider.altChange);
         }
 
+    }
 
-        BenjasMath.countdownToZero(ref currentInactivityTime);
-        debugInfo.log("time until standby", currentInactivityTime);
 
-        debugInfo.log("speed", glider.speed);
-        debugInfo.log("altitude", glider.altitude);
-        debugInfo.log("alt change", glider.altChange);
 
-        Map.updateMap(glider.position,glider.transform.eulerAngles);
+    void Update()
+    {
+		
+		cheatkeys();
+
+        if (levelControl.level>0)
+        {
+            //BUG BUG BUG
+            //only update after levels have been loaded, never during load
+            updateHUD();
+        }
+
+       
+
 
         if (BenjasMath.countdownToZero(ref timeToSpawn) && spawnByTime)
         {
@@ -174,6 +212,10 @@ public class ParagliderMainScript : MonoBehaviour {
         //debugInfo.log("time", levelControl.levelInfo().terrain.activeInHierarchy?"visible":"invisible");
     }
 
+
+
+
+
 	/*
 	 █     █▀▀▀  █  █  █▀▀▀  █     ▄▀▀▀ 
 	 █     █▀▀   █ █   █▀▀   █     ▀▀▀▄ 
@@ -182,6 +224,7 @@ public class ParagliderMainScript : MonoBehaviour {
 
 	void onLevelsLoaded()
     {
+        changestate(STATE.READY);
         debugInfo.log("last big event", "all levels preloaded");
     }
 
@@ -198,12 +241,13 @@ public class ParagliderMainScript : MonoBehaviour {
 							);
             HUD.setLevelString("Welt " + levelControl.level.ToString() + "/4");
 			glider.spawn(levelControl.levelInfo().startPoint.transform);
-			glider.togglePhysics(false);
+            if (levelControl.level > 1) gamePause(false);
 
-			levelControl.wakeLevel();
+
+            levelControl.wakeLevel();
 
 	    	Map.gameObject.SetActive(true);
-	    	HUD.appear(true);
+            
             if(levelControl.level==1)
             {
                 gameTime = maxGameTime;
@@ -216,7 +260,7 @@ public class ParagliderMainScript : MonoBehaviour {
 			Map.gameObject.SetActive(false);
             HUD.setLevelString("");
 
-            HUD.appear(false);
+            HUD.appearHIDDEN();
     	}
 
 		Debug.Log("level "+levelControl.level+" started");
@@ -227,7 +271,7 @@ public class ParagliderMainScript : MonoBehaviour {
 	void onLevelawake()
     {
         debugInfo.log("last big event", "level running");
-		glider.togglePhysics(true);
+		glider.togglePhysics(!pausing);
 		onStiffBreeze();
     }
 
@@ -241,11 +285,10 @@ public class ParagliderMainScript : MonoBehaviour {
 
 	public void onCrash()
     {
-        if (respawnEnabled || godmode)
-        {
-            glider.respawn();
-        }
         debugInfo.log("collider info", "crash");
+        if (godmode) return;
+        HUD.appearINFOONLY();
+        gameManager.SendMessage("08.00");
     }
 
 	public void onFog()
@@ -359,13 +402,21 @@ public class ParagliderMainScript : MonoBehaviour {
 			debugInfo.log("key p", "toggle physics");
 			debugInfo.log("key q/w", "quiet<>windy ");
 			debugInfo.log("key space", "superspeed");
-			debugInfo.log(": :",": : : : :");
+            debugInfo.log("key 1", "start game");
+            debugInfo.log("key 2", "start playing game (start glider)");
+            debugInfo.log(": :",": : : : :");
         }
-        if(Input.anyKey)
+        if (Input.GetKeyDown("1"))
         {
-            onInput();
+            gameStart();
         }
-    	if (Input.GetKeyDown("d")) 
+
+        if (Input.GetKeyDown("2"))
+        {
+            gameStartPlaying();
+        }
+
+        if (Input.GetKeyDown("d")) 
     	{
     	  	debug=!debug;
     	  	onDebugChange(debug);
@@ -384,7 +435,7 @@ public class ParagliderMainScript : MonoBehaviour {
     	}
         if (Input.GetKeyDown("x"))
         {
-            reset();
+            gameReset();
         }
         if (Input.GetKeyDown("g"))
         {
@@ -401,7 +452,7 @@ public class ParagliderMainScript : MonoBehaviour {
         }
         if (Input.GetKeyDown("p"))
         {
-        	glider.togglePhysics();
+            gamePause(!pausing);
 				debugInfo.log("physics", glider.physicsEnabled()? "enabled" : "disabled");
         }
 		if (!glider.physicsEnabled())

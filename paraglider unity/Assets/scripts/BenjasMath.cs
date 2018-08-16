@@ -203,15 +203,27 @@ public class smoothVector3{
 		return Mathf.Clamp01(Mathf.SmoothStep(0,1,t));
 	}
 
-	public static float smooth01trigonometrically(float t)
+	public static float easeInOut(float t)
 	{
-		//uses cosinus shape between, input 0..1, output 0..1
-		//return Mathf.Clamp01((1-Mathf.Cos(t*Mathf.PI))/2);
-		return Mathf.Clamp01(Mathf.InverseLerp(1,-1, Mathf.Cos(t*Mathf.PI)));
+        //uses cosinus shape between, input 0..1, output 0..1
+        //return Mathf.Clamp01((1-Mathf.Cos(t*Mathf.PI))/2);
+        t = Mathf.Clamp01(t);
+        return Mathf.InverseLerp(1,-1, Mathf.Cos(t*Mathf.PI));
 	}
 
+    public static float easeIn(float t)
+    {
+        t = Mathf.Clamp01(t);
+        return Mathf.Sin(t * Mathf.PI/2);
+    }
 
-	public int[] randomIntArray(int min, int max, int count)
+    public static float easeOut(float t)
+    {
+        t = Mathf.Clamp01(t);
+        return  1- Mathf.Cos(t * Mathf.PI/2);
+    }
+
+    public int[] randomIntArray(int min, int max, int count)
 	{
 		if(count>max-min)
 		{
@@ -273,6 +285,11 @@ public class smoothVector3{
         value = Mathf.InverseLerp(valMin, valMax, value);
         if (clamp) value = Mathf.Clamp01(value);
         return Mathf.Lerp(outMin, OutMax, value);
+    }
+
+    public static float map(float value, float minIn, float maxIn, float minOut, float maxOut, float minClamp, float maxClamp)
+    {
+        return Mathf.Clamp(map(value, minIn, maxIn, minOut, maxOut, false), minClamp, maxClamp);
     }
 
     public static float keepAngle0to360(float Angle)

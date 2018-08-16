@@ -14,15 +14,19 @@ public class GameMap_benja : MonoBehaviour {
 		
 	}
 
-	Vector3 NEworld;
-	Vector3 SWworld;
+    public Vector3 NEworld;
+    public Vector3 SWworld;
 	//RectTransform NEmap;
 	//RectTransform SWmap;
 	public Vector2 mapMin = new Vector2(-0.5f,-0.5f);
 	public Vector2 mapMax = new Vector2(0.5f,0.5f);
-	Vector2 clampMin;
-	Vector2 clampMax;
-	public Vector3 positionWorld;
+    public Vector2 mapMinScaled ;
+    public Vector2 mapMaxScaled ;
+    public Vector2 clampMin;
+    public Vector2 clampMax;
+    public Vector2 mapScale;
+
+    public Vector3 positionWorld;
 	public Vector3 rotationWorld;
 	public Vector3 positionMap;
 	public Vector3 rotationMap;
@@ -41,28 +45,38 @@ public class GameMap_benja : MonoBehaviour {
 		mapImage.sprite = MapTexture;
 		NEworld = northeast;
 		SWworld = southwest;
-		Vector2 scale = new Vector2(mapPointer.localScale.x/2,mapPointer.localScale.y/2);
-		clampMin = mapMin+scale;
-		clampMax = mapMax-scale;
+
+        RectTransform maptrafo = mapImage.GetComponent<RectTransform>();
+        Vector2 mapScale = new Vector2(maptrafo.rect.width, maptrafo.rect.height);
+        mapMinScaled = mapMin * mapScale;
+        mapMaxScaled = mapMax * mapScale;
+        /*		Vector2 pointerScale = new Vector2(mapPointer.rect.width,mapPointer.rect.height);
+        clampMin = mapMinScaled + 0.5f * pointerScale;
+		clampMax = mapMaxScaled - 0.5f * pointerScale;
+        */
+        clampMin = mapMinScaled ;
+		clampMax = mapMaxScaled ;
 	}
 
-	public void updateMap(Vector3 coordinates)
+	private void updateMap(Vector3 coordinates)
 	{
-		positionMap = mapPointer.localPosition;
+        
+		positionMap = mapPointer.anchoredPosition3D;
 		positionWorld = coordinates;
 
+        Debug.Log("map" +positionMap.x);
 
-		positionMap.x=map(	positionWorld.x,
+		positionMap.x=BenjasMath.map(	positionWorld.x,
 							SWworld.x,NEworld.x,
-							mapMin.x,mapMax.x,
+                            mapMinScaled.x, mapMaxScaled.x,
 							clampMin.x,clampMax.x);
-
-		positionMap.y=map(	positionWorld.z,
+        Debug.Log(positionMap.x);
+        positionMap.y=BenjasMath.map(	positionWorld.z,
 							SWworld.z,NEworld.z,
-							mapMin.y,mapMax.y,
+                            mapMinScaled.y, mapMaxScaled.y,
 							clampMin.y,clampMax.y);
 
-		mapPointer.localPosition = positionMap;
+		mapPointer.anchoredPosition3D = positionMap;
 	}
 
 	public void updateMap(Vector3 coordinates, Vector3 direction)
@@ -79,15 +93,6 @@ public class GameMap_benja : MonoBehaviour {
 		
 	}
 
-	// Mapping
-	float map(float value, float minIn, float maxIn, float minOut,float maxOut)
-	{
-		return 	Mathf.Lerp(minOut,maxOut,Mathf.InverseLerp(minIn,maxIn,value));
-	}
 
-	float map(float value, float minIn, float maxIn, float minOut,float maxOut, float minClamp, float maxClamp)
-	{
-			return 	Mathf.Clamp(map(value,minIn,maxIn,minOut,maxOut),minClamp,maxClamp);
-	}
 
 }
