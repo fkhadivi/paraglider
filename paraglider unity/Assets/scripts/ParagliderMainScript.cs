@@ -7,7 +7,9 @@ using UnityEngine.UI;
 public class ParagliderMainScript : MonoBehaviour {
 
 
-	public bool dontDestroyOnLoad = false;
+    private static ParagliderMainScript instance;
+
+    public bool dontDestroyOnLoad = false;
     private static bool created = false;
     ParagliderLevelControl levelControl;
 	public ParagliderControler glider;			//script für paraglider interaktionen mit umgebung
@@ -90,9 +92,17 @@ public class ParagliderMainScript : MonoBehaviour {
         debugInfo.log("state", state.ToString());
     }
 
+    public static ParagliderMainScript GetInstance()
+    {
+        return instance;
+    }
 
     void Start()
     {
+        instance = this;
+
+        maxGameTime = (float)Configuration.GetInnerTextByTagName("maxGameTime", maxGameTime);
+
         if (!created && dontDestroyOnLoad)
         {
             DontDestroyOnLoad(this.gameObject);
@@ -115,8 +125,16 @@ public class ParagliderMainScript : MonoBehaviour {
         //gameReset();
     }
 
+    public void CallGameManagerGameOver()
+    {
+        GameManager.GameOver(false);
+    }
 
-    void gameReset()
+
+    /// <summary>
+    ///  can only be called when IGP is visible because it takes time and things are visible
+    /// </summary>
+    public void gameReset()
     {
 		debug=false;
     	onDebugChange(false);
@@ -131,10 +149,14 @@ public class ParagliderMainScript : MonoBehaviour {
         //HUD.setGameTime(0);
         HUD.appearHIDDEN();
         gamePause(true);
+
+        // state can be used by GameManager to see if main is ready
         changestate(STATE.RESETTING);
     }
 
-
+    /// <summary>
+    /// Prepare before start and set to start point
+    /// </summary>
     public void gameStart()
     {
         HUD.appearCOMPLETE();
@@ -143,6 +165,9 @@ public class ParagliderMainScript : MonoBehaviour {
         changestate(STATE.ATSTART);
     }
 
+    /// <summary>
+    /// Actually set the paraglider free
+    /// </summary>
     public void gameStartPlaying()
     {
         HUD.appearNOINFO();
@@ -150,8 +175,14 @@ public class ParagliderMainScript : MonoBehaviour {
         changestate(STATE.PLAYING);
     }
 
+
     public bool pausing = false;
 
+    /// <summary>
+    /// No STATE change
+    /// stores current physics values and turns off updating physics
+    /// </summary>
+    /// <param name="doPause"></param>
     public void gamePause(bool doPause = true)
     {
         pausing = doPause;
@@ -468,5 +499,4 @@ public class ParagliderMainScript : MonoBehaviour {
 
     public delegate void boolDelegate(bool b);
     public boolDelegate onDebugChange;
-
 }
