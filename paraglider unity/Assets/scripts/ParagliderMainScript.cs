@@ -288,7 +288,7 @@ public class ParagliderMainScript : MonoBehaviour {
         debugInfo.log("collider info", "crash");
         if (godmode) return;
         HUD.appearINFOONLY();
-        gameManager.SendMessage("08.00");
+        changestate(STATE.CRASH);     
     }
 
 	public void onFog()
@@ -305,6 +305,11 @@ public class ParagliderMainScript : MonoBehaviour {
     	{
     		NextLevel();
     	}
+        else
+        {
+            HUD.appearINFOONLY();
+            changestate(STATE.CRASH);
+        }
     }
 
 	void onDocking()

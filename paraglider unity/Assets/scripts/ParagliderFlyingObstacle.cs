@@ -21,7 +21,7 @@ public class ParagliderFlyingObstacle : MonoBehaviour {
         if (rigi == null)
 			rigi = gameObject.AddComponent<Rigidbody>();
 		rigi.useGravity=false;
-        rigi.isKinematic = true;
+        //rigi.isKinematic = true;
 		rigi.mass = 1000;
 	}
 
@@ -169,6 +169,7 @@ public class ParagliderFlyingObstacle : MonoBehaviour {
 
 	void Update () 
 	{
+        transform.localEulerAngles = Vector3.zero;
 
 		if(player!= null)
 		{
