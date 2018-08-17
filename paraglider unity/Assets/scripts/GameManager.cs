@@ -9,8 +9,8 @@ public class GameManager : MonoBehaviour {
     UDPListener listener;
     static GameManager instance;
 
-    string ip = "127.0.0.1";
-    int port = 6000;
+    static string ip = "127.0.0.1";
+    static int port = 6000;
     int listenerPort = 5000;
 
     string languageCode = "de";
@@ -22,16 +22,12 @@ public class GameManager : MonoBehaviour {
     string endtime = "";
     bool goToStandbyModusNow = false;
 
-    public float maxTimeInGame = 180.0f;          //maximale zeit des spiels 
   		  
-
-    public float maxTimeUntilInactivity = 30f;         //max time of inactivity until state changes to inactivity
-
-    public float maxTimeUntilStandby = 180.0f;    //time until switched to standby mode 
-    public float timeUntilStandby = 0;
+    
+    public float maxTimeUntilStandby = 15.0f;    //time until switched to standby mode 
 
 
-    public STATE state;
+    public static STATE state;
 
     public enum STATE
     {
@@ -53,13 +49,16 @@ public class GameManager : MonoBehaviour {
     void Awake()
     {
         instance = this;
+        Configuration.LoadConfig();
     }
 
-    // Use this for initialization
+    
     void Start () {
         ip           = Configuration.GetInnerTextByTagName("ip", ip);
         port         = (int)Configuration.GetInnerTextByTagName("senderPort", port);
         listenerPort = (int)Configuration.GetInnerTextByTagName("listenerPort", listenerPort);
+
+        maxTimeUntilStandby = (float)Configuration.GetInnerTextByTagName("maxTimeUntilStandby ", maxTimeUntilStandby );
 
         listener = new UDPListener();
         listener.MessageReceived += OnMessage;
@@ -67,7 +66,6 @@ public class GameManager : MonoBehaviour {
         listener.Start(listenerPort);
 
         inputManager = InputManager.GetInstance();
-        inputManager.timeout_idle = maxTimeUntilInactivity;
 
         TextProvider.Load("text_9681.xlsx");
         TextProvider.lang = languageCode;
@@ -174,7 +172,7 @@ public class GameManager : MonoBehaviour {
 
     public void resetStandbyTimer()
     {
-        timeUntilStandby = maxTimeUntilStandby;
+        //timeUntilStandby = maxTimeUntilStandby;
     }
 
 
@@ -191,7 +189,7 @@ public class GameManager : MonoBehaviour {
     /// See 180524_exp_ie_0404_fsb_paraglider_animkom_jn.pdf
     ///
     // 1.00 Standby Modus
-    public void StartStandbymodus()
+    public static void StartStandbymodus()
     {
         state = STATE.STANDBYMODUS;
         UDPSender.SendUDPStringUTF8(ip, port, "state=standbymodus");
@@ -224,6 +222,11 @@ public class GameManager : MonoBehaviour {
         state = STATE.GAME;
         UDPSender.SendUDPStringUTF8(ip, port, "state=game;action=start;");
         //Todo: start game and turn on character control to be able to play
+        ParagliderMainScript.GetInstance().gameStart();
+        
+        //later
+        //ParagliderMainScript.GetInstance().gameStartPlaying();
+
     }
 
     // 3.00: ID = 1
@@ -274,7 +277,7 @@ public class GameManager : MonoBehaviour {
 
     // 8.0 Unfall / Game Over 
     // 9.0 Zeit abgelaufen
-    public void GameOver(bool isTimeout)
+    public static void GameOver(bool isTimeout)
     {
         state = STATE.GAMEOVER;
         string action = "crash";
@@ -283,7 +286,7 @@ public class GameManager : MonoBehaviour {
             action = "timeout";
         }
 
-        UDPSender.SendUDPStringUTF8(ip, port, "state=gamover;action="+ action);
+        UDPSender.SendUDPStringUTF8(ip, port, "state=gameover;action="+ action);
     }
 
     // 10.0 Abbruch

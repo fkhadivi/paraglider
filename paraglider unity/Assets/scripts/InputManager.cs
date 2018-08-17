@@ -32,7 +32,7 @@ public class InputManager : MonoBehaviour {
     private float threshold_idle = 0;
     public bool showInputGUI = false;
     public bool enableKeyboard = false;
-    public float timeout_idle = 30; // sec
+    public float maxTimeUntilInactivity = 30f;         //max time of inactivity until state changes to inactivity
     public float time_idle;
     bool usingGrips = false;
 
@@ -54,11 +54,10 @@ public class InputManager : MonoBehaviour {
     {
         instance = this;
 
-        Configuration.LoadConfig();
-
         sensor = new BmcmSensor("usb-ad");
         sensor.Init();
 
+        maxTimeUntilInactivity = (float)Configuration.GetInnerTextByTagName("maxTimeUntilInactivity", maxTimeUntilInactivity);
     }
 
     // Use this for initialization
@@ -158,7 +157,7 @@ public class InputManager : MonoBehaviour {
 
             if (normalizedVal_leftGrip < threshold_idle && normalizedVal_rightGrip < threshold_idle)
             {
-                if (time_idle > timeout_idle)
+                if (time_idle > maxTimeUntilInactivity)
                 {
                     time_idle = 0;
                     usingGrips = false;
