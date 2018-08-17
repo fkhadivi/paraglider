@@ -229,12 +229,17 @@ public class GameManager : MonoBehaviour {
 
     }
 
-    // 3.00: ID = 1
-    // 4.00: ID = 2
-    // 4.01: ID = 0
-    // 4.02: ID = 0
-    // 5.00: ID = 0
-    // 6.00: ID = 4 
+    /// <summary>
+    /// 
+    /// 3.00: ID = 1
+    /// 4.00: ID = 2
+    /// 4.01: ID = 0
+    /// 4.02: ID = 0
+    /// 5.00: ID = 0
+    /// 6.00: ID = 4 
+    /// 09.00 Zeit abgelaufen ID = 9; 
+    /// </summary>
+    /// <param name="_id"></param>
     public void ChangePromptInGame(int _id)
     {
         state = STATE.GAME;
@@ -257,6 +262,10 @@ public class GameManager : MonoBehaviour {
             case 4:
                 actionString = "finish";
                 break;
+            default:
+                Debug.LogError("case " + _id + "  is missing");
+                break;
+            
         }
 
         UDPSender.SendUDPStringUTF8(ip, port, "state=game;action=" + actionString);

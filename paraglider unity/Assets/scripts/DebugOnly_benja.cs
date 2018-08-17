@@ -4,12 +4,11 @@ using UnityEngine;
 
 public class DebugOnly_benja : MonoBehaviour {
 
-	public ParagliderMainScript mainScript;
+
 	public bool isDebug = true;
     private bool isConnected = false;
 	// Use this for initialization
 	void Awake () {
-		mainScript = FindObjectOfType<ParagliderMainScript>();
 		//Debug.Log("main script " + mainScript.name);
 		onDebugChange(false);
         connect(true);
@@ -18,8 +17,8 @@ public class DebugOnly_benja : MonoBehaviour {
     public void connect(bool shouldBeConnected)
     {
 		if(isConnected == shouldBeConnected) return;
-		if(shouldBeConnected) mainScript.onDebugChange += this.onDebugChange;
-		else mainScript.onDebugChange -= this.onDebugChange;
+		if(shouldBeConnected) ParagliderMainScript.GetInstance().onDebugChange += this.onDebugChange;
+		else ParagliderMainScript.GetInstance().onDebugChange -= this.onDebugChange;
 		isConnected = shouldBeConnected;
     }
 

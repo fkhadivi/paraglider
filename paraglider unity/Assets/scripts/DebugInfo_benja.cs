@@ -60,13 +60,13 @@ public class DebugInfo_benja : MonoBehaviour {
         textField.enabled = debugging;
     }
 
-    public ParagliderMainScript mainScript;
+    
     private bool isConnected = false;
     // Use this for initialization
     void Awake()
     {
-        mainScript = FindObjectOfType<ParagliderMainScript>();
-        onDebugChange(mainScript.debug);
+
+        onDebugChange(ParagliderMainScript.GetInstance().debug);
         connect(true);
     }
 
@@ -76,14 +76,14 @@ public class DebugInfo_benja : MonoBehaviour {
         {
             if (!shouldBeConnected)
             {
-                mainScript.onDebugChange -= this.onDebugChange;
+                ParagliderMainScript.GetInstance().onDebugChange -= this.onDebugChange;
             }
         }
         else
         {
             if (shouldBeConnected)
             {
-                mainScript.onDebugChange += this.onDebugChange;
+                ParagliderMainScript.GetInstance().onDebugChange += this.onDebugChange;
             }
         }
     }
