@@ -13,21 +13,21 @@ public class GameManager : MonoBehaviour {
     static int port = 6000;
     int listenerPort = 5000;
 
-    string languageCode = "de";
+    static string languageCode = "de";
 
     bool pulledReipcord = false;
     bool controlledGrips = false;
     bool leavedGrips = false;
 
-    string endtime = "";
+    static string endtime = "";
     bool goToStandbyModusNow = false;
 
-  		  
-    
-    public float maxTimeUntilStandby = 15.0f;    //time until switched to standby mode 
+    public float delayStartPlaying = 1.0f; //in sec
 
+    public static float maxTimeUntilStandby = 15.0f;    //time until switched to standby mode 
 
     public static STATE state;
+    private static float timeUntilStandby;
 
     public enum STATE
     {
@@ -60,6 +60,8 @@ public class GameManager : MonoBehaviour {
 
         maxTimeUntilStandby = (float)Configuration.GetInnerTextByTagName("maxTimeUntilStandby ", maxTimeUntilStandby );
 
+        delayStartPlaying = (float)Configuration.GetInnerTextByTagName("delayStartPlaying ", delayStartPlaying);
+
         listener = new UDPListener();
         listener.MessageReceived += OnMessage;
 
@@ -80,111 +82,78 @@ public class GameManager : MonoBehaviour {
         {
             UDPSender.SendUDPStringUTF8(ip,port,"Hello World!");
         }
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            OpenInactivity();
-        }
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            OpenAbort();
-        }
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            GameOver(false);
-        }
         // --------------------------------
 
         if (goToStandbyModusNow)
         {
-            goToStandbyModusNow = false;
+            goToStandbyModusNow = false;           
             StartStandbymodus();
         }
-
-        // Ripcord
-        if (inputManager.PulledRipcord() != pulledReipcord)
-        {
-            pulledReipcord = inputManager.PulledRipcord();
-            if(pulledReipcord)
-
-            if (state == STATE.STANDBYMODUS)
-            {
-                GoToIntro();
-            }
-
-            else if (state == STATE.INTRO)
-            {
-                ChangeLanguage();
-            }
-
-            else if (state == STATE.GAME)
-            {
-                OpenAbort();
-            }
-
-            else if (state == STATE.ABORT)
-            {
-                GoToIntro();
-            }
-
-            else if (state == STATE.INACTIVITY)
-            {
-                StartStandbymodus();
-            }
-        }
-
-        // two Grips
-        if (inputManager.ControlledGrips() != controlledGrips)
-        {
-            controlledGrips = inputManager.ControlledGrips();
-            if (controlledGrips)
-            {
-                if (state == STATE.STANDBYMODUS)
-                {
-                    GoToIntro();
-                }
-
-                else if (state == STATE.INTRO)
-                {
-                    StartGame();
-                }
-
-                else if (state == STATE.ABORT || state == STATE.INACTIVITY)
-                {
-                    ResumeGame();
-                }
-            }
-        }
-
-        if (inputManager.LeavedGrips() != !leavedGrips)
-        {
-            leavedGrips = inputManager.LeavedGrips();
-
-            if (leavedGrips)
-            {
-                if (state != STATE.INACTIVITY && state != STATE.STANDBYMODUS)
-                {
-                    OpenInactivity();
-                }
-            }
-        }
     }
-
 
     public void resetStandbyTimer()
     {
         //timeUntilStandby = maxTimeUntilStandby;
     }
 
-
-
     private void OnMessage(object sender, string e)
     {
         Debug.Log("Message: " + e);
-        if(e == "startscreensaver")
+        if(e == "standbymodus")
         {
             goToStandbyModusNow = true;
         }
     }
+
+    //InputManager calls the static functions
+    public static void CallInactivity()
+    {
+        if (state != STATE.INACTIVITY)
+        {
+            OpenInactivityDialog();
+        }
+    }
+
+    public static void CallPulledGrips()
+    {
+        Debug.Log("Pulled grips " + state);
+        if (state == STATE.INTRO)
+        {
+            StartGame();
+        }
+        else if (state == STATE.ABORT || state == STATE.INACTIVITY)
+        {
+            ResumeGame();
+        }    
+    }
+
+    public static void CallPulledRipcord()
+    {
+        Debug.Log("Pulled ripcord " + state);
+
+        if (state == STATE.STANDBYMODUS)
+        {
+            GoToIntro();
+        }
+        else if (state == STATE.INTRO)
+        {
+            ChangeLanguage();
+        }
+        else if (state == STATE.GAME)
+        {
+            OpenAbort();
+        }
+        else if (state == STATE.ABORT)
+        {
+            GoToIntro();
+        }
+
+        else if (state == STATE.INACTIVITY)
+        {
+            StartStandbymodus();
+        }
+    }
+
     ///
     /// See 180524_exp_ie_0404_fsb_paraglider_animkom_jn.pdf
     ///
@@ -193,17 +162,32 @@ public class GameManager : MonoBehaviour {
     {
         state = STATE.STANDBYMODUS;
         UDPSender.SendUDPStringUTF8(ip, port, "state=standbymodus");
+        timeUntilStandby = maxTimeUntilStandby;
+        if (ParagliderMainScript.GetInstance() != null)
+        {
+            if (ParagliderMainScript.GetInstance().state != ParagliderMainScript.STATE.RESETTING &&
+                   ParagliderMainScript.GetInstance().state != ParagliderMainScript.STATE.READY)
+            {
+                ParagliderMainScript.GetInstance().gameReset();
+            }
+        }
     }
 
     // 2.00 Aktivierung
-    public void GoToIntro()
+    public static void GoToIntro()
     {
         state = STATE.INTRO;
         UDPSender.SendUDPStringUTF8(ip, port, "state=activation;action=open;");
+
+        if (ParagliderMainScript.GetInstance().state != ParagliderMainScript.STATE.RESETTING &&
+       ParagliderMainScript.GetInstance().state != ParagliderMainScript.STATE.READY)
+        {
+            ParagliderMainScript.GetInstance().gameReset();
+        }
     }
 
     // 2.00 Aktivierung
-    public void ChangeLanguage()
+    public static void ChangeLanguage()
     {
         if(languageCode == "en") {
             languageCode = "de";
@@ -217,16 +201,39 @@ public class GameManager : MonoBehaviour {
         UDPSender.SendUDPStringUTF8(ip, port, "state=activation;action=ripcord;value=" + languageCode);
     }
 
-    public void StartGame()
+    public static void StartGame()
     {
         state = STATE.GAME;
-        UDPSender.SendUDPStringUTF8(ip, port, "state=game;action=start;");
-        //Todo: start game and turn on character control to be able to play
-        ParagliderMainScript.GetInstance().gameStart();
-        
-        //later
-        //ParagliderMainScript.GetInstance().gameStartPlaying();
+        GameManager.GetInstance().StartCoroutine(GameManager.GetInstance().WaitForGameReady() );
+    }
 
+    IEnumerator WaitForGameReady()
+    {
+        Debug.Log("WaitForGameReady");
+        if  (ParagliderMainScript.GetInstance().state != ParagliderMainScript.STATE.RESETTING &&
+            ParagliderMainScript.GetInstance().state != ParagliderMainScript.STATE.READY)
+        {
+            ParagliderMainScript.GetInstance().gameReset();
+        }
+
+        //Todo: start game and turn on character control to be able to play
+        while (ParagliderMainScript.GetInstance().state != ParagliderMainScript.STATE.READY)
+        {
+            Debug.Log("Waiting For GameReady");
+
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        UDPSender.SendUDPStringUTF8(ip, port, "state=game;action=start;");
+        ParagliderMainScript.GetInstance().gameStart();
+
+        instance.Invoke("DelayGameStartPlaying", instance.delayStartPlaying);
+    }
+
+    public void DelayGameStartPlaying()
+    {
+        Debug.Log("Delayed Game Start Playing");
+        ParagliderMainScript.GetInstance().gameStartPlaying();
     }
 
     // 3.00: ID = 1
@@ -235,7 +242,7 @@ public class GameManager : MonoBehaviour {
     // 4.02: ID = 0
     // 5.00: ID = 0
     // 6.00: ID = 4 
-    public void ChangePromptInGame(int _id)
+    public static void ChangePromptTextInGame(int _id)
     {
         state = STATE.GAME;
         string actionString = "";
@@ -263,13 +270,13 @@ public class GameManager : MonoBehaviour {
     }
 
     // 7.0 Spielende
-    public void SetScore(string time)
+    public static void SetScore(string time)
     {
         endtime = time;
     }
 
     // 7.0 Spielende
-    public void GoToResult()
+    public static void GoToResult()
     {
         state = STATE.RESULT;
         UDPSender.SendUDPStringUTF8(ip, port, "state=result;action=time;score=" + endtime);
@@ -290,24 +297,27 @@ public class GameManager : MonoBehaviour {
     }
 
     // 10.0 Abbruch
-    public void OpenAbort()
+    public static void OpenAbort()
     {
         state = STATE.ABORT;
         UDPSender.SendUDPStringUTF8(ip, port, "state=abort;action=open");
+        ParagliderMainScript.GetInstance().gamePause(true);
     }
 
     // 10.0 Abbruch
-    public void ResumeGame()
+    public static void ResumeGame()
     {
         state = STATE.GAME;
         UDPSender.SendUDPStringUTF8(ip, port, "state=game;action=resume");
+        ParagliderMainScript.GetInstance().gamePause(false);
     }
 
     // 11.0 Inaktivität
-    public void OpenInactivity()
+    public static void OpenInactivityDialog()
     {
         state = STATE.INACTIVITY;
         UDPSender.SendUDPStringUTF8(ip, port, "state=inactivity;action=open");
+        ParagliderMainScript.GetInstance().gamePause(true);
     }
 
     void OnDestroy()

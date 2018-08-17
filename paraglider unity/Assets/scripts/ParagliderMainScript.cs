@@ -125,33 +125,27 @@ public class ParagliderMainScript : MonoBehaviour {
         //gameReset();
     }
 
-    public void CallGameManagerGameOver()
-    {
-        GameManager.GameOver(false);
-    }
-
-
     /// <summary>
     ///  can only be called when IGP is visible because it takes time and things are visible
     /// </summary>
     public void gameReset()
     {
-		debug=false;
-    	onDebugChange(false);
-    	//onDoldrums();
-    	glider.togglePhysics(false);
-        levelControl.onPreloadDone = onLevelsLoaded;
-        levelControl.onLevelAwake = onLevelawake;
-    	gameTime = 0;
-        levelControl.goToLevel(0);
-        levelControl.preloadAllLevels();
-        debugInfo.log("last big event", "game reset started");
+        instance.debug =false;
+        instance.onDebugChange(false);
+        //onDoldrums();
+        instance.glider.togglePhysics(false);
+        instance.levelControl.onPreloadDone = instance.onLevelsLoaded;
+        instance.levelControl.onLevelAwake = instance.onLevelawake;
+        instance.gameTime = 0;
+        instance.levelControl.goToLevel(0);
+        instance.levelControl.preloadAllLevels();
+        instance.debugInfo.log("last big event", "game reset started");
         //HUD.setGameTime(0);
-        HUD.appearHIDDEN();
-        gamePause(true);
+        instance.HUD.appearHIDDEN();
+        instance.gamePause(true);
 
         // state can be used by GameManager to see if main is ready
-        changestate(STATE.RESETTING);
+        instance.changestate(STATE.RESETTING);
     }
 
     /// <summary>
@@ -187,6 +181,7 @@ public class ParagliderMainScript : MonoBehaviour {
     {
         pausing = doPause;
         glider.togglePhysics(!pausing);
+
     }
 
     public void updateHUD(bool reset =false)
@@ -319,7 +314,7 @@ public class ParagliderMainScript : MonoBehaviour {
         debugInfo.log("collider info", "crash");
         if (godmode) return;
         HUD.appearINFOONLY();
-        gameManager.SendMessage("08.00");
+        GameManager.GameOver(false);
     }
 
 	public void onFog()

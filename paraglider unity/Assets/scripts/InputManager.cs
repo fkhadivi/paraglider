@@ -33,7 +33,7 @@ public class InputManager : MonoBehaviour {
     public bool showInputGUI = false;
     public bool enableKeyboard = false;
     public float maxTimeUntilInactivity = 30f;         //max time of inactivity until state changes to inactivity
-    public float time_idle;
+    public float curTimeUntilInactivity;
     bool usingGrips = false;
 
     int port_ripcord = 1;
@@ -44,6 +44,8 @@ public class InputManager : MonoBehaviour {
     int line_rightgrip = 1;
 
     static InputManager instance;
+    private bool pulledGrips;
+    private bool pulledReipcord;
 
     public static InputManager GetInstance()
     {
@@ -110,11 +112,11 @@ public class InputManager : MonoBehaviour {
             Application.Quit();
         }
 
-        if (sensor.IsValid())
+        if (sensor.IsValid() && enableKeyboard)
         {
-            rawVal_ripcord    = sensor.GetAnalogIn(port_ripcord, line_ripcord);
-            rawVal_left       = sensor.GetAnalogIn(port_leftGrip, line_leftgrip);
-            rawVal_right      = sensor.GetAnalogIn(port_rightGrip, line_rightgrip);
+            rawVal_left = sensor.GetAnalogIn(port_leftGrip, line_leftgrip);
+            rawVal_right = sensor.GetAnalogIn(port_rightGrip, line_rightgrip);
+            rawVal_ripcord = sensor.GetAnalogIn(port_ripcord, line_ripcord);
 
             if (Input.GetKey(KeyCode.C))
             {
@@ -122,8 +124,8 @@ public class InputManager : MonoBehaviour {
                 {
                     minRawValue_leftgrip = rawVal_left;
                     minRawValue_rightgrip = rawVal_right;
-                    minRawVal_ripcord = rawVal_ripcord;
 
+                    minRawVal_ripcord = rawVal_ripcord;
                     Configuration.SaveValueInConfig(minRawValue_leftgrip.ToString(), "minRawValue_leftgrip");
                     Configuration.SaveValueInConfig(minRawValue_rightgrip.ToString(), "minRawValue_rightgrip");
                     Configuration.SaveValueInConfig(minRawVal_ripcord.ToString(), "minRawVal_ripcord");
@@ -154,26 +156,64 @@ public class InputManager : MonoBehaviour {
 
             resultLeftRightMinus1To1 = (normalizedVal_leftGrip - normalizedVal_rightGrip) * 0.5f;
             resultUpDownMinus1To1 = (normalizedVal_leftGrip + normalizedVal_rightGrip) * 0.5f;
+        }
+        if (enableKeyboard || !sensor.IsValid() )
+        {
+            resultUpDownMinus1To1 = Input.GetAxis("Vertical");
+            resultLeftRightMinus1To1  = Input.GetAxis("Horizontal");
+            normalizedVal_ripcord = (Input.GetKeyDown(KeyCode.Return))? 1 : 0;
+        }
 
+        // pull the grips
+        if (resultUpDownMinus1To1 > threshold_control && !pulledGrips)
+        {
+            pulledGrips = true;
+            GameManager.CallPulledGrips();
+        }
+        else if (resultUpDownMinus1To1 < threshold_control && pulledGrips)
+        {
+            pulledGrips = false;
+        }
+
+
+        // pull the Ripcord
+        if (normalizedVal_ripcord > threshold_pull && !pulledReipcord)
+        {
+            pulledReipcord = true;
+            GameManager.CallPulledRipcord();
+        }
+        else if (normalizedVal_ripcord < threshold_pull && pulledReipcord)
+        {
+            pulledReipcord = false;
+        }
+        
+        //Inactivity
+        if (usingGrips)
+        {
             if (normalizedVal_leftGrip < threshold_idle && normalizedVal_rightGrip < threshold_idle)
             {
-                if (time_idle > maxTimeUntilInactivity)
+                if (curTimeUntilInactivity > maxTimeUntilInactivity)
                 {
-                    time_idle = 0;
+                    curTimeUntilInactivity = 0;
                     usingGrips = false;
+
+                    GameManager.CallInactivity();
                 }
                 else
                 {
-                    time_idle += Time.deltaTime;
+                    curTimeUntilInactivity += Time.deltaTime;
                 }
             }
-            else
+        }
+        else if (!usingGrips)
+        {
+            if (normalizedVal_leftGrip > threshold_idle && normalizedVal_rightGrip > threshold_idle)
             {
-                time_idle = 0;
+                curTimeUntilInactivity = 0;
                 usingGrips = true;
             }
         }
-    }
+}
 
     void OnGUI()
     {
@@ -220,53 +260,12 @@ public class InputManager : MonoBehaviour {
     // move to left or right
     public float GetResultLeftRightMinus1To1()
     {
-        if (enableKeyboard)
-        {
-            return Input.GetAxis("Horizontal");
-        }
-
         return resultLeftRightMinus1To1;
     }
 
     // move to up or down
     public float GetResultUpDownMinus1To1()
     {
-        if (enableKeyboard)
-        {
-            return Input.GetAxis("Vertical");
-        }
-
         return resultUpDownMinus1To1;
     }
-
-    public bool PulledRipcord()
-    {
-        if (enableKeyboard)
-        {
-            return Input.GetKeyDown(KeyCode.Return);
-        }
-
-        if (normalizedVal_ripcord > threshold_pull)
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    public bool ControlledGrips()
-    {
-        if (GetResultUpDownMinus1To1() > threshold_control)
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    public bool LeavedGrips()
-    {
-        return !usingGrips;
-    }
-
 }

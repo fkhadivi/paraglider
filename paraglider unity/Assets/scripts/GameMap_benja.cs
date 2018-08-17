@@ -64,13 +64,13 @@ public class GameMap_benja : MonoBehaviour {
 		positionMap = mapPointer.anchoredPosition3D;
 		positionWorld = coordinates;
 
-        Debug.Log("map" +positionMap.x);
+        //Debug.Log("map" +positionMap.x);
 
 		positionMap.x=BenjasMath.map(	positionWorld.x,
 							SWworld.x,NEworld.x,
                             mapMinScaled.x, mapMaxScaled.x,
 							clampMin.x,clampMax.x);
-        Debug.Log(positionMap.x);
+        //Debug.Log(positionMap.x);
         positionMap.y=BenjasMath.map(	positionWorld.z,
 							SWworld.z,NEworld.z,
                             mapMinScaled.y, mapMaxScaled.y,
