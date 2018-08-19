@@ -22,19 +22,32 @@ public class ParagliderLevelControl : MonoBehaviour {
         //Debug.Log("starting LEVEL CONTROL");
     }
 
-  
-	public ParagliderLevel levelInfo(int level)
+    /// <summary>
+    /// get
+    /// </summary>
+    /// <returns>level info^of certain level</returns>
+
+    public ParagliderLevel levelInfo(int level)
     {
         if (level > 0)
         return levelInfos[level];
         return null;
     }
 
+    /// <summary>
+    /// get
+    /// </summary>
+    /// <returns>current level info</returns>
     public ParagliderLevel levelInfo()
     {
 			return levelInfo(level);
     }
 
+    /// <summary>
+    /// returns level info of the scene
+    /// </summary>
+    /// <param name="scene"></param>
+    /// <returns></returns>
     public ParagliderLevel getLevelInfo(Scene scene)
     { 
      
@@ -55,6 +68,10 @@ public class ParagliderLevelControl : MonoBehaviour {
     public int preloadingLevel = 0;
     public bool isPreloadingLevels = false;
 
+    /// <summary>
+    /// will preload all levels that are not loaded already
+    /// will load asynchronously over time
+    /// </summary>
     public void preloadAllLevels()
     {
         Debug.Log(">>>>>>>>>>>>>> PRELOADING LEVELS");
@@ -137,7 +154,9 @@ public class ParagliderLevelControl : MonoBehaviour {
         SceneManager.LoadSceneAsync(levelNames[level], LoadSceneMode.Additive);
     }
 
-
+    /// <summary>
+    /// will start next level
+    /// </summary>
     public void NextLevel()
     {
     	if(level<0)
@@ -147,6 +166,11 @@ public class ParagliderLevelControl : MonoBehaviour {
         goToLevel(incrementLevel(level));
     }
 
+
+    /// <summary>
+    /// will start level with by int newLevel
+    /// </summary>
+    /// <param name="newLevel"></param>
     public void goToLevel(int newLevel)
     {
         //unload last level
@@ -161,6 +185,16 @@ public class ParagliderLevelControl : MonoBehaviour {
             SceneManager.SetActiveScene(levels[level]);
         }
         //start current level
+    }
+
+    public bool isLastLevel()
+    {
+        return level == getLastLevel();
+    }
+
+    public int getLastLevel()
+    {
+        return levelInfos.Length - 1;
     }
 
     public void wakeLevel()
@@ -190,17 +224,26 @@ public class ParagliderLevelControl : MonoBehaviour {
 		onLevelAwake();
 	}
 
-
-
-    public int incrementLevel(int currentLevel)
+    /// <summary>
+    /// tells which level will be next
+    /// </summary>
+    /// <returns>next level</returns>
+    public int incrementLevel()
     {
-    	currentLevel++;
-    	if (currentLevel<levelNames.Length)
-    	return currentLevel;
+        return incrementLevel(level);
+    }
+
+    /// <summary>
+    /// will tell which level will be after int level
+    /// </summary>
+    /// <param name="level"></param>
+    /// <returns></returns>
+    public int incrementLevel(int level)
+    {
+        level++;
+    	if (level < levelNames.Length)
+    	return level;
     	return 0;
-        // so ein stmhallo welt  most
-        // so ein stmsdfhallo welt  must
-        // so ein stmhalfdlo welt  mist
     }
 
 }

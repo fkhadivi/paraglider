@@ -339,6 +339,11 @@ public class smoothVector3{
 		}
 	}
 
+    /// <summary>
+    /// use ref for currentTime, will be reduced by time since last frame
+    /// </summary>
+    /// <param name="currentTime"></param>
+    /// <returns>true when countdown at zero</returns>
     public static bool countdownToZero(ref float currentTime)
     {
         if (currentTime == 0)
@@ -352,6 +357,17 @@ public class smoothVector3{
             return true;
         }
         return false;
+    }
+
+    /// <summary>
+    /// use ref for currentTime, will be changed
+    /// </summary>
+    /// <param name="currentTime"></param>
+    /// <returns>float between 0 and 1 </returns>
+    public static float timer(ref float currentTime, float maxTime, bool pausing = false)
+    {
+        if(!pausing) currentTime = Mathf.Min(currentTime + Time.deltaTime,maxTime);
+        return Mathf.InverseLerp(0f, maxTime, currentTime);
     }
 
 }

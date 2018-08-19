@@ -5,6 +5,9 @@ using UnityEngine;
 public class DebugInfo_benja : MonoBehaviour {
 
     public UnityEngine.UI.Text textField;
+    public delegate void boolDelegate(bool theBool);
+    public boolDelegate onDebugChange;
+
 	// Use this for initialization
 	void Start () {
 	    	
@@ -19,6 +22,21 @@ public class DebugInfo_benja : MonoBehaviour {
     public void log(string name, float value)
     {
         log(name, (Mathf.Round(value*100)/100).ToString());
+    }
+
+    public void log(string name, int value)
+    {
+        log(name, value.ToString());
+    }
+
+    public void log(string name, bool value)
+    {
+        log(name, value.ToString());
+    }
+
+    public void log(string name, Vector3 value)
+    {
+        log(name, value.ToString());
     }
 
     public void log(string name, string value)
@@ -52,63 +70,29 @@ public class DebugInfo_benja : MonoBehaviour {
     // Update is called once per frame
     void Update () {
         
-        if(doUpdate)
+        if(doUpdate && debugging)
         {
             doUpdate = false;
             updateText();
         }
-        textField.enabled = debugging;
-    }
-
-    
-    private bool isConnected = false;
-    // Use this for initialization
-    void Awake()
-    {
-
-        onDebugChange(ParagliderMainScript.GetInstance().debug);
-        connect(true);
-    }
-
-    public void connect(bool shouldBeConnected)
-    {
-        if (isConnected)
-        {
-            if (!shouldBeConnected)
-            {
-                ParagliderMainScript.GetInstance().onDebugChange -= this.onDebugChange;
-            }
-        }
-        else
-        {
-            if (shouldBeConnected)
-            {
-                ParagliderMainScript.GetInstance().onDebugChange += this.onDebugChange;
-            }
-        }
-    }
-
-    private void OnEnable()
-    {
-        connect(true);
-    }
-
-    private void OnDisable()
-    {
-        connect(false);
-    }
-
-    private void OnDestroy()
-    {
-        connect(false);
+        
     }
 
 
-    void onDebugChange(bool debug)
+
+    public void setDebugState(bool debug)
     {
         debugging = debug;
-        gameObject.SetActive(debugging);
+        textField.enabled = debugging;
+        if(onDebugChange!=null)
+            try 
+            {
+                onDebugChange(debug);
+            }
+            catch
+            {
 
+            }
     }
 
 }

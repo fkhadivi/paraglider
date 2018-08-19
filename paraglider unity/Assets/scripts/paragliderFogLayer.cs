@@ -16,11 +16,16 @@ public class paragliderFogLayer : MonoBehaviour {
 		setAlpha(0.0f);
 	}
 
-	public void doFog()
+    public void doFog(float fogDuranceTime)
+    {
+        fogTime = fogDuranceTime;
+        isFogging = true;
+        testFog = false;
+    }
+
+        public void doFog()
 	{
-		fogTime=maxFogTime;
-		isFogging = true;
-		testFog = false;
+        doFog(maxFogTime);
 	}
 
 	void setAlpha (float alpha)

@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour {
     static int port = 6000;
     int listenerPort = 5000;
 
-    static string languageCode = "de";
+    public static string languageCode = "de";
 
     bool pulledReipcord = false;
     bool controlledGrips = false;
@@ -28,6 +28,8 @@ public class GameManager : MonoBehaviour {
 
     public static STATE state;
     private static float timeUntilStandby;
+    public string currentState;
+    public string currentStateOfGame;
 
     public enum STATE
     {
@@ -59,7 +61,6 @@ public class GameManager : MonoBehaviour {
         listenerPort = (int)Configuration.GetInnerTextByTagName("listenerPort", listenerPort);
 
         maxTimeUntilStandby = (float)Configuration.GetInnerTextByTagName("maxTimeUntilStandby ", maxTimeUntilStandby );
-
         delayStartPlaying = (float)Configuration.GetInnerTextByTagName("delayStartPlaying ", delayStartPlaying);
 
         listener = new UDPListener();
@@ -77,6 +78,10 @@ public class GameManager : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
+
+        currentState = state.ToString()+"   (language "+languageCode+")";
+        currentStateOfGame = ParagliderGame.GetInstance().state.ToString()+" (level "+ParagliderGame.GetInstance().currentLevel+")";
+        cheatkeys(); //use keyboard input
         // Test --------------------------
         if (Input.GetKeyDown(KeyCode.M))
         {
@@ -119,12 +124,16 @@ public class GameManager : MonoBehaviour {
         Debug.Log("Pulled grips " + state);
         if (state == STATE.INTRO)
         {
-            StartGame();
+            ChangeLanguage();
+        }
+        else if (state == STATE.GAME && ParagliderGame.GetInstance().state == ParagliderGame.STATE.ATSTART)
+        {
+            ParagliderGame.GetInstance().gameStartPlaying();
         }
         else if (state == STATE.ABORT || state == STATE.INACTIVITY)
         {
             ResumeGame();
-        }    
+        }
     }
 
     public static void CallPulledRipcord()
@@ -137,7 +146,7 @@ public class GameManager : MonoBehaviour {
         }
         else if (state == STATE.INTRO)
         {
-            ChangeLanguage();
+            StartGame();
         }
         else if (state == STATE.GAME)
         {
@@ -147,10 +156,21 @@ public class GameManager : MonoBehaviour {
         {
             GoToIntro();
         }
-
+        else if (state == STATE.GAMEOVER)
+        {
+            GoToIntro();
+        }
+        else if (state == STATE.TIMEOUT)
+        {
+            GoToIntro();
+        }
+        else if (state == STATE.RESULT)
+        {
+            GoToIntro();
+        }
         else if (state == STATE.INACTIVITY)
         {
-            StartStandbymodus();
+            GoToIntro();
         }
     }
 
@@ -163,12 +183,12 @@ public class GameManager : MonoBehaviour {
         state = STATE.STANDBYMODUS;
         UDPSender.SendUDPStringUTF8(ip, port, "state=standbymodus");
         timeUntilStandby = maxTimeUntilStandby;
-        if (ParagliderMainScript.GetInstance() != null)
+        if (ParagliderGame.GetInstance() != null)
         {
-            if (ParagliderMainScript.GetInstance().state != ParagliderMainScript.STATE.RESETTING &&
-                   ParagliderMainScript.GetInstance().state != ParagliderMainScript.STATE.READY)
+            if (ParagliderGame.GetInstance().state != ParagliderGame.STATE.RESETTING &&
+                   ParagliderGame.GetInstance().state != ParagliderGame.STATE.READY)
             {
-                ParagliderMainScript.GetInstance().gameReset();
+                ParagliderGame.GetInstance().gameReset();
             }
         }
     }
@@ -179,10 +199,10 @@ public class GameManager : MonoBehaviour {
         state = STATE.INTRO;
         UDPSender.SendUDPStringUTF8(ip, port, "state=activation;action=open;");
 
-        if (ParagliderMainScript.GetInstance().state != ParagliderMainScript.STATE.RESETTING &&
-       ParagliderMainScript.GetInstance().state != ParagliderMainScript.STATE.READY)
+        if (ParagliderGame.GetInstance().state != ParagliderGame.STATE.RESETTING &&
+       ParagliderGame.GetInstance().state != ParagliderGame.STATE.READY)
         {
-            ParagliderMainScript.GetInstance().gameReset();
+            ParagliderGame.GetInstance().gameReset();
         }
     }
 
@@ -196,9 +216,9 @@ public class GameManager : MonoBehaviour {
         {
             languageCode = "en";
         }
-
         TextProvider.lang = languageCode;
         UDPSender.SendUDPStringUTF8(ip, port, "state=activation;action=ripcord;value=" + languageCode);
+        ParagliderGame.GetInstance().updateHudTexts();
     }
 
     public static void StartGame()
@@ -210,14 +230,14 @@ public class GameManager : MonoBehaviour {
     IEnumerator WaitForGameReady()
     {
         Debug.Log("WaitForGameReady");
-        if  (ParagliderMainScript.GetInstance().state != ParagliderMainScript.STATE.RESETTING &&
-            ParagliderMainScript.GetInstance().state != ParagliderMainScript.STATE.READY)
+        if  (ParagliderGame.GetInstance().state != ParagliderGame.STATE.RESETTING &&
+            ParagliderGame.GetInstance().state != ParagliderGame.STATE.READY)
         {
-            ParagliderMainScript.GetInstance().gameReset();
+            ParagliderGame.GetInstance().gameReset();
         }
 
         //Todo: start game and turn on character control to be able to play
-        while (ParagliderMainScript.GetInstance().state != ParagliderMainScript.STATE.READY)
+        while (ParagliderGame.GetInstance().state != ParagliderGame.STATE.READY)
         {
             Debug.Log("Waiting For GameReady");
 
@@ -225,39 +245,35 @@ public class GameManager : MonoBehaviour {
         }
 
         UDPSender.SendUDPStringUTF8(ip, port, "state=game;action=start;");
-        ParagliderMainScript.GetInstance().gameStart();
+        ParagliderGame.GetInstance().gameStart();
 
-        instance.Invoke("DelayGameStartPlaying", instance.delayStartPlaying);
+        //instance.Invoke("DelayGameStartPlaying", instance.delayStartPlaying);
     }
 
     public void DelayGameStartPlaying()
     {
         Debug.Log("Delayed Game Start Playing");
-        ParagliderMainScript.GetInstance().gameStartPlaying();
+        ParagliderGame.GetInstance().gameStartPlaying();
     }
 
-<<<<<<< HEAD
+
+
     /// <summary>
     /// 
-    /// 3.00: ID = 1
-    /// 4.00: ID = 2
-    /// 4.01: ID = 0
-    /// 4.02: ID = 0
-    /// 5.00: ID = 0
-    /// 6.00: ID = 4 
-    /// 09.00 Zeit abgelaufen ID = 9; 
+    /// > 3.00: ID = 1
+    /// > 4.00: ID = 2
+    /// > 4.01: ID = 0
+    /// > 4.02: ID = 0
+    /// > 5.00: ID = 0
+    /// > 6.00: ID = 4 
+    /// > 7.00: ID = 0
+    /// > 8.00 Unfall / Game Over ID = 5
+    /// > 9.00 Zeit abgelaufen ID = 5; 
     /// </summary>
     /// <param name="_id"></param>
-    public void ChangePromptInGame(int _id)
-=======
-    // 3.00: ID = 1
-    // 4.00: ID = 2
-    // 4.01: ID = 0
-    // 4.02: ID = 0
-    // 5.00: ID = 0
-    // 6.00: ID = 4 
+
     public static void ChangePromptTextInGame(int _id)
->>>>>>> a1dc6fda25e4951be49721734feef88a3522d86c
+
     {
         state = STATE.GAME;
         string actionString = "";
@@ -279,6 +295,10 @@ public class GameManager : MonoBehaviour {
             case 4:
                 actionString = "finish";
                 break;
+            case 5:
+                actionString = "gameover";
+                Debug.LogError("please implement this");
+                break;
             default:
                 Debug.LogError("case " + _id + "  is missing");
                 break;
@@ -287,17 +307,28 @@ public class GameManager : MonoBehaviour {
 
         UDPSender.SendUDPStringUTF8(ip, port, "state=game;action=" + actionString);
     }
+    /// <summary>
+    /// 7.0 Spielende, sets score
+    /// </summary>
 
-    // 7.0 Spielende
-    public static void SetScore(string time)
+
+    static void SetScore(float scoreTime)
     {
-        endtime = time;
+        int min = Mathf.FloorToInt(scoreTime / 60);
+        int sec = Mathf.FloorToInt(scoreTime % 60);
+        endtime = min.ToString() + ":";
+        if (sec < 10) endtime += 0;
+        endtime += sec;
     }
 
-    // 7.0 Spielende
-    public static void GoToResult()
+    /// <summary>
+    /// 7.0 Spielende, needs current game time for score 
+    /// </summary>
+    /// <param name="scoreTime"></param>
+    public static void GoToResult(float scoreTime)
     {
         state = STATE.RESULT;
+        SetScore(scoreTime);
         UDPSender.SendUDPStringUTF8(ip, port, "state=result;action=time;score=" + endtime);
     }
 
@@ -320,7 +351,7 @@ public class GameManager : MonoBehaviour {
     {
         state = STATE.ABORT;
         UDPSender.SendUDPStringUTF8(ip, port, "state=abort;action=open");
-        ParagliderMainScript.GetInstance().gamePause(true);
+        ParagliderGame.GetInstance().gamePause(true);
     }
 
     // 10.0 Abbruch
@@ -328,7 +359,7 @@ public class GameManager : MonoBehaviour {
     {
         state = STATE.GAME;
         UDPSender.SendUDPStringUTF8(ip, port, "state=game;action=resume");
-        ParagliderMainScript.GetInstance().gamePause(false);
+        ParagliderGame.GetInstance().gamePause(false);
     }
 
     // 11.0 Inaktivität
@@ -336,7 +367,7 @@ public class GameManager : MonoBehaviour {
     {
         state = STATE.INACTIVITY;
         UDPSender.SendUDPStringUTF8(ip, port, "state=inactivity;action=open");
-        ParagliderMainScript.GetInstance().gamePause(true);
+        ParagliderGame.GetInstance().gamePause(true);
     }
 
     void OnDestroy()
@@ -349,6 +380,16 @@ public class GameManager : MonoBehaviour {
     void OnApplicationQuit()
     {
         listener.Close();
+    }
+
+
+    void cheatkeys()
+    {
+       
+        if (Input.GetKeyDown("up")|| Input.GetKeyDown("down") || Input.GetKeyDown("left") || Input.GetKeyDown("right"))
+        {
+            CallPulledGrips();
+        }
     }
 
 }
