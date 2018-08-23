@@ -424,7 +424,7 @@ namespace Devices
         /// <param name="_ch"></param>
         /// <param name="_line"></param>
         /// <returns></returns>
-        public float GetAnalogIn(int _ch, int _line)
+        public float GetAnalogIn(int _line)
         {
             float volt = 0;
             UInt32 ad = ad_analog_in(adh, AD_CHA_TYPE_ANALOG_IN | (_line + 1), 33, ref volt);
@@ -471,7 +471,7 @@ namespace Devices
         /// <returns></returns>
         public float GetRawValueFromAnalog(int _line = 0)
         {
-            return GetAnalogIn(channel, _line);
+            return GetAnalogIn(_line);
         }
 
         /// <summary>

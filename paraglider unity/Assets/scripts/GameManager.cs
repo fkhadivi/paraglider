@@ -124,11 +124,11 @@ public class GameManager : MonoBehaviour {
         Debug.Log("Pulled grips " + state);
         if (state == STATE.INTRO)
         {
-            ChangeLanguage();
+            StartGame();
         }
         else if (state == STATE.GAME && ParagliderGame.GetInstance().state == ParagliderGame.STATE.ATSTART)
         {
-            ParagliderGame.GetInstance().gameStartPlaying();
+            StartPlaying();
         }
         else if (state == STATE.ABORT || state == STATE.INACTIVITY)
         {
@@ -146,7 +146,7 @@ public class GameManager : MonoBehaviour {
         }
         else if (state == STATE.INTRO)
         {
-            StartGame();
+            ChangeLanguage();
         }
         else if (state == STATE.GAME)
         {
@@ -246,18 +246,14 @@ public class GameManager : MonoBehaviour {
 
         UDPSender.SendUDPStringUTF8(ip, port, "state=game;action=start;");
         ParagliderGame.GetInstance().gameStart();
-
-        //instance.Invoke("DelayGameStartPlaying", instance.delayStartPlaying);
     }
 
-    public void DelayGameStartPlaying()
+    public static void StartPlaying()
     {
-        Debug.Log("Delayed Game Start Playing");
+        Debug.Log("Game Start Playing");
         ParagliderGame.GetInstance().gameStartPlaying();
     }
-
-
-
+    
     /// <summary>
     /// 
     /// > 3.00: ID = 1
@@ -271,7 +267,6 @@ public class GameManager : MonoBehaviour {
     /// > 9.00 Zeit abgelaufen ID = 5; 
     /// </summary>
     /// <param name="_id"></param>
-
     public static void ChangePromptTextInGame(int _id)
 
     {
@@ -354,12 +349,13 @@ public class GameManager : MonoBehaviour {
         ParagliderGame.GetInstance().gamePause(true);
     }
 
-    // 10.0 Abbruch
+    // 10.0 Abbruch - Resume
     public static void ResumeGame()
     {
         state = STATE.GAME;
         UDPSender.SendUDPStringUTF8(ip, port, "state=game;action=resume");
-        ParagliderGame.GetInstance().gamePause(false);
+        //ParagliderGame.GetInstance().gamePause(false);
+        StartPlaying();
     }
 
     // 11.0 Inaktivität
@@ -381,7 +377,6 @@ public class GameManager : MonoBehaviour {
     {
         listener.Close();
     }
-
 
     void cheatkeys()
     {

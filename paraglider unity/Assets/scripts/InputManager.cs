@@ -1,5 +1,5 @@
 using UnityEngine;
-using System.Collections.Generic;
+using System.Collections;
 using Devices;
 using System;
 
@@ -29,7 +29,7 @@ public class InputManager : MonoBehaviour {
     private float deadzone = 0;
     private float threshold_pull = 0;
     private float threshold_control = 0;
-    private float threshold_idle = 0;
+    private float threshold_inactivity = 0;
     public bool showInputGUI = false;
     public bool enableKeyboard = false;
     public float maxTimeUntilInactivity = 30f;         //max time of inactivity until state changes to inactivity
@@ -37,15 +37,13 @@ public class InputManager : MonoBehaviour {
     bool usingGrips = false;
 
     int port_ripcord = 1;
-    int port_leftGrip = 1;
-    int port_rightGrip = 1;
-    int line_ripcord = 1;
-    int line_leftgrip = 1;
-    int line_rightgrip = 1;
+    int port_leftGrip = 2;
+    int port_rightGrip = 3;
 
     static InputManager instance;
     private bool pulledGrips;
-    private bool pulledReipcord;
+    private bool pulledRipcord;
+    private bool waitingForTime = false;
 
     public static InputManager GetInstance()
     {
@@ -69,10 +67,6 @@ public class InputManager : MonoBehaviour {
         port_leftGrip   = Convert.ToInt32(Configuration.GetAttricuteByTagName("leftgrip", "port"));
         port_rightGrip = Convert.ToInt32(Configuration.GetAttricuteByTagName("rightgrip", "port"));
 
-        line_ripcord = Convert.ToInt32(Configuration.GetAttricuteByTagName("ripcord", "line"));
-        line_leftgrip = Convert.ToInt32(Configuration.GetAttricuteByTagName("leftgrip", "line"));
-        line_rightgrip = Convert.ToInt32(Configuration.GetAttricuteByTagName("rightgrip", "line"));
-
         minRawValue_leftgrip = (float)Configuration.GetInnerTextByTagName("minRawValue_leftgrip", minRawValue_leftgrip);
         minRawValue_rightgrip = (float)Configuration.GetInnerTextByTagName("minRawValue_rightgrip", minRawValue_rightgrip);
 
@@ -85,7 +79,7 @@ public class InputManager : MonoBehaviour {
         deadzone            = (float)Configuration.GetInnerTextByTagName("deadzone", deadzone);
         threshold_pull       = (float)Configuration.GetInnerTextByTagName("threshold_pull", threshold_pull);
         threshold_control   = (float)Configuration.GetInnerTextByTagName("threshold_control", threshold_control);
-        threshold_idle = (float)Configuration.GetInnerTextByTagName("threshold_idle", threshold_idle);
+        threshold_inactivity = (float)Configuration.GetInnerTextByTagName("threshold_inactivity", threshold_inactivity);
 
         enableKeyboard = Configuration.GetInnerTextByTagName("debug", false);
 
@@ -114,9 +108,9 @@ public class InputManager : MonoBehaviour {
 
         if (sensor.IsValid() && enableKeyboard)
         {
-            rawVal_left = sensor.GetAnalogIn(port_leftGrip, line_leftgrip);
-            rawVal_right = sensor.GetAnalogIn(port_rightGrip, line_rightgrip);
-            rawVal_ripcord = sensor.GetAnalogIn(port_ripcord, line_ripcord);
+            rawVal_left = sensor.GetAnalogIn(port_leftGrip);
+            rawVal_right = sensor.GetAnalogIn(port_rightGrip);
+            rawVal_ripcord = sensor.GetAnalogIn(port_ripcord);
 
             if (Input.GetKey(KeyCode.C))
             {
@@ -145,18 +139,19 @@ public class InputManager : MonoBehaviour {
                 }
             }
 
-            //normalized Values
-            normalizedVal_leftGrip = Remap(rawVal_left, minRawValue_leftgrip, maxRawValue_leftgrip, -1, 1);
-            normalizedVal_rightGrip = Remap(rawVal_right, minRawValue_rightgrip, maxRawValue_rightgrip, -1, 1);
-            normalizedVal_ripcord = Remap(rawVal_ripcord, minRawVal_ripcord, maxRawVal_ripcord, 0, 1);
-
             //Filter with Deadzone
             normalizedVal_leftGrip = FilterValueWithDeadzone(normalizedVal_leftGrip);
             normalizedVal_rightGrip = FilterValueWithDeadzone(normalizedVal_rightGrip);
 
-            resultLeftRightMinus1To1 = (normalizedVal_leftGrip - normalizedVal_rightGrip) * 0.5f;
+            //normalized Values
+            normalizedVal_leftGrip = Remap(rawVal_left, minRawValue_leftgrip, maxRawValue_leftgrip, -1, 1);
+            normalizedVal_rightGrip = Remap(rawVal_right, minRawValue_rightgrip, maxRawValue_rightgrip, -1, 1);
+            normalizedVal_ripcord = Remap(rawVal_ripcord, minRawVal_ripcord, maxRawVal_ripcord, 0, 1);
+            
+            resultLeftRightMinus1To1 = (normalizedVal_rightGrip - normalizedVal_leftGrip) * 0.5f;
             resultUpDownMinus1To1 = (normalizedVal_leftGrip + normalizedVal_rightGrip) * 0.5f;
         }
+
         if (enableKeyboard || !sensor.IsValid() )
         {
             resultUpDownMinus1To1 = Input.GetAxis("Vertical");
@@ -175,22 +170,22 @@ public class InputManager : MonoBehaviour {
             pulledGrips = false;
         }
 
-
         // pull the Ripcord
-        if (normalizedVal_ripcord > threshold_pull && !pulledReipcord)
+        if (normalizedVal_ripcord > threshold_pull && !pulledRipcord)
         {
-            pulledReipcord = true;
+            pulledRipcord = true;
             GameManager.CallPulledRipcord();
         }
-        else if (normalizedVal_ripcord < threshold_pull && pulledReipcord)
+        else if (normalizedVal_ripcord < threshold_pull && pulledRipcord && !waitingForTime)
         {
-            pulledReipcord = false;
+            waitingForTime = true;
+            StartCoroutine(WaitForTimeToReleaseRipcord());
         }
-        
+
         //Inactivity
         if (usingGrips)
         {
-            if (normalizedVal_leftGrip < threshold_idle && normalizedVal_rightGrip < threshold_idle)
+            if (normalizedVal_leftGrip < threshold_inactivity && normalizedVal_rightGrip < threshold_inactivity)
             {
                 if (curTimeUntilInactivity > maxTimeUntilInactivity)
                 {
@@ -207,13 +202,20 @@ public class InputManager : MonoBehaviour {
         }
         else if (!usingGrips)
         {
-            if (normalizedVal_leftGrip > threshold_idle && normalizedVal_rightGrip > threshold_idle)
+            if (normalizedVal_leftGrip > threshold_inactivity && normalizedVal_rightGrip > threshold_inactivity)
             {
                 curTimeUntilInactivity = 0;
                 usingGrips = true;
             }
         }
-}
+    }
+
+    IEnumerator WaitForTimeToReleaseRipcord()
+    {
+        yield return new WaitForSeconds(0.5f);
+        pulledRipcord = false;
+        waitingForTime = false;
+    }
 
     void OnGUI()
     {
@@ -240,7 +242,7 @@ public class InputManager : MonoBehaviour {
 
             curVal = (curVal - deadzone) / (1.0f - deadzone);
         }
-        else if (curVal < deadzone)
+        else if (curVal < -deadzone)
         {
             curVal = (curVal + deadzone) / (1.0f - deadzone);
         }
