@@ -23,6 +23,10 @@ public class Configuration
 
         try
         {
+            var culture = new CultureInfo("en-US");
+            CultureInfo.DefaultThreadCurrentCulture = culture;
+            CultureInfo.DefaultThreadCurrentUICulture = culture;
+
             XmlDocument xmldoc = new XmlDocument();
 
             //TODO: Test for UDOO
