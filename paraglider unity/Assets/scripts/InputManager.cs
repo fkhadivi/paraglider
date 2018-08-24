@@ -56,16 +56,19 @@ public class InputManager : MonoBehaviour {
 
         sensor = new BmcmSensor("usb-ad");
         sensor.Init();
-
+        
         maxTimeUntilInactivity = (float)Configuration.GetInnerTextByTagName("maxTimeUntilInactivity", maxTimeUntilInactivity);
     }
 
     // Use this for initialization
     void Start()
     {
-        port_ripcord = Convert.ToInt32(Configuration.GetAttricuteByTagName("ripcord", "port"));
-        port_leftGrip   = Convert.ToInt32(Configuration.GetAttricuteByTagName("leftgrip", "port"));
-        port_rightGrip = Convert.ToInt32(Configuration.GetAttricuteByTagName("rightgrip", "port"));
+        port_ripcord    = (int)Configuration.GetInnerTextByTagName("ripcord_port", port_ripcord );
+        port_leftGrip   = (int)Configuration.GetInnerTextByTagName("leftgrip_port", port_leftGrip );
+        port_rightGrip  = (int)Configuration.GetInnerTextByTagName("rightgrip_port", port_rightGrip );
+        Debug.Log("port_ripcord " + port_ripcord);
+        Debug.Log("port_leftGrip " + port_leftGrip);
+        Debug.Log("port_rightGrip " + port_rightGrip);
 
         minRawValue_leftgrip = (float)Configuration.GetInnerTextByTagName("minRawValue_leftgrip", minRawValue_leftgrip);
         minRawValue_rightgrip = (float)Configuration.GetInnerTextByTagName("minRawValue_rightgrip", minRawValue_rightgrip);
@@ -106,11 +109,11 @@ public class InputManager : MonoBehaviour {
             Application.Quit();
         }
 
-        if (sensor.IsValid() && enableKeyboard)
+        if (sensor.IsValid() && !enableKeyboard)
         {
+            rawVal_ripcord = sensor.GetAnalogIn(port_ripcord);
             rawVal_left = sensor.GetAnalogIn(port_leftGrip);
             rawVal_right = sensor.GetAnalogIn(port_rightGrip);
-            rawVal_ripcord = sensor.GetAnalogIn(port_ripcord);
 
             if (Input.GetKey(KeyCode.C))
             {
@@ -139,14 +142,15 @@ public class InputManager : MonoBehaviour {
                 }
             }
 
-            //Filter with Deadzone
-            normalizedVal_leftGrip = FilterValueWithDeadzone(normalizedVal_leftGrip);
-            normalizedVal_rightGrip = FilterValueWithDeadzone(normalizedVal_rightGrip);
-
             //normalized Values
             normalizedVal_leftGrip = Remap(rawVal_left, minRawValue_leftgrip, maxRawValue_leftgrip, -1, 1);
             normalizedVal_rightGrip = Remap(rawVal_right, minRawValue_rightgrip, maxRawValue_rightgrip, -1, 1);
             normalizedVal_ripcord = Remap(rawVal_ripcord, minRawVal_ripcord, maxRawVal_ripcord, 0, 1);
+
+            //Filter with Deadzone
+            normalizedVal_leftGrip = FilterValueWithDeadzone(normalizedVal_leftGrip);
+            normalizedVal_rightGrip = FilterValueWithDeadzone(normalizedVal_rightGrip);
+
             
             resultLeftRightMinus1To1 = (normalizedVal_rightGrip - normalizedVal_leftGrip) * 0.5f;
             resultUpDownMinus1To1 = (normalizedVal_leftGrip + normalizedVal_rightGrip) * 0.5f;
@@ -156,6 +160,7 @@ public class InputManager : MonoBehaviour {
         {
             resultUpDownMinus1To1 = Input.GetAxis("Vertical");
             resultLeftRightMinus1To1  = Input.GetAxis("Horizontal");
+
             normalizedVal_ripcord = (Input.GetKeyDown(KeyCode.Return))? 1 : 0;
         }
 
@@ -222,16 +227,22 @@ public class InputManager : MonoBehaviour {
         if (showInputGUI)
         {
             int yPos = 0, lineHeight = 20;
-            int x = 20; //Screen.width / 2;
-            int y = 380;
+            int x = 20;
+            int y = 400;
 
-            GUI.Box(new Rect(10, y, 200, 200), "");
+            GUI.Box(new Rect(10, y, 200, 300), "");
             GUI.Label(new Rect(x, y + (++yPos) * lineHeight, 500, 500), "USB-AD is " + sensor.IsValid());
-            GUI.Label(new Rect(x, y + (++yPos) * lineHeight, 500, 500), "raw Value left: " + rawVal_left);
+            GUI.Label(new Rect(x, y + (++yPos) * lineHeight, 500, 500), "raw Value left " + port_leftGrip + ": " + rawVal_left);
             GUI.Label(new Rect(x, y + (++yPos) * lineHeight, 500, 500), "norm Value left: " + normalizedVal_leftGrip);
-            GUI.Label(new Rect(x, y + (++yPos) * lineHeight, 500, 500), "raw Value right: " + rawVal_right);
+            GUI.Label(new Rect(x, y + (++yPos) * lineHeight, 500, 500), "raw Value right " + port_rightGrip + ": " + rawVal_right);
             GUI.Label(new Rect(x, y + (++yPos) * lineHeight, 500, 500), "norm Value right: " + normalizedVal_rightGrip);
+            GUI.Label(new Rect(x, y + (++yPos) * lineHeight, 500, 500), "raw Value ripcord " + port_ripcord + " : " + rawVal_ripcord);
             GUI.Label(new Rect(x, y + (++yPos) * lineHeight, 500, 500), "norm Value ripcord: " + normalizedVal_ripcord);
+            if (enableKeyboard)
+            {
+                GUI.Label(new Rect(x, y + (++yPos) * lineHeight, 500, 500), "keyboard Vertical " + resultUpDownMinus1To1);
+                GUI.Label(new Rect(x, y + (++yPos) * lineHeight, 500, 500), "keyboard Horizontal" + resultLeftRightMinus1To1);
+            }
         }
     }
 
@@ -256,7 +267,8 @@ public class InputManager : MonoBehaviour {
 
     float Remap(float _val, float _minIn, float _maxIn, float _minOut, float _maxOut)
     {
-        return _minOut + (_maxOut - _minOut) * (_val - _minIn) / (_maxIn - _minIn);
+        float newVal = _minOut + (_maxOut - _minOut) * (_val - _minIn) / (_maxIn - _minIn);
+        return Mathf.Clamp(newVal, _minOut, _maxOut);
     }
 
     // move to left or right

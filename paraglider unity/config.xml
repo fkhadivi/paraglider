@@ -2,24 +2,7 @@
 	<debug>true</debug>
 	<game>
 		<timeout timeunit="sec">120</timeout>
-		<!-- time in sec -->
-		<maxGameTime>180</maxGameTime>
-		<!-- time after gamestart to spawn first obstacle -->
-		<maxTimeToSpawn>6</maxTimeToSpawn>
-		<!-- time in sec for levelchange -->
-		<dockingDuration>5</dockingDuration>
-		<!-- time in sec for fog duration -->
-		<fogDuration>5</fogDuration>
-		<!-- height in m -->
-		<maxHeight>150</maxHeight>
-		<!-- height in m for thermics to work (up below max, down above min) -->
-		<maxThermicHeight>150</maxThermicHeight>
-		<minThermicHeight>50</minThermicHeight>
-		<!-- acceleration -->
-		<forceOnThermicUp>1000</forceOnThermicUp>
-		<forceOnThermicDown>-500</forceOnThermicDown>
-		<!-- acceleration down when glider is too high -->
-		<forceOnHeight>-500</forceOnHeight>
+
 	</game>
 	<controller>
 		<maxEnginePower>8</maxEnginePower>
@@ -40,9 +23,9 @@
 		<maxSpeed>37</maxSpeed>
 	</controller>
 	<input>
-		<ripcord	port="1" line="0" ></ripcord>
-		<leftgrip	port="1" line="1" ></leftgrip>
-		<rightgrip	port="1" line="2" ></rightgrip>
+		<ripcord	port="0"></ripcord>
+		<leftgrip	port="1"></leftgrip>
+		<rightgrip	port="2"></rightgrip>
 		<minRawValue_leftgrip>0</minRawValue_leftgrip>
 		<minRawValue_rightgrip>0</minRawValue_rightgrip>
 		<minRawVal_ripcord>0</minRawVal_ripcord>

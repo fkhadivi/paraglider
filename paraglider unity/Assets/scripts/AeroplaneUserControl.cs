@@ -11,7 +11,7 @@ public class AeroplaneUserControl : MonoBehaviour
 	// reference to the aeroplane that we're controlling
 	private AeroplaneController aeroplane;
     private InputManager inputmanager;
-    public bool isPlaying = false;
+    public bool isPlaying = true;
 
     void Awake ()
     {

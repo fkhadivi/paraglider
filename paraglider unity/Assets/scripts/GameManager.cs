@@ -113,7 +113,7 @@ public class GameManager : MonoBehaviour {
     //InputManager calls the static functions
     public static void CallInactivity()
     {
-        if (state != STATE.INACTIVITY)
+        if (state == STATE.GAME)
         {
             OpenInactivityDialog();
         }
