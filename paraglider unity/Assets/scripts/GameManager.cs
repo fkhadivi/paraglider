@@ -331,14 +331,17 @@ public class GameManager : MonoBehaviour {
     // 9.0 Zeit abgelaufen
     public static void GameOver(bool isTimeout)
     {
-        state = STATE.GAMEOVER;
-        string action = "crash";
-        if (isTimeout)
+        if (state != STATE.GAMEOVER)
         {
-            action = "timeout";
-        }
+            state = STATE.GAMEOVER;
+            string action = "crash";
+            if (isTimeout)
+            {
+                action = "timeout";
+            }
 
-        UDPSender.SendUDPStringUTF8(ip, port, "state=gameover;action="+ action);
+            UDPSender.SendUDPStringUTF8(ip, port, "state=gameover;action=" + action);
+        }
     }
 
     // 10.0 Abbruch
