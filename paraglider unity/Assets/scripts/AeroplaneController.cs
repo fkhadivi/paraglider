@@ -55,7 +55,6 @@ public class AeroplaneController : MonoBehaviour
         airBrakesEffect     = (float)Configuration.GetInnerTextByTagName("airBrakesEffect", airBrakesEffect);
         throttleChangeSpeed = (float)Configuration.GetInnerTextByTagName("throttleChangeSpeed", throttleChangeSpeed);
         dragIncreaseFactor  = (float)Configuration.GetInnerTextByTagName("dragIncreaseFactor", dragIncreaseFactor);
-        maxSpeed             = (float)Configuration.GetInnerTextByTagName("maxSpeed", maxSpeed);
         // Store original drag settings, these are modified during flight.
         originalDrag = GetComponent<Rigidbody>().drag;
 		originalAngularDrag = GetComponent<Rigidbody>().angularDrag;
@@ -142,11 +141,6 @@ public class AeroplaneController : MonoBehaviour
 		// Forward speed is the speed in the planes's forward direction (not the same as its velocity, eg if falling in a stall)
 		var localVelocity = transform.InverseTransformDirection (GetComponent<Rigidbody>().velocity);
 
-        
-        if (maxSpeed == 0)
-            ForwardSpeed = Mathf.Max(0, localVelocity.z);
-        else ForwardSpeed = maxSpeed;
-       
         ForwardSpeed = Mathf.Max(0, localVelocity.z);
 
     }
