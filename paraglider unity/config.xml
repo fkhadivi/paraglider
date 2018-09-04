@@ -18,9 +18,8 @@
 		<airBrakesEffect>3</airBrakesEffect>
 		<throttleChangeSpeed>0.3</throttleChangeSpeed>
 		<dragIncreaseFactor>0.001</dragIncreaseFactor>
-		<maxRollAngle>80</maxRollAngle>
-		<maxPitchAngle>80</maxPitchAngle>
-		<maxSpeed>37</maxSpeed>
+		<rollValueFactor>0.75</rollValueFactor>
+		<pitchValueFactor>0.75</pitchValueFactor>		
 	</controller>
 	<input>
 		<ripcord	port="0"></ripcord>
