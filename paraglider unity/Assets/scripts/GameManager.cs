@@ -267,7 +267,7 @@ public class GameManager : MonoBehaviour {
     /// > 9.00 Zeit abgelaufen ID = 5; 
     /// </summary>
     /// <param name="_id"></param>
-    public static void ChangePromptTextInGame(int _id)
+    public static void ChangePromptTextInIGP(int _id)
 
     {
         state = STATE.GAME;
