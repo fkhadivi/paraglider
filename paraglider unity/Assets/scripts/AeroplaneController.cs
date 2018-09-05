@@ -135,7 +135,6 @@ public class AeroplaneController : MonoBehaviour
 		}
 	}
 
-    float maxSpeed = 45;
 	void CalculateForwardSpeed ()
 	{
 		// Forward speed is the speed in the planes's forward direction (not the same as its velocity, eg if falling in a stall)
