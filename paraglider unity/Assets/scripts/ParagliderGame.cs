@@ -189,7 +189,7 @@ public class ParagliderGame : MonoBehaviour {
         HUD.appearCOMPLETE();
         updateHudTexts();
         updateHUD(0);
-        GameManager.ChangePromptTextInGame(1); //03.00 Spielstart
+        GameManager.ChangePromptTextInIGP(1); //03.00 Spielstart
         spawnByCollider = false;
         spawnByTime = false;
         gamePause(true);
@@ -201,13 +201,16 @@ public class ParagliderGame : MonoBehaviour {
     /// </summary>
     public void gameStartPlaying()
     {
-        GameManager.ChangePromptTextInGame(2);//04.00 Welt 1: Steuerung (thermics)
+        GameManager.ChangePromptTextInIGP(2);//04.00 Welt 1: Steuerung (thermics)
         gamePause(false);
         changestate(STATE.PLAYING);
         // set a countdown to spawn afer certain amount of time
         spawnByCollider = false;
         spawnByTime = true;
         timeToSpawn = maxTimeToSpawn;
+
+        // start velocity -> fix to make it easier to steer
+        gliderRig.AddRelativeForce(Vector3.forward * (float)Configuration.GetInnerTextByTagName("startSpeed", 2000.0)) ;
     }
 
 
@@ -275,7 +278,7 @@ public class ParagliderGame : MonoBehaviour {
             finishIsNear = true;
             HUD.appearCOMPLETE();
             updateHudTexts();
-            GameManager.ChangePromptTextInGame(4);//06.00 Welt 4: Ziel
+            GameManager.ChangePromptTextInIGP(4);//06.00 Welt 4: Ziel
         }
 
     }
@@ -317,7 +320,7 @@ public class ParagliderGame : MonoBehaviour {
         onDoldrums();
         HUD.appearINFOONLY();
         updateHudTexts();
-        GameManager.ChangePromptTextInGame(5);//09.00 Zeit abgelaufen
+        GameManager.ChangePromptTextInIGP(5);//09.00 Zeit abgelaufen
         GameManager.GameOver(true);
         
     }
@@ -369,7 +372,7 @@ public class ParagliderGame : MonoBehaviour {
         {
             thermicBeenUsed = true;
             //blendOutHeadline
-            GameManager.ChangePromptTextInGame(0);
+            GameManager.ChangePromptTextInIGP(0);
             HUD.appearNOINFO();
             updateHudTexts();
         }
@@ -441,6 +444,10 @@ public class ParagliderGame : MonoBehaviour {
             HUD.appearHIDDEN();
             updateHudTexts();
         }
+
+
+        // start velocity -> fix to make it easier to steer
+        gliderRig.AddRelativeForce(Vector3.forward * (float)Configuration.GetInnerTextByTagName("startSpeed", 2000.0));
 
         Debug.Log("level " + levelControl.level + " started");
         debugInfo.log("level", "" + levelControl.level);
