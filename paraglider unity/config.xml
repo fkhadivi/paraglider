@@ -1,37 +1,55 @@
 <config>
-	<debug>true</debug>
-	<game>
-		<timeout timeunit="sec">120</timeout>
-
-	</game>
-	<controller>
-		<maxEnginePower>8</maxEnginePower>
-		<lift>0.015</lift>
-		<zeroLiftSpeed>70</zeroLiftSpeed>
-		<rollEffect>0.5</rollEffect>
-		<pitchEffect>1</pitchEffect>
-		<yawEffect>-0.0033</yawEffect>
-		<bankedTurnEffect>5.5</bankedTurnEffect>
-		<autoTurnPitch>0.5</autoTurnPitch>
-		<autoRollLevel>2</autoRollLevel>
-		<autoPitchLevel>0.1</autoPitchLevel>
-		<airBrakesEffect>3</airBrakesEffect>
-		<throttleChangeSpeed>0.3</throttleChangeSpeed>
-		<dragIncreaseFactor>0.001</dragIncreaseFactor>
-		<rollValueFactor>0.75</rollValueFactor>
-		<pitchValueFactor>0.75</pitchValueFactor>		
-	</controller>
-	<input>
-		<ripcord	port="0"></ripcord>
-		<leftgrip	port="1"></leftgrip>
-		<rightgrip	port="2"></rightgrip>
-		<minRawValue_leftgrip>0</minRawValue_leftgrip>
-		<minRawValue_rightgrip>0</minRawValue_rightgrip>
-		<minRawVal_ripcord>0</minRawVal_ripcord>
-		<maxRawValue_leftgrip>100</maxRawValue_leftgrip>
-		<maxRawValue_rightgrip>100</maxRawValue_rightgrip>
-		<maxRawVal_ripcord>100</maxRawVal_ripcord>
-		<threshold_move>0.1</threshold_move>
-		<threshold_pull>0.5</threshold_pull>
-	</input>
+  <debug>false</debug>
+  <game>
+    <timeout timeunit="sec">120</timeout>
+    <!-- time in sec -->
+    <maxGameTime>180</maxGameTime>
+    <!-- time after gamestart to spawn first obstacle -->
+    <maxTimeToSpawn>6</maxTimeToSpawn>
+    <!-- time in sec for levelchange -->
+    <dockingDuration>5</dockingDuration>
+    <!-- time in sec for fog duration -->
+    <fogDuration>3</fogDuration>
+    <!-- height in m -->
+    <maxHeight>200</maxHeight>
+    <!-- height in m for thermics to work (up below max, down above min) -->
+    <maxThermicHeight>100</maxThermicHeight>
+    <minThermicHeight>50</minThermicHeight>
+    <!-- acceleration -->
+    <forceOnThermicUp>1000</forceOnThermicUp>
+    <forceOnThermicDown>-500</forceOnThermicDown>
+    <!-- acceleration down when glider is too high -->
+    <forceOnHeight>-500</forceOnHeight>
+	<startSpeed>3000</startSpeed>
+  </game>
+  <controller>
+	<maxEnginePower>15</maxEnginePower>
+	<lift>0.06</lift>
+	<zeroLiftSpeed>20</zeroLiftSpeed>
+	<rollEffect>1.0</rollEffect>
+	<pitchEffect>0.8</pitchEffect>
+	<yawEffect>1.0</yawEffect>
+	<bankedTurnEffect>2.0</bankedTurnEffect>
+	<autoTurnPitch>0.5</autoTurnPitch>
+	<autoRollLevel>2</autoRollLevel>
+	<autoPitchLevel>0.3</autoPitchLevel>
+	<airBrakesEffect>3</airBrakesEffect>
+	<throttleChangeSpeed>0.3</throttleChangeSpeed>
+	<dragIncreaseFactor>0.002</dragIncreaseFactor>
+	<rollValueFactor>1</rollValueFactor>
+	<pitchValueFactor>1</pitchValueFactor>		
+  </controller>
+  <input>
+	<ripcord_port>0</ripcord_port>
+	<leftgrip_port>1</leftgrip_port>
+	<rightgrip_port>2</rightgrip_port>
+	<minRawValue_leftgrip>0.06</minRawValue_leftgrip>
+	<maxRawValue_leftgrip>4.735</maxRawValue_leftgrip>
+	<minRawValue_rightgrip>0</minRawValue_rightgrip>
+	<maxRawValue_rightgrip>4.705</maxRawValue_rightgrip>
+	<minRawVal_ripcord>0.015</minRawVal_ripcord>
+	<maxRawVal_ripcord>4.7575</maxRawVal_ripcord>
+	<threshold_move>0.1</threshold_move>
+	<threshold_pull>0.5</threshold_pull>
+  </input>
 </config>
