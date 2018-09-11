@@ -268,9 +268,8 @@ public class GameManager : MonoBehaviour {
     /// </summary>
     /// <param name="_id"></param>
     public static void ChangePromptTextInIGP(int _id)
-
     {
-        state = STATE.GAME;
+
         string actionString = "";
 
         switch (_id)

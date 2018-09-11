@@ -1,9 +1,8 @@
 <config>
   <debug>false</debug>
   <game>
-    <timeout timeunit="sec">120</timeout>
     <!-- time in sec -->
-    <maxGameTime>180</maxGameTime>
+    <maxGameTime>60</maxGameTime>
     <!-- time after gamestart to spawn first obstacle -->
     <maxTimeToSpawn>6</maxTimeToSpawn>
     <!-- time in sec for levelchange -->
@@ -26,18 +25,21 @@
 	<maxEnginePower>15</maxEnginePower>
 	<lift>0.06</lift>
 	<zeroLiftSpeed>20</zeroLiftSpeed>
-	<rollEffect>1.0</rollEffect>
-	<pitchEffect>0.8</pitchEffect>
-	<yawEffect>1.0</yawEffect>
-	<bankedTurnEffect>2.0</bankedTurnEffect>
+	<rollEffect>10</rollEffect>
+	<pitchEffect>5</pitchEffect>
+	<yawEffect>10</yawEffect>
+	<bankedTurnEffect>0.2</bankedTurnEffect>
 	<autoTurnPitch>0.5</autoTurnPitch>
 	<autoRollLevel>2</autoRollLevel>
 	<autoPitchLevel>0.3</autoPitchLevel>
 	<airBrakesEffect>3</airBrakesEffect>
 	<throttleChangeSpeed>0.3</throttleChangeSpeed>
-	<dragIncreaseFactor>0.002</dragIncreaseFactor>
-	<rollValueFactor>1</rollValueFactor>
-	<pitchValueFactor>1</pitchValueFactor>		
+	<dragIncreaseFactor>0.001</dragIncreaseFactor>
+	<originalDrag>0.2</originalDrag>
+	<originalAngularDrag>0.2</originalAngularDrag>
+	
+	<rollValueFactor>0.9</rollValueFactor>
+	<pitchValueFactor>0.9</pitchValueFactor>		
   </controller>
   <input>
 	<ripcord_port>0</ripcord_port>
@@ -51,5 +53,7 @@
 	<maxRawVal_ripcord>4.7575</maxRawVal_ripcord>
 	<threshold_move>0.1</threshold_move>
 	<threshold_pull>0.5</threshold_pull>
+	<inactivityTimeout>30</inactivityTimeout>
+	<threshold_inactivity>-0.2</threshold_inactivity>
   </input>
 </config>

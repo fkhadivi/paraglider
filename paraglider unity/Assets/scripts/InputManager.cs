@@ -32,8 +32,8 @@ public class InputManager : MonoBehaviour {
     private float threshold_inactivity = 0;
     public bool showInputGUI = false;
     public bool enableKeyboard = false;
-    public float maxTimeUntilInactivity = 30f;         //max time of inactivity until state changes to inactivity
-    public float curTimeUntilInactivity;
+    public float inactivityTimeout = 30f;         //max time of inactivity until state changes to inactivity
+    public float curInactivityTime;
     bool usingGrips = false;
 
     int port_ripcord = 1;
@@ -57,7 +57,7 @@ public class InputManager : MonoBehaviour {
         sensor = new BmcmSensor("usb-ad");
         sensor.Init();
         
-        maxTimeUntilInactivity = (float)Configuration.GetInnerTextByTagName("maxTimeUntilInactivity", maxTimeUntilInactivity);
+        inactivityTimeout = (float)Configuration.GetInnerTextByTagName("inactivityTimeout", inactivityTimeout);
     }
 
     // Use this for initialization
@@ -192,16 +192,16 @@ public class InputManager : MonoBehaviour {
         {
             if (normalizedVal_leftGrip < threshold_inactivity && normalizedVal_rightGrip < threshold_inactivity)
             {
-                if (curTimeUntilInactivity > maxTimeUntilInactivity)
+                if (curInactivityTime > inactivityTimeout)
                 {
-                    curTimeUntilInactivity = 0;
+                    curInactivityTime = 0;
                     usingGrips = false;
 
                     GameManager.CallInactivity();
                 }
                 else
                 {
-                    curTimeUntilInactivity += Time.deltaTime;
+                    curInactivityTime += Time.deltaTime;
                 }
             }
         }
@@ -209,7 +209,7 @@ public class InputManager : MonoBehaviour {
         {
             if (normalizedVal_leftGrip > threshold_inactivity && normalizedVal_rightGrip > threshold_inactivity)
             {
-                curTimeUntilInactivity = 0;
+                curInactivityTime = 0;
                 usingGrips = true;
             }
         }

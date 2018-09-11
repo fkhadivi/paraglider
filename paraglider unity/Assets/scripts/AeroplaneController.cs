@@ -16,7 +16,8 @@ public class AeroplaneController : MonoBehaviour
     [SerializeField] private float autoPitchLevel = 0.2f;               // How much the aeroplane tries to level when not pitching.
     [SerializeField] private float airBrakesEffect = 3f;                // How much the air brakes effect the drag.
     [SerializeField] private float throttleChangeSpeed = 0.3f;          // The speed with which the throttle changes.
-	[SerializeField] private float dragIncreaseFactor = 0.001f;			// how much drag should increase with speed.
+
+    public float dragIncreaseFactor = 0.001f;			// how much drag should increase with speed.
 	
 	public float Altitude { get; private set; }                         // The aeroplane's height above the ground.
 	public float Throttle { get; private set; }                         // The amount of throttle being used.
@@ -24,41 +25,52 @@ public class AeroplaneController : MonoBehaviour
 	public float ForwardSpeed { get; private set; }                     // How fast the aeroplane is traveling in it's forward direction.
 	public float EnginePower { get; private set; }                      // How much power the engine is being given.
 	public float MaxEnginePower { get { return maxEnginePower; } }      // The maximum output of the engine.
-	public float RollAngle { get; private set; }
+
+    public float RollAngle { get; private set; }
 	public float PitchAngle { get; private set; }
-	public float RollInput { get; private set; }
+
+    public float RollInput { get; private set; }
 	public float PitchInput { get; private set; }
 	public float YawInput { get; private set; }
 	public float ThrottleInput { get; private set; }
 
-	private float originalDrag;                                         // The drag when the scene starts.
-    private float originalAngularDrag;                                  // The angular drag when the scene starts.
+    public float originalDrag;                                         // The drag when the scene starts.
+    public float originalAngularDrag;                                  // The angular drag when the scene starts.
 	private float aeroFactor;
 
 	bool immobilized = false;											// used for making the plane uncontrollable, i.e. if it has been hit or crashed.
 
 	float bankedTurnAmount;
 
-	void Start ()
+
+    void Awake()
     {
-        maxEnginePower      = (float)Configuration.GetInnerTextByTagName("maxEnginePower", maxEnginePower);
-        lift                = (float)Configuration.GetInnerTextByTagName("lift", lift);
-        zeroLiftSpeed       = (float)Configuration.GetInnerTextByTagName("zeroLiftSpeed", zeroLiftSpeed);
-        rollEffect          = (float)Configuration.GetInnerTextByTagName("rollEffect", rollEffect);
-        pitchEffect         = (float)Configuration.GetInnerTextByTagName("pitchEffect", pitchEffect);
-        yawEffect           = (float)Configuration.GetInnerTextByTagName("yawEffect", yawEffect);
-        bankedTurnEffect    = (float)Configuration.GetInnerTextByTagName("bankedTurnEffect", bankedTurnEffect);
-        aerodynamicEffect   = (float)Configuration.GetInnerTextByTagName("aerodynamicEffect", aerodynamicEffect);
-        autoTurnPitch       = (float)Configuration.GetInnerTextByTagName("autoTurnPitch", autoTurnPitch);
-        autoRollLevel       = (float)Configuration.GetInnerTextByTagName("autoRollLevel", autoRollLevel);
-        autoPitchLevel      = (float)Configuration.GetInnerTextByTagName("autoPitchLevel", autoPitchLevel);
-        airBrakesEffect     = (float)Configuration.GetInnerTextByTagName("airBrakesEffect", airBrakesEffect);
+        Configuration.LoadConfig();
+
+        maxEnginePower = (float)Configuration.GetInnerTextByTagName("maxEnginePower", maxEnginePower);
+        lift = (float)Configuration.GetInnerTextByTagName("lift", lift);
+        zeroLiftSpeed = (float)Configuration.GetInnerTextByTagName("zeroLiftSpeed", zeroLiftSpeed);
+        rollEffect = (float)Configuration.GetInnerTextByTagName("rollEffect", rollEffect);
+        pitchEffect = (float)Configuration.GetInnerTextByTagName("pitchEffect", pitchEffect);
+        yawEffect = (float)Configuration.GetInnerTextByTagName("yawEffect", yawEffect);
+        bankedTurnEffect = (float)Configuration.GetInnerTextByTagName("bankedTurnEffect", bankedTurnEffect);
+        aerodynamicEffect = (float)Configuration.GetInnerTextByTagName("aerodynamicEffect", aerodynamicEffect);
+        autoTurnPitch = (float)Configuration.GetInnerTextByTagName("autoTurnPitch", autoTurnPitch);
+        autoRollLevel = (float)Configuration.GetInnerTextByTagName("autoRollLevel", autoRollLevel);
+        autoPitchLevel = (float)Configuration.GetInnerTextByTagName("autoPitchLevel", autoPitchLevel);
+        airBrakesEffect = (float)Configuration.GetInnerTextByTagName("airBrakesEffect", airBrakesEffect);
         throttleChangeSpeed = (float)Configuration.GetInnerTextByTagName("throttleChangeSpeed", throttleChangeSpeed);
-        dragIncreaseFactor  = (float)Configuration.GetInnerTextByTagName("dragIncreaseFactor", dragIncreaseFactor);
+        dragIncreaseFactor = (float)Configuration.GetInnerTextByTagName("dragIncreaseFactor", dragIncreaseFactor);
+        originalDrag = (float)Configuration.GetInnerTextByTagName("originalDrag", GetComponent<Rigidbody>().drag);
+        originalAngularDrag = (float)Configuration.GetInnerTextByTagName("originalAngularDrag", GetComponent<Rigidbody>().angularDrag);
+    }
+
+    void Start ()
+    {
         // Store original drag settings, these are modified during flight.
-        originalDrag = GetComponent<Rigidbody>().drag;
-		originalAngularDrag = GetComponent<Rigidbody>().angularDrag;
-	}
+        //originalDrag = GetComponent<Rigidbody>().drag;
+        //originalAngularDrag = GetComponent<Rigidbody>().angularDrag;
+    }
 
 	public void Move(float rollInput, float pitchInput, float yawInput, float throttleInput, bool airBrakes)
     {
