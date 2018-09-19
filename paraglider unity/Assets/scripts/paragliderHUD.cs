@@ -13,6 +13,7 @@ public class paragliderHUD : MonoBehaviour {
 
     public ParagliderControler glider;
 
+    public float instrumentSmoothing = 0.5f;
     public RectTransform speedoHand;
     public float speedoMinAngle;
     public float speedoMaxAngle;
@@ -185,13 +186,17 @@ public class paragliderHUD : MonoBehaviour {
         appear(meterInstruments, false);
     }
 
+    
     public void updatespeedo()
     {
         if (glider != null)
         {
-            speedoValue = glider.speed;
-            altitudeValue = glider.altitude;
-            altChangeValue = glider.altChange;
+            instrumentSmoothing = Mathf.Clamp(instrumentSmoothing, 0, 0.999999f);
+
+
+            speedoValue = Mathf.Lerp(glider.speed, speedoValue, instrumentSmoothing);
+            altitudeValue = Mathf.Lerp(glider.altitude, altitudeValue,  instrumentSmoothing);
+            altChangeValue = Mathf.Lerp(glider.altChange, altChangeValue,  instrumentSmoothing);
 
             speedoHand.localEulerAngles = new Vector3(0, 0, BenjasMath.map(speedoValue, speedoMin, speedoMax, speedoMinAngle, speedoMaxAngle));
             speedDigits.text = Mathf.FloorToInt(speedoValue).ToString() + " " + speedUnit;
