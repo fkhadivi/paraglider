@@ -192,17 +192,7 @@ public class InputManager : MonoBehaviour {
         {
             if (normalizedVal_leftGrip < threshold_inactivity && normalizedVal_rightGrip < threshold_inactivity)
             {
-                if (curInactivityTime > inactivityTimeout)
-                {
-                    curInactivityTime = 0;
-                    usingGrips = false;
-
-                    GameManager.CallInactivity();
-                }
-                else
-                {
-                    curInactivityTime += Time.deltaTime;
-                }
+                usingGrips = false;
             }
         }
         else if (!usingGrips)
@@ -211,6 +201,14 @@ public class InputManager : MonoBehaviour {
             {
                 curInactivityTime = 0;
                 usingGrips = true;
+            }
+
+            curInactivityTime += Time.deltaTime;
+
+            if (curInactivityTime > inactivityTimeout)
+            {
+                curInactivityTime = 0;
+                GameManager.CallInactivity();
             }
         }
     }
