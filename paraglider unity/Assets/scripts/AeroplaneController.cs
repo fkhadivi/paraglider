@@ -137,14 +137,14 @@ public class AeroplaneController : MonoBehaviour
 		// because that's what people expect to happen in games!
 		bankedTurnAmount = Mathf.Sin (RollAngle);
 		// auto level roll, if there's no roll input:
-		if (RollInput == 0f) {
-			RollInput = -RollAngle * autoRollLevel;
-		}
+		//if (RollInput == 0f) {
+			RollInput += -RollAngle * autoRollLevel;
+		//}
 		// auto correct pitch, if no pitch input (but also apply the banked turn amount)
-		if (PitchInput == 0f) {
-			PitchInput = -PitchAngle * autoPitchLevel;
+		//if (PitchInput == 0f) {
+			PitchInput += -PitchAngle * autoPitchLevel;
 			PitchInput -= Mathf.Abs (bankedTurnAmount * bankedTurnAmount * autoTurnPitch);
-		}
+		//}
 	}
 
 	void CalculateForwardSpeed ()

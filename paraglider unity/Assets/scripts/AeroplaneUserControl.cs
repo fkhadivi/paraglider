@@ -10,6 +10,7 @@ public class AeroplaneUserControl : MonoBehaviour
 
     float rollValueFactor = 1.0f;
     float pitchValueFactor = 1.0f;
+    float yawValueFactor = .20f;
 
     void Awake ()
     {
@@ -22,6 +23,7 @@ public class AeroplaneUserControl : MonoBehaviour
     {
         rollValueFactor     = (float)Configuration.GetInnerTextByTagName("rollValueFactor", rollValueFactor);
         pitchValueFactor    = (float)Configuration.GetInnerTextByTagName("pitchValueFactor", pitchValueFactor);
+        yawValueFactor    = (float)Configuration.GetInnerTextByTagName("yawValueFactor", yawValueFactor);
     }
 
     void FixedUpdate()
@@ -38,9 +40,11 @@ public class AeroplaneUserControl : MonoBehaviour
             {
                 roll = inputmanager.GetResultLeftRightMinus1To1();
                 pitch = inputmanager.GetResultUpDownMinus1To1() * -1.0f;
+                yaw = inputmanager.GetResultLeftRightMinus1To1() * yawValueFactor;
 
                 roll *= rollValueFactor;
                 pitch *= pitchValueFactor;
+                yaw *= yawValueFactor;
             }
         }
 

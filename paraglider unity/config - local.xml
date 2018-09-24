@@ -2,7 +2,7 @@
   <debug>false</debug>
   <game>
     <!-- time in sec -->
-    <maxGameTime>180</maxGameTime>
+    <maxGameTime>60</maxGameTime>
     <!-- time after gamestart to spawn first obstacle -->
     <maxTimeToSpawn>6</maxTimeToSpawn>
     <!-- time in sec for levelchange -->
@@ -22,15 +22,15 @@
 	<startSpeed>3000</startSpeed>
   </game>
   <controller>
-	<maxEnginePower>10</maxEnginePower>
+	<maxEnginePower>15</maxEnginePower>
 	<lift>0.06</lift>
-	<zeroLiftSpeed>5</zeroLiftSpeed>
-	<rollEffect>2</rollEffect>
-	<pitchEffect>2</pitchEffect>
-	<yawEffect>20</yawEffect>
-	<bankedTurnEffect>0.45</bankedTurnEffect>
-	<autoTurnPitch>1.4</autoTurnPitch>
-	<autoRollLevel>0.3</autoRollLevel>
+	<zeroLiftSpeed>20</zeroLiftSpeed>
+	<rollEffect>10</rollEffect>
+	<pitchEffect>5</pitchEffect>
+	<yawEffect>10</yawEffect>
+	<bankedTurnEffect>0.2</bankedTurnEffect>
+	<autoTurnPitch>0.5</autoTurnPitch>
+	<autoRollLevel>2</autoRollLevel>
 	<autoPitchLevel>0.3</autoPitchLevel>
 	<airBrakesEffect>3</airBrakesEffect>
 	<throttleChangeSpeed>0.3</throttleChangeSpeed>
