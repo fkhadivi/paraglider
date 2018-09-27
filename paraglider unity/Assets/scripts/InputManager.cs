@@ -42,6 +42,8 @@ public class InputManager : MonoBehaviour {
 
     static InputManager instance;
     private bool pulledGrips;
+    private bool pulledLeftGrip;
+    private bool pulledRightGrip;
     private bool pulledRipcord;
     private bool waitingForTime = false;
 
@@ -162,6 +164,44 @@ public class InputManager : MonoBehaviour {
             resultLeftRightMinus1To1  = Input.GetAxis("Horizontal");
 
             normalizedVal_ripcord = (Input.GetKeyDown(KeyCode.Return))? 1 : 0;
+        }
+
+        // pull left / right grip
+        var changedGripDirection = false;
+        if (normalizedVal_leftGrip > threshold_control && !pulledLeftGrip)
+        {
+            pulledLeftGrip = true;
+
+            changedGripDirection = true;
+        }
+        else if (normalizedVal_leftGrip < threshold_control && pulledLeftGrip)
+        {
+            pulledLeftGrip = false;
+
+            changedGripDirection = true;
+        }
+
+        if (normalizedVal_rightGrip > threshold_control && !pulledRightGrip)
+        {
+            pulledRightGrip = true;
+
+            changedGripDirection = true;
+        }
+        else if (normalizedVal_rightGrip < threshold_control && pulledRightGrip)
+        {
+            pulledRightGrip = false;
+
+            changedGripDirection = true;
+        }
+
+        if (changedGripDirection)
+        {
+            changedGripDirection = false;
+
+            string leftDirection = (pulledLeftGrip) ? "down" : "up";
+            string rightDirection = (pulledRightGrip) ? "down" : "up";
+
+            GameManager.CallChangedGrips("left=" + leftDirection + ";right=" + rightDirection);
         }
 
         // pull the grips
