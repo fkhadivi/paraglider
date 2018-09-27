@@ -18,8 +18,10 @@ public class AeroplaneController : MonoBehaviour
     [SerializeField] private float throttleChangeSpeed = 0.3f;          // The speed with which the throttle changes.
 
     public float dragIncreaseFactor = 0.001f;			// how much drag should increase with speed.
-	
-	public float Altitude { get; private set; }                         // The aeroplane's height above the ground.
+
+    private float additionalLiftFactor = 1;
+
+    public float Altitude { get; private set; }                         // The aeroplane's height above the ground.
 	public float Throttle { get; private set; }                         // The amount of throttle being used.
 	public bool AirBrakes { get; private set; }                         // Whether or not the air brakes are being applied.
 	public float ForwardSpeed { get; private set; }                     // How fast the aeroplane is traveling in it's forward direction.
@@ -216,8 +218,11 @@ public class AeroplaneController : MonoBehaviour
 		// Calculate and add the lift power
 		var liftPower = ForwardSpeed * ForwardSpeed * lift * zeroLiftFactor * aeroFactor;
 		forces += liftPower * liftDirection;
-		// Apply the calculated forces to the the rigidbody
-		GetComponent<Rigidbody>().AddForce (forces);
+        forces += additionalLiftFactor * liftDirection;
+        // Apply the calculated forces to the the rigidbody
+        GetComponent<Rigidbody>().AddForce (forces);
+        //if (additionalLiftFactor != 1)
+        //    Debug.Log(zeroLiftFactor);
 	}
 
 	void CalculateTorque ()
@@ -253,6 +258,12 @@ public class AeroplaneController : MonoBehaviour
             Altitude = transform.position.y;
 		}
 	}
+
+    public void SetAdditionalLift(float amount)
+    {
+        //Debug.Log("SetAdditionalLift : " + amount);
+        additionalLiftFactor = amount;
+    }
 
 	// Immobilize can be called from other objects, for example if this plane is hit by a weapon and should become uncontrollable
 	public void Immobilize ()
