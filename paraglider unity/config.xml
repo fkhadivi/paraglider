@@ -12,11 +12,11 @@
     <!-- height in m -->
     <maxHeight>200</maxHeight>
     <!-- height in m for thermics to work (up below max, down above min) -->
-    <maxThermicHeight>100</maxThermicHeight>
+	<maxThermicHeight>100</maxThermicHeight>
     <minThermicHeight>50</minThermicHeight>
     <!-- acceleration -->
-    <forceOnThermicUp>1000</forceOnThermicUp>
-    <forceOnThermicDown>-500</forceOnThermicDown>
+    <forceOnThermicUp>100</forceOnThermicUp>
+    <forceOnThermicDown>-100</forceOnThermicDown>
     <!-- acceleration down when glider is too high -->
     <forceOnHeight>-500</forceOnHeight>
 	<startSpeed>3000</startSpeed>
@@ -27,19 +27,20 @@
 	<zeroLiftSpeed>5</zeroLiftSpeed>
 	<rollEffect>2</rollEffect>
 	<pitchEffect>2</pitchEffect>
-	<yawEffect>20</yawEffect>
-	<bankedTurnEffect>0.45</bankedTurnEffect>
+	<yawEffect>2</yawEffect>
+	<bankedTurnEffect>1.45</bankedTurnEffect>
 	<autoTurnPitch>1.4</autoTurnPitch>
-	<autoRollLevel>0.3</autoRollLevel>
-	<autoPitchLevel>0.3</autoPitchLevel>
+	<autoRollLevel>2.5</autoRollLevel>
+	<autoPitchLevel>0.9</autoPitchLevel>
 	<airBrakesEffect>3</airBrakesEffect>
 	<throttleChangeSpeed>0.3</throttleChangeSpeed>
 	<dragIncreaseFactor>0.001</dragIncreaseFactor>
 	<originalDrag>0.2</originalDrag>
-	<originalAngularDrag>0.2</originalAngularDrag>
+	<originalAngularDrag>0.12</originalAngularDrag>
 	
-	<rollValueFactor>0.9</rollValueFactor>
+	<rollValueFactor>1</rollValueFactor>
 	<pitchValueFactor>0.9</pitchValueFactor>		
+	<yawValueFactor>0.5</yawValueFactor>		
   </controller>
   <input>
 	<ripcord_port>0</ripcord_port>
@@ -52,7 +53,7 @@
 	<minRawVal_ripcord>0.015</minRawVal_ripcord>
 	<maxRawVal_ripcord>4.7575</maxRawVal_ripcord>
 	<threshold_move>0.1</threshold_move>
-	<threshold_pull>0.5</threshold_pull>
+	<threshold_pull>0.3</threshold_pull>
 	<inactivityTimeout>30</inactivityTimeout>
 	<threshold_inactivity>-0.2</threshold_inactivity>
   </input>
