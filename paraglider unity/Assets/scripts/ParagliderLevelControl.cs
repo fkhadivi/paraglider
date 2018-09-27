@@ -7,8 +7,7 @@ public class ParagliderLevelControl : MonoBehaviour {
 
     private static bool created = false;
 
-    public string[] levelNames;
-    public string[] levelNamesToLoad = new string[1];
+	public string[] levelNames;
     private Scene[] levels = new Scene[1];
     public ParagliderLevel[] levelInfos;
 	public int level = -1;
@@ -76,44 +75,15 @@ public class ParagliderLevelControl : MonoBehaviour {
     public void preloadAllLevels()
     {
         Debug.Log(">>>>>>>>>>>>>> PRELOADING LEVELS");
-        if(LevelsRestrictedTo > 0)
+        if (!(levels.Length == levelNames.Length))
         {
-            //restrict levels to a single level for loading and managing
-            levelNamesToLoad = new string[2];
-            levelNamesToLoad[0] = levelNames[0];
-            levelNamesToLoad[1] = levelNames[LevelsRestrictedTo];
-        }
-        else if(levelNamesToLoad.Length != levelNames.Length)
-        {
-            //load and manage all levels
-            levelNamesToLoad = new string[levelNames.Length];
-            levelNamesToLoad = levelNames;
-        }
-
-        if (!(levels.Length == levelNames.Length)) 
-        {
-            //compares to levelNames to see if something wrong with levels or levels restricted to single
-            levels = new Scene[levelNamesToLoad.Length];
-            levels[0] = SceneManager.GetSceneByName(levelNamesToLoad[0]);
-            levelInfos = new ParagliderLevel[levelNamesToLoad.Length];
+            levels = new Scene[levelNames.Length];
+            levels[0] = SceneManager.GetSceneByName(levelNames[0]);
+            levelInfos = new ParagliderLevel[levelNames.Length];
         }
           isPreloadingLevels = true;
         preloadingLevel = 1;
         managePreloading();
-    }
-
-    public int LevelsRestrictedTo = 0;
-
-    public void restrictLevelsTo(int level)
-    {
-        if (level == Mathf.Clamp(level, 1, levelNamesToLoad.Length - 1))
-        {
-            LevelsRestrictedTo = level;
-        }
-        else
-        {
-            LevelsRestrictedTo = 0;
-        }
     }
 
     public void managePreloading()
@@ -170,18 +140,18 @@ public class ParagliderLevelControl : MonoBehaviour {
     public bool preload(int l)
     {
         preloadingLevel = l;
-        if (SceneManager.GetSceneByName(levelNamesToLoad[l]).isLoaded)
+        if (SceneManager.GetSceneByName(levelNames[l]).isLoaded)
         {
             return false;
         }
-        SceneManager.LoadSceneAsync(levelNamesToLoad[l], LoadSceneMode.Additive);
-        Debug.Log(">>> loading level " + l + " (" + levelNamesToLoad[l] + ")");
+        SceneManager.LoadSceneAsync(levelNames[l], LoadSceneMode.Additive);
+        Debug.Log(">>> loading level " + l + " (" + levelNames[l] + ")");
         return true;
     }
 
     public void unloadlevel(int level)
     {
-        SceneManager.LoadSceneAsync(levelNamesToLoad[level], LoadSceneMode.Additive);
+        SceneManager.LoadSceneAsync(levelNames[level], LoadSceneMode.Additive);
     }
 
     /// <summary>
@@ -271,7 +241,7 @@ public class ParagliderLevelControl : MonoBehaviour {
     public int incrementLevel(int level)
     {
         level++;
-    	if (level < levelNamesToLoad.Length)
+    	if (level < levelNames.Length)
     	return level;
     	return 0;
     }
