@@ -29,12 +29,12 @@ public class GameManager : MonoBehaviour {
     public static STATE state;
     private static float timeUntilStandby;
     public string currentState;
+    public string currentStateOfGame;
 
     public enum STATE
     {
         STANDBYMODUS,
         INTRO,
-        ENDINTRO,
         GAME,
         ABORT,   
         INACTIVITY,
@@ -80,6 +80,7 @@ public class GameManager : MonoBehaviour {
     void Update () {
 
         currentState = state.ToString()+"   (language "+languageCode+")";
+        currentStateOfGame = ParagliderGame.GetInstance().state.ToString()+" (level "+ParagliderGame.GetInstance().currentLevel+")";
         cheatkeys(); //use keyboard input
         // Test --------------------------
         if (Input.GetKeyDown(KeyCode.M))
@@ -107,10 +108,6 @@ public class GameManager : MonoBehaviour {
         {
             goToStandbyModusNow = true;
         }
-        else if (e == "endintro")
-        {
-            state = STATE.ENDINTRO;
-        }
     }
 
     //InputManager calls the static functions
@@ -122,22 +119,10 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    public static void CallChangedGrips(string action)
-    {
-        Debug.Log("action " + action);
-
-        if (state == STATE.INTRO)
-        {
-            UDPSender.SendUDPStringUTF8(ip, port, "state=intro;" + action);
-        }else if (state == STATE.ENDINTRO)
-        {
-            StartGame();
-        }
-    }
-
     public static void CallPulledGrips()
     {
-        if (state == STATE.INTRO || state == STATE.ENDINTRO )
+        Debug.Log("Pulled grips " + state);
+        if (state == STATE.INTRO)
         {
             StartGame();
         }
@@ -232,7 +217,7 @@ public class GameManager : MonoBehaviour {
             languageCode = "en";
         }
         TextProvider.lang = languageCode;
-        UDPSender.SendUDPStringUTF8(ip, port, "state=intro;action=ripcord;value=" + languageCode);
+        UDPSender.SendUDPStringUTF8(ip, port, "state=activation;action=ripcord;value=" + languageCode);
         ParagliderGame.GetInstance().updateHudTexts();
     }
 
