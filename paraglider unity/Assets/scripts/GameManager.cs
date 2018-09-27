@@ -34,7 +34,7 @@ public class GameManager : MonoBehaviour {
     {
         STANDBYMODUS,
         INTRO,
-        ENDINTRO,
+        STARTGAME,
         GAME,
         ABORT,   
         INACTIVITY,
@@ -78,6 +78,11 @@ public class GameManager : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
+        if (startGameNow)
+        {
+            StartGame();
+            startGameNow = false;
+        }
 
         currentState = state.ToString()+"   (language "+languageCode+")";
         cheatkeys(); //use keyboard input
@@ -100,16 +105,20 @@ public class GameManager : MonoBehaviour {
         //timeUntilStandby = maxTimeUntilStandby;
     }
 
+    bool startGameNow = false;
     private void OnMessage(object sender, string e)
     {
-        Debug.Log("Message: " + e);
         if(e == "standbymodus")
         {
             goToStandbyModusNow = true;
         }
-        else if (e == "endintro")
+        else if (e == "startgame")
         {
-            state = STATE.ENDINTRO;
+            if (state != STATE.STARTGAME)
+            {
+                state = STATE.STARTGAME;
+                startGameNow = true;
+            }
         }
     }
 
@@ -122,30 +131,21 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    public static void CallChangedGrips(string action)
+    public static void CallChangedGrips(string currentDirections)
     {
-        Debug.Log("action " + action);
-
         if (state == STATE.INTRO)
         {
-            UDPSender.SendUDPStringUTF8(ip, port, "state=intro;" + action);
-        }else if (state == STATE.ENDINTRO)
+            Debug.Log("" + currentDirections);
+            UDPSender.SendUDPStringUTF8(ip, port, "state=intro;action=steps;" + currentDirections);
+        }else if (state == STATE.STARTGAME && currentDirections == "left=down;right=down")
         {
             StartGame();
         }
-    }
-
-    public static void CallPulledGrips()
-    {
-        if (state == STATE.INTRO || state == STATE.ENDINTRO )
-        {
-            StartGame();
-        }
-        else if (state == STATE.GAME && ParagliderGame.GetInstance().state == ParagliderGame.STATE.ATSTART)
+        else if (state == STATE.GAME && ParagliderGame.GetInstance().state == ParagliderGame.STATE.ATSTART && currentDirections == "left=down;right=down")
         {
             StartPlaying();
         }
-        else if (state == STATE.ABORT || state == STATE.INACTIVITY)
+        else if ((state == STATE.ABORT || state == STATE.INACTIVITY) && currentDirections == "left=down;right=down")
         {
             ResumeGame();
         }
@@ -400,7 +400,10 @@ public class GameManager : MonoBehaviour {
        
         if (Input.GetKeyDown("up")|| Input.GetKeyDown("down") || Input.GetKeyDown("left") || Input.GetKeyDown("right"))
         {
-            CallPulledGrips();
+            if (state == STATE.INTRO)
+                state = STATE.STARTGAME;
+
+            CallChangedGrips("left=down;right=down");
         }
     }
 
