@@ -13,7 +13,12 @@
 
 		Category
 	{
-		Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
+		Tags
+		{ 
+			"Queue" = "Transparent" 
+			"IgnoreProjector" = "True" 
+			"RenderType" = "Transparent" 
+		}
 		Blend SrcAlpha OneMinusSrcAlpha
 		AlphaTest Greater .01
 		//Cull Off
@@ -37,6 +42,7 @@
 	float _Scale;
 	float _Xoffset;
 	float _Yoffset;
+	float _Rotation;
 
 	struct appdata_t
 	{
@@ -52,7 +58,7 @@
 		float2 texcoord : TEXCOORD0;
 	};
 
-	float _Rotation;
+
 
 	v2f vert(appdata_t v)
 	{

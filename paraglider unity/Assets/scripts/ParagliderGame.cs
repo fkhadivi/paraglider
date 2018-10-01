@@ -563,11 +563,15 @@ public class ParagliderGame : MonoBehaviour {
          {
             HUD.setGameTime(timeNormalized);
             debugInfo.log("time", gameTime);
-            //the finish looks same in all directions 
-            // so i can misuse that to get the angle towards the glider 
-            levelControl.levelInfo().finish.transform.LookAt(glider.transform.position);
-            //and then rotate it 180 to get the direction towards the finish
-            compass.setBacon(levelControl.levelInfo().finish.transform.eulerAngles.y + 180 - glider.transform.eulerAngles.y);
+            //make we put a bacon game object to the finish 
+            GameObject bacon1 = new GameObject();
+            bacon1.transform.position = levelControl.levelInfo().finish.transform.position;
+            // and let it look at the glider
+            bacon1.transform.LookAt(glider.transform.position);
+            //and then rotate its y 180 to get the direction from glider towards the finish
+            // and now the difference of the two y angles is the angle of the bacon
+            compass.setBacon(bacon1.transform.eulerAngles.y + 180 - glider.transform.eulerAngles.y);
+            Destroy(bacon1);
             compass.setCompass(glider.transform.eulerAngles.y);
             
             Map.updateMap(glider.position, glider.transform.eulerAngles);
