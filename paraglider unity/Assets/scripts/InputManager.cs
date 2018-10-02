@@ -208,7 +208,7 @@ public class InputManager : MonoBehaviour {
         if (resultUpDownMinus1To1 > threshold_control && !pulledGrips)
         {
             pulledGrips = true;
-            GameManager.CallPulledGrips();
+            //GameManager.CallPulledGrips();
         }
         else if (resultUpDownMinus1To1 < threshold_control && pulledGrips)
         {
