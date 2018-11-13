@@ -10,7 +10,7 @@
     <!-- time in sec for fog duration -->
     <fogDuration>3</fogDuration>
     <!-- height in m -->
-    <maxHeight>200</maxHeight>
+    <maxHeight>180</maxHeight>
     <!-- height in m for thermics to work (up below max, down above min) -->
 	<maxThermicHeight>100</maxThermicHeight>
     <minThermicHeight>50</minThermicHeight>
@@ -43,8 +43,8 @@
 	<yawValueFactor>0.5</yawValueFactor>		
   </controller>
   <input>
-	<ripcord_port>0</ripcord_port>
-	<leftgrip_port>1</leftgrip_port>
+	<ripcord_port>1</ripcord_port>
+	<leftgrip_port>0</leftgrip_port>
 	<rightgrip_port>2</rightgrip_port>
 	<minRawValue_leftgrip>0.06</minRawValue_leftgrip>
 	<maxRawValue_leftgrip>4.735</maxRawValue_leftgrip>
