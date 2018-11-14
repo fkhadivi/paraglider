@@ -71,6 +71,7 @@
     <Compile Include="Assets\scripts\cameraFourPointProjection.cs" />
     <Compile Include="Assets\scripts\compassStrip_benja.cs" />
     <Compile Include="Assets\scripts\Configuration.cs" />
+    <Compile Include="Assets\scripts\crashTest.cs" />
     <Compile Include="Assets\scripts\DebugInfo_benja.cs" />
     <Compile Include="Assets\scripts\DebugOnly_benja.cs" />
     <Compile Include="Assets\scripts\experimentaAnimationPresets.cs" />
@@ -80,7 +81,6 @@
     <Compile Include="Assets\scripts\InputManager.cs" />
     <Compile Include="Assets\scripts\name_from_texture.cs" />
     <Compile Include="Assets\scripts\ParagliderControler.cs" />
-    <Compile Include="Assets\scripts\ParagliderCrashDetection.cs" />
     <Compile Include="Assets\scripts\ParagliderFinish.cs" />
     <Compile Include="Assets\scripts\ParagliderFlyingObjSpawnPoint.cs" />
     <Compile Include="Assets\scripts\ParagliderFlyingObstacle.cs" />
