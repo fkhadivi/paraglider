@@ -6,12 +6,12 @@
 [Bb]uild
 /[Bb]uilds/
 /[Ll]ibrary/
+*/Library/*
 sysinfo.txt
 *.stackdump
 /Assets/AssetStoreTools*
 *.apk
 *.unitypackage
- 
 # ===================================== #
 # Visual Studio / MonoDevelop generated #
 # ===================================== #
@@ -43,3 +43,4 @@ ehthumbs.db
 [Dd]esktop.ini
 Corridor/Library/ShaderCache/
 Corridor/Library/metadata/
+
