@@ -75,13 +75,14 @@ public class ParagliderGame : MonoBehaviour {
         maxTimeToSpawn = (float)Configuration.GetInnerTextByTagName("maxTimeToSpawn", maxTimeToSpawn);
         glider.dockingDuration = (float)Configuration.GetInnerTextByTagName("dockingDuration", glider.dockingDuration);
         glider.fogDuration = (float)Configuration.GetInnerTextByTagName("fogDuration", glider.fogDuration);
-        glider.maxHeight = (float)Configuration.GetInnerTextByTagName("maxHeight", glider.maxHeight);
         glider.maxThermicHeight = (float)Configuration.GetInnerTextByTagName("maxThermicHeight", glider.maxThermicHeight);
         glider.minThermicHeight = (float)Configuration.GetInnerTextByTagName("minThermicHeight", glider.minThermicHeight);
         glider.forceOnThermicUp = (float)Configuration.GetInnerTextByTagName("forceOnThermicUp", glider.forceOnThermicUp);
         glider.forceOnThermicDown = (float)Configuration.GetInnerTextByTagName("forceOnThermicDown", glider.forceOnThermicDown);
         glider.forceOnMaxHeight = (float)Configuration.GetInnerTextByTagName("forceOnMaxHeight", glider.forceOnMaxHeight);
-    }
+        glider.collisionMaxAngleForCrash = (float)Configuration.GetInnerTextByTagName("collisionMaxAngleForCrash", glider.collisionMaxAngleForCrash);
+        glider.minCrashThresholdMPS = (float)Configuration.GetInnerTextByTagName("minCrashThresholdMPS", glider.minCrashThresholdMPS);
+}
 
     void Start()
     {
@@ -97,7 +98,7 @@ public class ParagliderGame : MonoBehaviour {
         }
 		Map.Setup(mapTexture,new Vector3(-1000,0,-1000),new Vector3(1000,0,1000));
 		gliderRig=glider.GetComponent<Rigidbody>();
-		ParagliderCrashDetection CrashDetect = glider.GetComponent<ParagliderCrashDetection>();
+		//ParagliderCrashDetection CrashDetect = glider.GetComponent<ParagliderCrashDetection>();
 		glider.onCrash = onCrash;
 		//glider.onFog = onFog;
 		glider.onFinishReached = onLevelFinish;
@@ -188,7 +189,7 @@ public class ParagliderGame : MonoBehaviour {
         NextLevel();     
         HUD.appearCOMPLETE();
         updateHudTexts();
-        updateHUD(0);
+        updateHUD();
         GameManager.ChangePromptTextInIGP(1); //03.00 Spielstart
         spawnByCollider = false;
         spawnByTime = false;
@@ -524,7 +525,8 @@ public class ParagliderGame : MonoBehaviour {
         if (Input.GetKeyDown("g"))
         {
             godmode = !godmode;
-            debugInfo.log("godmode", godmode ? "ensbled" : "disabled");
+            glider.crashEnabled = !godmode;
+            debugInfo.log("godmode", godmode ? "enabled" : "disabled");
         }
 		if (Input.GetKeyDown("w"))
         {
@@ -618,7 +620,12 @@ public class ParagliderGame : MonoBehaviour {
             }
 
         }
-      
+        else if (state == STATE.ATSTART)
+        {
+            updateHUD();
+        }
+
+
     }
 
 }

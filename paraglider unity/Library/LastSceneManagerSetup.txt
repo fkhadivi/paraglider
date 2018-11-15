@@ -2,13 +2,13 @@ sceneSetups:
 - path: Assets/scenes/paraglider_standby.unity
   isLoaded: 1
   isActive: 1
-- path: Assets/scenes/paraglider_city.unity
+- path: Assets/scenes/paraglider_hill.unity
   isLoaded: 0
   isActive: 0
 - path: Assets/scenes/paraglider_djungle.unity
   isLoaded: 0
   isActive: 0
-- path: Assets/scenes/paraglider_hill.unity
+- path: Assets/scenes/paraglider_city.unity
   isLoaded: 0
   isActive: 0
 - path: Assets/scenes/paraglider_ice.unity
