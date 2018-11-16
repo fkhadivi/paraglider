@@ -46,8 +46,8 @@
   </controller>
   <input>
 	<ripcord_port>1</ripcord_port>
-	<leftgrip_port>0</leftgrip_port>
-	<rightgrip_port>2</rightgrip_port>
+	<leftgrip_port>2</leftgrip_port>
+	<rightgrip_port>0</rightgrip_port>
 	<minRawValue_leftgrip>0.06</minRawValue_leftgrip>
 	<maxRawValue_leftgrip>4.735</maxRawValue_leftgrip>
 	<minRawValue_rightgrip>0</minRawValue_rightgrip>
