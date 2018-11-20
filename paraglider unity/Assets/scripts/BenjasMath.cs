@@ -294,19 +294,21 @@ public class smoothVector3{
 
     public static float keepAngle0to360(float Angle)
     {
-        while(Angle<0)
+        return keepAngleBetween(Angle, 0, 360);
+
+/*        while (Angle<0)
         { Angle += 360; }
         while (Angle > 360)
         { Angle -= 360; }
-        return Angle;
+        return Angle;*/
     }
 
     public static float keepAngleBetween(float Angle, float Min, float Max)
     {
-        float temp = Mathf.Lerp(Min, Max, 0.5f);
-        while (Angle < Min-360)
+       // float temp = Mathf.Lerp(Min, Max, 0.5f);
+        while (Angle < Min)
         { Angle += 360; }
-        while (Angle >  Max + 360)
+        while (Angle >  Max)
         { Angle -= 360; }
         return Angle;
     }

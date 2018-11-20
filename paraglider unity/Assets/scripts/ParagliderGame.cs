@@ -448,6 +448,7 @@ public class ParagliderGame : MonoBehaviour {
 
 
         // start velocity -> fix to make it easier to steer
+        glider.setSpeed(0);
         gliderRig.AddRelativeForce(Vector3.forward * (float)Configuration.GetInnerTextByTagName("startSpeed", 2000.0));
 
         Debug.Log("level " + levelControl.level + " started");

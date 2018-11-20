@@ -30,7 +30,9 @@ public class paragliderHUD : MonoBehaviour {
     public float altChangeMax;
     public float altChangeValue;
     public float altitudeValue;
-    public Text altDigits;
+    public Text altDigitsRed;
+    public Text altDigitsBlack;
+    public Text altDigitsWhite;
     public string altUnit = "m";
 
     public experimentaAnimationPresets mapFrame;
@@ -202,7 +204,15 @@ public class paragliderHUD : MonoBehaviour {
             speedDigits.text = Mathf.FloorToInt(speedoValue).ToString() + " " + speedUnit;
 
             altChangeHand.localEulerAngles = new Vector3(0, 0, BenjasMath.map(altChangeValue, altChangeMin, altChangeMax, altChangeMinAngle, altChangeMaxAngle));
-            altDigits.text = Mathf.FloorToInt(altitudeValue).ToString() + " " + altUnit;
+            int alt = Mathf.FloorToInt(altitudeValue);
+            string altsring = alt.ToString();
+            altDigitsRed.text = altsring;
+            altDigitsBlack.text = altsring;
+            altsring += " " + altUnit;
+            if (alt < 10) altsring = "0" + altsring;
+            if (alt < 100) altsring = "0" + altsring;
+            if (alt < 1000) altsring = "0" + altsring;
+            altDigitsWhite.text = altsring;
         }
     }
 
