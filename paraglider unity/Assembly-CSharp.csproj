@@ -60,6 +60,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\billboardCPU.cs" />
     <Compile Include="Assets\scripts\addImage.cs" />
     <Compile Include="Assets\scripts\AeroplaneController.cs" />
     <Compile Include="Assets\scripts\AeroplaneUserControl.cs" />

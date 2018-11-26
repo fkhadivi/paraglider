@@ -1,4 +1,73 @@
 Base path: C:/Program Files/Unity/Hub/Editor/2018.2.1f1/Editor/Data
 Cmd: initializeCompiler
 Cmd: initializeCompiler
+Cmd: preprocess
+  insize=1399 outsize=441 ok=1
+Cmd: preprocess
+  insize=2121 outsize=1428 ok=1
+Cmd: preprocess
+  insize=435 outsize=435 ok=1
+Cmd: preprocess
+  insize=1615 outsize=1854 ok=1
+Cmd: preprocess
+  insize=2309 outsize=651 ok=1
+Cmd: preprocess
+  insize=4242 outsize=1054 ok=1
+Cmd: preprocess
+  insize=435 outsize=435 ok=1
+Cmd: preprocess
+  insize=1681 outsize=1707 ok=1
+Cmd: preprocess
+  insize=505 outsize=505 ok=1
+Cmd: preprocess
+  insize=1046 outsize=943 ok=1
+Cmd: preprocess
+  insize=1454 outsize=1799 ok=1
+Cmd: preprocess
+  insize=12931 outsize=2549 ok=1
+Cmd: preprocess
+  insize=1044 outsize=941 ok=1
+Cmd: preprocess
+  insize=505 outsize=505 ok=1
+Cmd: preprocess
+  insize=2836 outsize=713 ok=1
+Cmd: preprocess
+  insize=1387 outsize=1152 ok=1
+Cmd: preprocess
+  insize=2273 outsize=1010 ok=1
+Cmd: preprocess
+  insize=2236 outsize=943 ok=1
+Cmd: preprocess
+  insize=1600 outsize=336 ok=1
+Cmd: preprocess
+  insize=12069 outsize=2430 ok=1
+Cmd: preprocess
+  insize=11054 outsize=2098 ok=1
+Cmd: preprocess
+  insize=2667 outsize=1124 ok=1
+Cmd: preprocess
+  insize=1308 outsize=352 ok=1
+Cmd: preprocess
+  insize=1567 outsize=610 ok=1
+Cmd: preprocess
+  insize=1876 outsize=565 ok=1
+Cmd: preprocess
+  insize=540 outsize=537 ok=1
+Cmd: preprocess
+  insize=1457 outsize=474 ok=1
+Cmd: preprocess
+  insize=11054 outsize=2098 ok=1
+Cmd: preprocess
+  insize=540 outsize=537 ok=1
+Cmd: preprocess
+  insize=2273 outsize=1004 ok=1
+Cmd: preprocess
+  insize=1567 outsize=610 ok=1
+Cmd: preprocess
+  insize=1308 outsize=352 ok=1
+Cmd: preprocess
+  insize=1046 outsize=943 ok=1
+Cmd: preprocess
+  insize=2121 outsize=1428 ok=1
+Cmd: initializeCompiler
 Cmd: initializeCompiler
