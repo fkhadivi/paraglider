@@ -2,7 +2,7 @@
   <debug>false</debug>
   <game>
     <!-- time in sec -->
-    <maxGameTime>180</maxGameTime>
+    <maxGameTime>210</maxGameTime>
     <!-- time after gamestart to spawn first obstacle -->
     <maxTimeToSpawn>6</maxTimeToSpawn>
     <!-- time in sec for levelchange -->
