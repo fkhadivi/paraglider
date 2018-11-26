@@ -17,7 +17,7 @@ public class DebugOnly_benja : MonoBehaviour {
         //they all react to the same debug toggle
         //this script will yust listen to the one debugManager it finds first
         debugManager = FindObjectOfType<DebugInfo_benja>();
-		Debug.Log("debug info on " + debugManager.name);
+		//Debug.Log("debug info on " + debugManager.name);
 
 		onDebugChange(false);
         connect(true);

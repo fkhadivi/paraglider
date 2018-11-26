@@ -25,7 +25,7 @@
   </game>
   <controller>
 	<maxEnginePower>10</maxEnginePower>
-	<lift>0.06</lift>
+	<lift>-10</lift>
 	<zeroLiftSpeed>5</zeroLiftSpeed>
 	<rollEffect>2</rollEffect>
 	<pitchEffect>2</pitchEffect>

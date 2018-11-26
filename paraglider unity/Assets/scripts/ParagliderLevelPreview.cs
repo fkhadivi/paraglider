@@ -49,10 +49,11 @@ public class ParagliderLevelPreview : MonoBehaviour {
 
 	// Update is called once per frame
 	void update() {
-		if (renderOneFrame)
-		{
-			renderOneFrame=false;
-			getPreviewTexture();
-		}
+        if (renderOneFrame)
+        {
+            renderOneFrame = false;
+            getPreviewTexture();
+
+        }
 	}
 }
