@@ -11,6 +11,7 @@ public class ParagliderLevel : MonoBehaviour {
 
 	 
 	public string level;
+    public Scene scene;
 	[Header("Terrain Settings")]
 	public GameObject terrain;
 	public GameObject startPoint;
@@ -126,8 +127,9 @@ public class ParagliderLevel : MonoBehaviour {
 		return;
 		levelPreview.transform.position=startPoint.transform.position;
 		levelPreview.transform.rotation=startPoint.transform.rotation;
-		previewTexture = levelPreview.getPreviewTexture();
-	}
+        previewTexture = levelPreview.getPreviewTexture();
+
+    }
 
 	// Use this for initialization
 	public ParagliderLevel Setup () {
@@ -152,7 +154,12 @@ public class ParagliderLevel : MonoBehaviour {
 		orderMobileObstacles(flyingObstacles);
 		if (terrain != null)
         {
+            Scene currentScene = SceneManager.GetActiveScene();
+            SceneManager.SetActiveScene(gameObject.scene);
 			makeLevelPreview();
+            //Debug.Log("preview level " + level);
+            //Debug.Break();
+            SceneManager.SetActiveScene(currentScene);
             terrain.SetActive(false);
             onSetupFinished();
         }

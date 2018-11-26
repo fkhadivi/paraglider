@@ -252,7 +252,7 @@ public class ParagliderLevelControl : MonoBehaviour {
     public void levelAwake()
     {
 		onLevelAwake();
-	}
+    }
 
     /// <summary>
     /// tells which level will be next

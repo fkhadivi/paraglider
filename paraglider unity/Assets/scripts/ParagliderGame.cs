@@ -121,6 +121,7 @@ public class ParagliderGame : MonoBehaviour {
         instance.onDebugChange(false);
         //onDoldrums();
         instance.glider.togglePhysics(false);
+        instance.thermicBeenUsed = false;
         instance.levelControl.onPreloadDone = instance.onLevelsLoaded;
         instance.levelControl.onLevelAwake = instance.onLevelawake;
         instance.gameTime = 0;
@@ -306,7 +307,7 @@ public class ParagliderGame : MonoBehaviour {
     {
         gamePause();
         changestate(STATE.FINISH);
-        HUD.appearHIDDEN();
+        HUD.appearINFOONLY();
         updateHudTexts();
         GameManager.GoToResult(gameTime);
     }
@@ -369,7 +370,7 @@ public class ParagliderGame : MonoBehaviour {
 
     public void onThermic()
     {
-        if (!thermicBeenUsed)
+        if( !thermicBeenUsed && state == STATE.PLAYING)
         {
             thermicBeenUsed = true;
             //blendOutHeadline
@@ -435,7 +436,6 @@ public class ParagliderGame : MonoBehaviour {
             if (currentLevel == 1)
             {
                 gameTime = 0;
-
             }
         }
         else
@@ -444,6 +444,7 @@ public class ParagliderGame : MonoBehaviour {
             Map.gameObject.SetActive(false);
             HUD.appearHIDDEN();
             updateHudTexts();
+
         }
 
 
@@ -454,6 +455,7 @@ public class ParagliderGame : MonoBehaviour {
         Debug.Log("level " + levelControl.level + " started");
         debugInfo.log("level", "" + levelControl.level);
         onDoldrums();
+        
     }
 
     void onLevelawake()
@@ -587,9 +589,11 @@ public class ParagliderGame : MonoBehaviour {
 
     }
 
+    public bool stopEveryFrame = false;
+
     void Update()
     {
-
+        if (stopEveryFrame) Debug.Break();
         cheatkeys();
 
         if (state == STATE.PLAYING)
