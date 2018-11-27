@@ -22,6 +22,7 @@ public class paragliderHUD : MonoBehaviour {
     public float speedoValue;
     public Text speedDigits;
     public string speedUnit = "km/h";
+    public bool ignoreVerticalSpeed = true;
 
     public RectTransform altChangeHand;
     public float altChangeMinAngle;
@@ -196,7 +197,8 @@ public class paragliderHUD : MonoBehaviour {
             instrumentSmoothing = Mathf.Clamp(instrumentSmoothing, 0, 0.999999f);
 
 
-            speedoValue = Mathf.Lerp(glider.speed, speedoValue, instrumentSmoothing);
+           if(ignoreVerticalSpeed)  speedoValue = Mathf.Lerp(glider.speedHorrizontal, speedoValue, instrumentSmoothing);
+           else                     speedoValue = Mathf.Lerp(glider.speed, speedoValue, instrumentSmoothing);
             altitudeValue = Mathf.Lerp(glider.altitude, altitudeValue,  instrumentSmoothing);
             altChangeValue = Mathf.Lerp(glider.altChange, altChangeValue,  instrumentSmoothing);
 
