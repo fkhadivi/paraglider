@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class paragliderHUD : MonoBehaviour {
 
-    public string levelString = "Welt 0/4";
+    //public string levelInfoString = "Welt 0/4";
     public Text levelInfoText;
 
     public Image timePieFill;
@@ -14,6 +14,7 @@ public class paragliderHUD : MonoBehaviour {
     public ParagliderControler glider;
 
     public float instrumentSmoothing = 0.5f;
+    public float instrumentMaxDegreesPerSec = 1;
     public RectTransform speedoHand;
     public float speedoMinAngle;
     public float speedoMaxAngle;
@@ -34,6 +35,7 @@ public class paragliderHUD : MonoBehaviour {
     public Text altDigitsRed;
     public Text altDigitsBlack;
     public Text altDigitsWhite;
+    public Text altDigitsUnit;
     public string altUnit = "m";
 
     public experimentaAnimationPresets mapFrame;
@@ -189,8 +191,16 @@ public class paragliderHUD : MonoBehaviour {
         appear(meterInstruments, false);
     }
 
-    
-    public void updatespeedo()
+    public Vector3 getHandAngle( float value, float min, float max, float minAngle, float maxAngle, float currentAngle)
+    {
+        float targetAngle = BenjasMath.map(value, min, max, minAngle, maxAngle);
+        if (instrumentMaxDegreesPerSec > 0) targetAngle = Mathf.MoveTowardsAngle(currentAngle, targetAngle, instrumentMaxDegreesPerSec * Time.deltaTime);
+        
+        return new Vector3(0,0, targetAngle);
+    }
+        
+        
+        public void updatespeedo()
     {
         if (glider != null)
         {
@@ -202,19 +212,19 @@ public class paragliderHUD : MonoBehaviour {
             altitudeValue = Mathf.Lerp(glider.altitude, altitudeValue,  instrumentSmoothing);
             altChangeValue = Mathf.Lerp(glider.altChange, altChangeValue,  instrumentSmoothing);
 
-            speedoHand.localEulerAngles = new Vector3(0, 0, BenjasMath.map(speedoValue, speedoMin, speedoMax, speedoMinAngle, speedoMaxAngle));
+            speedoHand.localEulerAngles =  getHandAngle(speedoValue, speedoMin, speedoMax, speedoMinAngle,speedoMaxAngle, speedoHand.localEulerAngles.z);
             speedDigits.text = Mathf.FloorToInt(speedoValue).ToString() + " " + speedUnit;
 
-            altChangeHand.localEulerAngles = new Vector3(0, 0, BenjasMath.map(altChangeValue, altChangeMin, altChangeMax, altChangeMinAngle, altChangeMaxAngle));
+            altChangeHand.localEulerAngles = getHandAngle(altChangeValue, altChangeMin, altChangeMax, altChangeMinAngle, altChangeMaxAngle, altChangeHand.localEulerAngles.z);
             int alt = Mathf.FloorToInt(altitudeValue);
             string altsring = alt.ToString();
             altDigitsRed.text = altsring;
             altDigitsBlack.text = altsring;
-            altsring += " " + altUnit;
             if (alt < 10) altsring = "0" + altsring;
             if (alt < 100) altsring = "0" + altsring;
             if (alt < 1000) altsring = "0" + altsring;
             altDigitsWhite.text = altsring;
+            altDigitsUnit.text = altUnit;
         }
     }
 
@@ -224,19 +234,15 @@ public class paragliderHUD : MonoBehaviour {
 
     }
 
-    public void setLevelString(string levelString)
+    public void setLevelString(string levelInfoString)
     {
-        levelInfoText.text = levelString;
+        levelInfoText.text = levelInfoString;
     }
 
 
     // Update is called once per frame
     void Update () {
         updatespeedo();
-        if(state!=currentState)
-        {
-            toggleVisibility();
-        }
-        //setGameTime(timePieFillAmount);
+        if (state!=currentState) toggleVisibility();
     }
 }

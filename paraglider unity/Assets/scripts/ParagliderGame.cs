@@ -177,7 +177,7 @@ public class ParagliderGame : MonoBehaviour {
         string level    = "0404.MT." + stateToString(state) + ".C";
         HUD.altUnit = TextProvider.GetText(alt);
         HUD.speedUnit = TextProvider.GetText(speed);
-        HUD.levelString = TextProvider.GetText(level) +" "+ currentLevel + "/" + levelControl.getLastLevel();
+        HUD.setLevelString(TextProvider.GetText(level) + " " + currentLevel + "/" + levelControl.getLastLevel());
     }
 
     /// <summary>
