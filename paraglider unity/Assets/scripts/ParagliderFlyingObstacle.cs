@@ -6,11 +6,11 @@ public class ParagliderFlyingObstacle : MonoBehaviour {
 
 	public Transform player;
 	public float speed = 0.0f;
-	public bool agrassive=true;
 	public Color debugColor;
 	public Rigidbody rigi;
-	public float maximumVelocityInKMH = 50;
-	public float maximumAccelerationInG = 1;
+	//public float maximumVelocityInKMH = 50;
+	//public float maximumAccelerationInG = 1;
+
 
 
 	// Use this for initialization
@@ -23,7 +23,7 @@ public class ParagliderFlyingObstacle : MonoBehaviour {
 		rigi.useGravity=false;
         //rigi.isKinematic = true;
 		rigi.mass = 1000;
-	}
+    }
 
     private void OnEnable()
     {
@@ -34,7 +34,7 @@ public class ParagliderFlyingObstacle : MonoBehaviour {
 	{
 		Transform glider = null;
 		AeroplaneUserControl player = transform.root.GetComponentInChildren<AeroplaneUserControl>();
-		Debug.Log("ae user search: " + player);
+		Debug.Log("hello I am your friendly neighbourhood "+ gameObject.name + ", performing ae user search: " + player);
 		if(player != null) 
 			glider = player.transform;
 		else 
@@ -104,7 +104,7 @@ public class ParagliderFlyingObstacle : MonoBehaviour {
 	public float TimeToSpawn = 0;
 	bool spawnInFromleft = false;
 	bool spawning=false;
-
+    
 
 	public void spawn()
 	{
@@ -121,12 +121,16 @@ public class ParagliderFlyingObstacle : MonoBehaviour {
 			else MaxSpawningAngle=Mathf.Abs(MaxSpawningAngle);
 			// in any case set Min angle to positiv
 			MinSpawningAngle = Mathf.Abs(MinSpawningAngle);
-			// than check if player is turning left and if so, make angles negative = left side of screen 
-			if(playerRigi.angularVelocity.y<0) 
+            // than check if player is turning left
+            bool playerTurnsLeft = playerRigi.angularVelocity.y < 0;
+            Debug.Log("playerTurnsLeft " + playerTurnsLeft);
+            if (playerTurnsLeft) 
 			{
-				MaxSpawningAngle=-MaxSpawningAngle;
+                // make angles negative = left side of screen 
+                MaxSpawningAngle = -MaxSpawningAngle;
 				MinSpawningAngle=-MinSpawningAngle;
 			}
+            flip(playerTurnsLeft);
 			TimeToSpawn = MaxTimeToSpawn;
 		}
 
@@ -156,18 +160,40 @@ public class ParagliderFlyingObstacle : MonoBehaviour {
 		rigi.velocity = new Vector3();
 	}
 
-	//return the horrizontal Field of View of a camera
-	 float horrizontalFOV(Camera cam){
 
-		float degrees = cam.fieldOfView ;
-		degrees *= Mathf.Deg2Rad;
-		degrees = 2f * Mathf.Atan(Mathf.Tan(degrees / 2f) * cam.aspect);
-		degrees *= (float) Mathf.Rad2Deg;
-		return degrees;
+    [Tooltip("tick if object forward direction looks right (>>>) right now ")]
+    public bool lookingLeftToRight;
 
-	}
+    /// <summary>
+    /// flip or flip back the x of the object (fly left or right)
+    /// </summary>
+    /// <param name="lookLeftToRight">should look Left To Right or Right to left</param>
+    public void flip(bool lookLeftToRight)
+    {
 
-	void Update () 
+        //if it was lookingLeftToRight at start, the whole flipping works the other way round
+        Debug.Log(" looking"+(lookingLeftToRight?">>>":"<<<") + " should look "+(lookLeftToRight ? ">>>" : "<<<"));
+        if (lookingLeftToRight == lookLeftToRight) return;
+        Debug.Log("flipping");
+        lookingLeftToRight = lookLeftToRight;
+        Vector3 scale = transform.localScale;
+        scale.x *= -1;
+        transform.localScale = scale;
+    }
+
+    //return the horrizontal Field of View of a camera
+    float horrizontalFOV(Camera cam)
+    {
+
+        float degrees = cam.fieldOfView;
+        degrees *= Mathf.Deg2Rad;
+        degrees = 2f * Mathf.Atan(Mathf.Tan(degrees / 2f) * cam.aspect);
+        degrees *= (float)Mathf.Rad2Deg;
+        return degrees;
+
+    }
+
+    void Update () 
 	{
         transform.localEulerAngles = Vector3.zero;
 
@@ -179,12 +205,14 @@ public class ParagliderFlyingObstacle : MonoBehaviour {
 				spawn();
 			}
 		}
+
+
 	}
 
 	// Update is called once per frame
 	void FixedUpdate () 
 	{
-
+        /*
 		if(player!= null)
 		{
 			if(!spawning && maximumVelocityInKMH!=0)
@@ -192,6 +220,7 @@ public class ParagliderFlyingObstacle : MonoBehaviour {
 			//	interceptRectangular(player,maximumVelocityInKMH/3.6f,maximumAccelerationInG*9.81f);
 			}
 		}
+        */
 	}
 
 }

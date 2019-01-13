@@ -4,7 +4,7 @@
 	{
 		_TintColor("Tint Color", Color) = (0.5,0.5,0.5,0.5)
 		_MainTex("Particle Texture", 2D) = "white" {}
-	_Scale("Scale", float) = 1.0
+		_Scale("Scale", float) = 1.0
 	}
 
 		Category

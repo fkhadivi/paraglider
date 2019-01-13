@@ -60,7 +60,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\billboardCPU.cs" />
     <Compile Include="Assets\scripts\addImage.cs" />
     <Compile Include="Assets\scripts\AeroplaneController.cs" />
     <Compile Include="Assets\scripts\AeroplaneUserControl.cs" />
@@ -68,6 +67,7 @@
     <Compile Include="Assets\scripts\BenjasMath.cs" />
     <Compile Include="Assets\scripts\BigWheel_benja.cs" />
     <Compile Include="Assets\scripts\billboardBkShaderRotation.cs" />
+    <Compile Include="Assets\scripts\billboardCPU.cs" />
     <Compile Include="Assets\scripts\bmcmSensor.cs" />
     <Compile Include="Assets\scripts\cameraFourPointProjection.cs" />
     <Compile Include="Assets\scripts\compassStrip_benja.cs" />
@@ -131,6 +131,7 @@
     <None Include="Assets\paraglider\Shaders\ToonLitOutline.shader" />
     <None Include="Assets\paraglider\Shaders\ToonLit.shader" />
     <None Include="Assets\paraglider\Shaders\NewSurfaceShader.shader" />
+    <None Include="Assets\shaders\UnlitShaderWater.shader" />
     <None Include="Assets\shaders\billboardTerrainBK.shader" />
     <None Include="Assets\scripts\shaders\ToonShading\Shaders\ToonBasic.shader" />
     <None Include="Assets\scripts\shaders\ToonShading\Shaders\ToonBasicOutline.shader" />
@@ -141,16 +142,16 @@
     <None Include="Assets\Resources\LightMapData_djungle\mapconfig.txt" />
     <None Include="Assets\shaders\unlitTransparentZbuffering.shader" />
     <Reference Include="UnityEditor.StandardEvents">
-      <HintPath>D:/git/paraglider/paraglider unity/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
+      <HintPath>C:/data/git/paraglider/paraglider unity/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro.Editor">
-      <HintPath>D:/git/paraglider/paraglider unity/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
+      <HintPath>C:/data/git/paraglider/paraglider unity/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.PackageManagerUI.Editor">
-      <HintPath>D:/git/paraglider/paraglider unity/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
+      <HintPath>C:/data/git/paraglider/paraglider unity/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
-      <HintPath>D:/git/paraglider/paraglider unity/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
+      <HintPath>C:/data/git/paraglider/paraglider unity/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AIModule">
       <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>
@@ -351,13 +352,13 @@
       <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnitySpatialTracking/RuntimeEditor/UnityEngine.SpatialTracking.dll</HintPath>
     </Reference>
     <Reference Include="Antlr3.Runtime">
-      <HintPath>D:/git/paraglider/paraglider unity/Assets/Plugins/Antlr3.Runtime.dll</HintPath>
+      <HintPath>C:/data/git/paraglider/paraglider unity/Assets/Plugins/Antlr3.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Excel">
-      <HintPath>D:/git/paraglider/paraglider unity/Assets/Plugins/Excel.dll</HintPath>
+      <HintPath>C:/data/git/paraglider/paraglider unity/Assets/Plugins/Excel.dll</HintPath>
     </Reference>
     <Reference Include="RTL">
-      <HintPath>D:/git/paraglider/paraglider unity/Assets/Plugins/RTL.dll</HintPath>
+      <HintPath>C:/data/git/paraglider/paraglider unity/Assets/Plugins/RTL.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.Analytics">
       <HintPath>C:/Users/benja/AppData/Local/Unity/cache/packages/packages.unity.com/com.unity.analytics@2.0.16/UnityEngine.Analytics.dll</HintPath>

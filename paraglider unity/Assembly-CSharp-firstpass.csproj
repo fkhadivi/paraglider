@@ -147,16 +147,16 @@
     <None Include="Assets\Standard Assets\ParticleSystems\Shaders\PriorityParticleAdd.shader" />
     <None Include="Assets\Standard Assets\Effects\TessellationShaders\Shaders\BumpedSpecularDisplacement.shader" />
     <Reference Include="UnityEditor.StandardEvents">
-      <HintPath>D:/git/paraglider/paraglider unity/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
+      <HintPath>C:/data/git/paraglider/paraglider unity/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro.Editor">
-      <HintPath>D:/git/paraglider/paraglider unity/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
+      <HintPath>C:/data/git/paraglider/paraglider unity/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.PackageManagerUI.Editor">
-      <HintPath>D:/git/paraglider/paraglider unity/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
+      <HintPath>C:/data/git/paraglider/paraglider unity/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
-      <HintPath>D:/git/paraglider/paraglider unity/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
+      <HintPath>C:/data/git/paraglider/paraglider unity/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AIModule">
       <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>
@@ -357,13 +357,13 @@
       <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnitySpatialTracking/RuntimeEditor/UnityEngine.SpatialTracking.dll</HintPath>
     </Reference>
     <Reference Include="Antlr3.Runtime">
-      <HintPath>D:/git/paraglider/paraglider unity/Assets/Plugins/Antlr3.Runtime.dll</HintPath>
+      <HintPath>C:/data/git/paraglider/paraglider unity/Assets/Plugins/Antlr3.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Excel">
-      <HintPath>D:/git/paraglider/paraglider unity/Assets/Plugins/Excel.dll</HintPath>
+      <HintPath>C:/data/git/paraglider/paraglider unity/Assets/Plugins/Excel.dll</HintPath>
     </Reference>
     <Reference Include="RTL">
-      <HintPath>D:/git/paraglider/paraglider unity/Assets/Plugins/RTL.dll</HintPath>
+      <HintPath>C:/data/git/paraglider/paraglider unity/Assets/Plugins/RTL.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.Analytics">
       <HintPath>C:/Users/benja/AppData/Local/Unity/cache/packages/packages.unity.com/com.unity.analytics@2.0.16/UnityEngine.Analytics.dll</HintPath>
