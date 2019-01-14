@@ -24,7 +24,7 @@
 	<startSpeed>3000</startSpeed>
   </game>
   <controller>
-	<maxEnginePower>10</maxEnginePower>
+	<maxEnginePower>9</maxEnginePower>
 	<lift>-10</lift>
 	<zeroLiftSpeed>5</zeroLiftSpeed>
 	<rollEffect>2</rollEffect>

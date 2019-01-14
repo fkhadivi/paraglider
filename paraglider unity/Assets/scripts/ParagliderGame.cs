@@ -350,8 +350,8 @@ public class ParagliderGame : MonoBehaviour {
 	{
         if (spawnByCollider)
         {
-			GameObject spawned = levelControl.levelInfo().spawnFlyingObject().gameObject;
-			if(debug && spawned!= null)
+            GameObject spawned = makeSpawn();
+            if (debug && spawned!= null)
             debugInfo.log("spawned", spawned.name );
             
             Debug.Log("triggered spawn point");
@@ -359,6 +359,7 @@ public class ParagliderGame : MonoBehaviour {
         }
     }
 
+    private GameObject makeSpawn() { return levelControl.levelInfo().spawnFlyingObject().gameObject; }
 
     /*
          ▀▀█▀▀  █  █  █▀▀▀  █▀▀▄  █▄ ▄█  ▀█▀  ▄▀▀▄  ▄▀▀▀ 
@@ -515,7 +516,7 @@ public class ParagliderGame : MonoBehaviour {
     	}
 		if (Input.GetKeyDown("s")) 
     	{
-    	  	onSpawn();
+            makeSpawn();
     	}
 		if (Input.GetKeyDown("l")) 
     	{

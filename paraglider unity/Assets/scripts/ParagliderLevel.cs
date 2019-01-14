@@ -91,7 +91,7 @@ public class ParagliderLevel : MonoBehaviour {
         if (availableMobilObstacles.Count > 0)
         {
             int i = UnityEngine.Random.Range(0, availableMobilObstacles.Count);
-            Debug.Log("level "+SceneManager.GetActiveScene().name+" - fetching index " + i + " out of " + availableMobilObstacles.Count + "available objetcs");
+            Debug.Log("level "+SceneManager.GetActiveScene().name+" - fetching index " + i + " out of " + availableMobilObstacles.Count + " available objetcs");
             GameObject copy = Instantiate(availableMobilObstacles[i].gameObject);
             copy.transform.parent = terrain.transform;
             copy.SetActive(true);
