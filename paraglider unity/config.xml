@@ -18,7 +18,7 @@
     <forceOnThermicUp>1200.0</forceOnThermicUp>
     <forceOnThermicDown>-900.0</forceOnThermicDown>
     <!-- acceleration down when glider is too high -->
-    <forceOnMaxHeight>-1111</forceOnMaxHeight>
+    <forceOnMaxHeight>-750</forceOnMaxHeight>
 	<collisionMaxAngleForCrash>45</collisionMaxAngleForCrash>
 	<minCrashThresholdMPS>1</minCrashThresholdMPS>
 	<startSpeed>3000</startSpeed>
