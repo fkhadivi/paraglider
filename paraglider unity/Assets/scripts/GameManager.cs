@@ -52,6 +52,8 @@ public class GameManager : MonoBehaviour {
     {
         instance = this;
         Configuration.LoadConfig();
+
+        Application.targetFrameRate = 30;
     }
 
     
@@ -76,6 +78,9 @@ public class GameManager : MonoBehaviour {
         StartStandbymodus(); 
     }
 
+    float testTime = 0;
+    float testTime2 = 0;
+    int num = 0;
     // Update is called once per frame
     void Update () {
         if (startGameNow)
@@ -91,6 +96,38 @@ public class GameManager : MonoBehaviour {
         {
             UDPSender.SendUDPStringUTF8(ip,port,"Hello World!");
         }
+        /*
+        if (testTime > 1.0)
+        {
+            num++;
+            testTime = 0;
+
+            if(num > 2)
+            {
+                num = 0;
+            }
+
+            switch (num)
+            {
+                case 0:
+                    UDPSender.SendUDPStringUTF8(ip, port, "state=standbymodus");
+                    break;
+                case 1:
+                    UDPSender.SendUDPStringUTF8(ip, port, "state=activation;action=open;");
+                    break;
+                case 2:
+                    UDPSender.SendUDPStringUTF8(ip, port, "state=game;action=start;");
+                    break;
+
+            }
+         
+        }
+        else
+        {
+            testTime += Time.deltaTime;
+
+        }
+        */
         // --------------------------------
 
         if (goToStandbyModusNow)
