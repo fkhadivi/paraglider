@@ -13,8 +13,6 @@ public class GameManager : MonoBehaviour {
     static int port = 6000;
     int listenerPort = 5000;
 
-    public static string languageCode = "de";
-
     bool pulledReipcord = false;
     bool controlledGrips = false;
     bool leavedGrips = false;
@@ -73,7 +71,7 @@ public class GameManager : MonoBehaviour {
         inputManager = InputManager.GetInstance();
 
         TextProvider.Load("text_9681.xlsx");
-        TextProvider.lang = languageCode;
+        TextProvider.lang = "de";
 
         StartStandbymodus(); 
     }
@@ -89,14 +87,15 @@ public class GameManager : MonoBehaviour {
             startGameNow = false;
         }
 
-        currentState = state.ToString()+"   (language "+languageCode+")";
+        currentState = state.ToString()+"   (language "+ TextProvider.lang + ")";
         cheatkeys(); //use keyboard input
         // Test --------------------------
         if (Input.GetKeyDown(KeyCode.M))
         {
             UDPSender.SendUDPStringUTF8(ip,port,"Hello World!");
         }
-        /*
+
+#if UNITY_EDITOR
         if (testTime > 1.0)
         {
             num++;
@@ -127,7 +126,8 @@ public class GameManager : MonoBehaviour {
             testTime += Time.deltaTime;
 
         }
-        */
+#endif
+
         // --------------------------------
 
         if (goToStandbyModusNow)
@@ -156,6 +156,11 @@ public class GameManager : MonoBehaviour {
                 state = STATE.STARTGAME;
                 startGameNow = true;
             }
+        }else if (e.IndexOf("language") > -1)
+        {
+            string languageCode = e.Replace("language=", "");
+            TextProvider.lang = languageCode;
+            ParagliderGame.GetInstance().updateHudTexts();
         }
     }
 
@@ -198,7 +203,7 @@ public class GameManager : MonoBehaviour {
         }
         else if (state == STATE.INTRO)
         {
-            ChangeLanguage();
+            ToogleLanguage();
         }
         else if (state == STATE.GAME)
         {
@@ -259,17 +264,17 @@ public class GameManager : MonoBehaviour {
     }
 
     // 2.00 Aktivierung
-    public static void ChangeLanguage()
+    public static void ToogleLanguage()
     {
-        if(languageCode == "en") {
-            languageCode = "de";
+        if(TextProvider.lang == "en") {
+            TextProvider.lang = "de";
         }
         else
         {
-            languageCode = "en";
+            TextProvider.lang = "en";
         }
-        TextProvider.lang = languageCode;
-        UDPSender.SendUDPStringUTF8(ip, port, "state=intro;action=ripcord;value=" + languageCode);
+        Debug.Log("Language: " + TextProvider.lang);
+        UDPSender.SendUDPStringUTF8(ip, port, "state=intro;action=ripcord;value=" + TextProvider.lang);
         ParagliderGame.GetInstance().updateHudTexts();
     }
 
