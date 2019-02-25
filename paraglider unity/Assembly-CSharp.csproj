@@ -108,6 +108,7 @@
     <Compile Include="Assets\scripts\Text\ITextFile.cs" />
     <Compile Include="Assets\scripts\Text\Log.cs" />
     <Compile Include="Assets\scripts\Text\TextProvider.cs" />
+    <Compile Include="Assets\scripts\TriggerChecker.cs" />
     <Compile Include="Assets\scripts\UDP\BinaryData.cs" />
     <Compile Include="Assets\scripts\UDP\NetworkTools.cs" />
     <Compile Include="Assets\scripts\UDP\UDPListener.cs" />

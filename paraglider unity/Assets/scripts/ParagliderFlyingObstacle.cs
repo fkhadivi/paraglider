@@ -172,9 +172,9 @@ public class ParagliderFlyingObstacle : MonoBehaviour {
     {
 
         //if it was lookingLeftToRight at start, the whole flipping works the other way round
-        Debug.Log(" looking"+(lookingLeftToRight?">>>":"<<<") + " should look "+(lookLeftToRight ? ">>>" : "<<<"));
+        Debug.Log(gameObject.name + "is  looking"+(lookingLeftToRight?">>>":"<<<") + " should look "+(lookLeftToRight ? ">>>" : "<<<"));
         if (lookingLeftToRight == lookLeftToRight) return;
-        Debug.Log("flipping");
+        Debug.Log("flipping "+ gameObject.name);
         lookingLeftToRight = lookLeftToRight;
         Vector3 scale = transform.localScale;
         scale.x *= -1;

@@ -13,9 +13,10 @@ public class paragliderHUD : MonoBehaviour {
 
     public ParagliderControler glider;
 
-    public float instrumentSmoothing = 0.5f;
+    //public float instrumentSmoothing = 0.5f;
     public float instrumentMaxDegreesPerSec = 1;
     public RectTransform speedoHand;
+    public float sppedoSmoothing = 0.9f;
     public float speedoMinAngle;
     public float speedoMaxAngle;
     public float speedoMin;
@@ -26,6 +27,9 @@ public class paragliderHUD : MonoBehaviour {
     public bool ignoreVerticalSpeed = true;
 
     public RectTransform altChangeHand;
+    public float altChangeSmoothing = 0.9f;
+    public Vector2 altChangeSmoothingMinMax = new Vector2(0.8f, 0.99f);
+    public Vector2 altChangeSmoothingAltLimits = new Vector2(50, 150);
     public float altChangeMinAngle;
     public float altChangeMaxAngle;
     public float altChangeMin;
@@ -55,9 +59,16 @@ public class paragliderHUD : MonoBehaviour {
 
 }
 
-    public int state = 0;
-    private int currentState = 1;
+    public STATE state;
+    public STATE currentState;
 
+    public enum STATE
+    {
+        HIDDEN,
+        COMPLETE,
+        NO_INFO,
+        INFO_ONLY
+    }
 
     /*
     public void toggleVisibility(bool shouldBeVisible)
@@ -86,29 +97,17 @@ public class paragliderHUD : MonoBehaviour {
     {
         switch(state)
         {
-            case 0:
+            case STATE.HIDDEN:
                 appearHIDDEN();
-                currentState = state;
                 break;
-            case 1:
+            case STATE.COMPLETE:
                 appearCOMPLETE();
-                currentState = state;
                 break;
-            case 2:
+            case STATE.NO_INFO:
                 appearNOINFO();
-                currentState = state;
                 break;
-            case 3:
+            case STATE.INFO_ONLY:
                 appearINFOONLY();
-                currentState = state;
-                break;
-            case 5:
-                appearTESTa();
-                currentState = state;
-                break;
-            case 6:
-                appearTESTb();
-                currentState = state;
                 break;
             default:
                 // something wrong, set back state
@@ -134,6 +133,7 @@ public class paragliderHUD : MonoBehaviour {
         appear(compassForeground, true);
         appear(compassBarShrinker, true);
         appear(compassBarMover, true);
+        currentState = state = STATE.COMPLETE;
     }
 
     public void appearNOINFO()
@@ -147,6 +147,7 @@ public class paragliderHUD : MonoBehaviour {
         appear(compassForeground, true);
         appear(compassBarShrinker, false);
         appear(compassBarMover, true);
+        currentState = state = STATE.NO_INFO;
     }
 
     public void appearINFOONLY()
@@ -160,6 +161,7 @@ public class paragliderHUD : MonoBehaviour {
         appear(compassForeground, false);
         appear(compassBarShrinker, true);
         appear(compassBarMover, false);
+        currentState = state = STATE.INFO_ONLY;
     }
 
     public void appearHIDDEN()
@@ -173,22 +175,7 @@ public class paragliderHUD : MonoBehaviour {
         appear(compassForeground, false);
         appear(compassBarShrinker, true);
         appear(compassBarMover, false);
-    }
-
-    private void appearTESTa()
-    {
-        appear(meterFrame, true);
-        appear(meterFrameStraight, false);
-        appear(meterFrameCutout, true);
-        appear(meterInstruments, false);
-    }
-
-    private void appearTESTb()
-    {
-        appear(meterFrame, true);
-        appear(meterFrameStraight, true);
-        appear(meterFrameCutout, false);
-        appear(meterInstruments, false);
+        currentState = state = STATE.HIDDEN;
     }
 
     public Vector3 getHandAngle( float value, float min, float max, float minAngle, float maxAngle, float currentAngle)
@@ -204,25 +191,30 @@ public class paragliderHUD : MonoBehaviour {
     {
         if (glider != null)
         {
-            instrumentSmoothing = Mathf.Clamp(instrumentSmoothing, 0, 0.999999f);
-
-
-           if(ignoreVerticalSpeed)  speedoValue = Mathf.Lerp(glider.speedHorrizontal, speedoValue, instrumentSmoothing);
-           else                     speedoValue = Mathf.Lerp(glider.speed, speedoValue, instrumentSmoothing);
-            altitudeValue = Mathf.Lerp(glider.altitude, altitudeValue,  instrumentSmoothing);
-            altChangeValue = Mathf.Lerp(glider.altChange, altChangeValue,  instrumentSmoothing);
-
-            speedoHand.localEulerAngles =  getHandAngle(speedoValue, speedoMin, speedoMax, speedoMinAngle,speedoMaxAngle, speedoHand.localEulerAngles.z);
+            sppedoSmoothing = Mathf.Clamp(sppedoSmoothing, 0, 0.999999f);
+            if (ignoreVerticalSpeed)  speedoValue = Mathf.Lerp(glider.speedHorrizontal, speedoValue, sppedoSmoothing);
+           else                     speedoValue = Mathf.Lerp(glider.speed, speedoValue, sppedoSmoothing);
+            speedoHand.localEulerAngles = getHandAngle(speedoValue, speedoMin, speedoMax, speedoMinAngle, speedoMaxAngle, speedoHand.localEulerAngles.z);
             speedDigits.text = Mathf.FloorToInt(speedoValue).ToString() + " " + speedUnit;
 
+            //adaptive smoothing depending on height
+            altChangeSmoothingMinMax.x = Mathf.Clamp(altChangeSmoothingMinMax.x, 0, 0.999999f);
+            altChangeSmoothingMinMax.y = Mathf.Clamp(altChangeSmoothingMinMax.y, 0, 0.999999f);
+            altChangeSmoothing = BenjasMath.map(altitudeValue
+                                                , altChangeSmoothingAltLimits.x, altChangeSmoothingAltLimits.y
+                                                , altChangeSmoothingMinMax.x, altChangeSmoothingMinMax.y);
+            //apply values
+            altitudeValue = Mathf.Lerp(glider.altitude, altitudeValue, altChangeSmoothing);
+            altChangeValue = Mathf.Lerp(glider.altChange, altChangeValue, altChangeSmoothing);
             altChangeHand.localEulerAngles = getHandAngle(altChangeValue, altChangeMin, altChangeMax, altChangeMinAngle, altChangeMaxAngle, altChangeHand.localEulerAngles.z);
+
             int alt = Mathf.FloorToInt(altitudeValue);
             string altsring = alt.ToString();
             altDigitsRed.text = altsring;
             altDigitsBlack.text = altsring;
             if (alt < 10) altsring = "0" + altsring;
             if (alt < 100) altsring = "0" + altsring;
-            if (alt < 1000) altsring = "0" + altsring;
+            //if (alt < 1000) altsring = "0" + altsring;
             altDigitsWhite.text = altsring;
             altDigitsUnit.text = altUnit;
         }
@@ -243,6 +235,6 @@ public class paragliderHUD : MonoBehaviour {
     // Update is called once per frame
     void Update () {
         updatespeedo();
-        if (state!=currentState) toggleVisibility();
+        if (currentState != state) toggleVisibility();
     }
 }

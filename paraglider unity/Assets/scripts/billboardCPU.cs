@@ -19,9 +19,10 @@ public class billboardCPU : MonoBehaviour {
         if (target == null)
         {
             target = Camera.main.gameObject;
-            Debug.Log(Camera.main.gameObject.name + "found as cam");
+            Debug.Log(Camera.main.gameObject.name + " found as cam");
         }
-	}
+        isSetUp = true;
+    }
 
 
 	

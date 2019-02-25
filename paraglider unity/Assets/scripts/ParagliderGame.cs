@@ -215,6 +215,15 @@ public class ParagliderGame : MonoBehaviour {
         gliderRig.AddRelativeForce(Vector3.forward * (float)Configuration.GetInnerTextByTagName("startSpeed", 2000.0)) ;
     }
 
+    /// <summary>
+    /// resume After Pause
+    /// </summary>
+    public void gameResume()
+    {
+        gamePause(false);
+        // start velocity -> fix to make it easier to steer
+        gliderRig.AddRelativeForce(Vector3.forward * 0.5f* (float)Configuration.GetInnerTextByTagName("startSpeed", 2000.0));
+    }
 
 
 
@@ -233,14 +242,7 @@ public class ParagliderGame : MonoBehaviour {
     {
         pausing = doPause;
         glider.togglePhysics(!pausing);
-
     }
-
-
-
-
-
-
 
 
 	/*
@@ -257,7 +259,6 @@ public class ParagliderGame : MonoBehaviour {
         changestate(STATE.CRASH);
         HUD.appearINFOONLY();
         updateHudTexts();
-    
         GameManager.GameOver(false);
     }
 
@@ -282,7 +283,6 @@ public class ParagliderGame : MonoBehaviour {
             updateHudTexts();
             GameManager.ChangePromptTextInIGP(4);//06.00 Welt 4: Ziel
         }
-
     }
 
     /// <summary>
@@ -298,6 +298,8 @@ public class ParagliderGame : MonoBehaviour {
             else onFinalFinish();
         }
     }
+
+
 
     /// <summary>
     /// called on final finish
@@ -326,10 +328,6 @@ public class ParagliderGame : MonoBehaviour {
         GameManager.GameOver(true);
         
     }
-
-
-
-   
 
 
 

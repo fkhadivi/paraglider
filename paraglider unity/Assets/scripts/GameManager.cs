@@ -348,7 +348,6 @@ public class GameManager : MonoBehaviour {
                 break;
             case 5:
                 actionString = "gameover";
-                Debug.LogError("please implement this");
                 break;
             default:
                 Debug.LogError("case " + _id + "  is missing");
@@ -405,7 +404,7 @@ public class GameManager : MonoBehaviour {
     {
         state = STATE.ABORT;
         UDPSender.SendUDPStringUTF8(ip, port, "state=abort;action=open");
-        ParagliderGame.GetInstance().gamePause(true);
+        ParagliderGame.GetInstance().gamePause();
     }
 
     // 10.0 Abbruch - Resume
@@ -414,7 +413,8 @@ public class GameManager : MonoBehaviour {
         state = STATE.GAME;
         UDPSender.SendUDPStringUTF8(ip, port, "state=game;action=resume");
         //ParagliderGame.GetInstance().gamePause(false);
-        StartPlaying();
+        //StartPlaying();
+        ParagliderGame.GetInstance().gameResume();
     }
 
     // 11.0 Inaktivität
