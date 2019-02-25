@@ -20,7 +20,7 @@ MonoBehaviour:
   m_ShowMode: 4
   m_Title: 
   m_RootView: {fileID: 2}
-  m_MinSize: {x: 950, y: 542}
+  m_MinSize: {x: 950, y: 392}
   m_MaxSize: {x: 10000, y: 10000}
 --- !u!114 &2
 MonoBehaviour:
@@ -43,7 +43,7 @@ MonoBehaviour:
     y: 0
     width: 1500
     height: 918
-  m_MinSize: {x: 950, y: 542}
+  m_MinSize: {x: 950, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
 --- !u!114 &3
 MonoBehaviour:
@@ -106,8 +106,8 @@ MonoBehaviour:
     y: 30
     width: 1500
     height: 868
-  m_MinSize: {x: 683, y: 492}
-  m_MaxSize: {x: 14004, y: 14042}
+  m_MinSize: {x: 679, y: 342}
+  m_MaxSize: {x: 12004, y: 8042}
   vertical: 0
   controlID: 37
 --- !u!114 &6
@@ -130,8 +130,8 @@ MonoBehaviour:
     y: 0
     width: 1223
     height: 868
-  m_MinSize: {x: 406, y: 492}
-  m_MaxSize: {x: 10002, y: 14042}
+  m_MinSize: {x: 404, y: 342}
+  m_MaxSize: {x: 8004, y: 8042}
   vertical: 1
   controlID: 38
 --- !u!114 &7
@@ -154,8 +154,8 @@ MonoBehaviour:
     y: 0
     width: 1223
     height: 505
-  m_MinSize: {x: 406, y: 221}
-  m_MaxSize: {x: 8006, y: 4021}
+  m_MinSize: {x: 404, y: 221}
+  m_MaxSize: {x: 8004, y: 4021}
   vertical: 0
   controlID: 39
 --- !u!114 &8
@@ -176,8 +176,8 @@ MonoBehaviour:
     y: 0
     width: 331
     height: 505
-  m_MinSize: {x: 202, y: 221}
-  m_MaxSize: {x: 4002, y: 4021}
+  m_MinSize: {x: 200, y: 200}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 13}
   m_Panes:
   - {fileID: 13}
@@ -228,14 +228,14 @@ MonoBehaviour:
     y: 505
     width: 1223
     height: 363
-  m_MinSize: {x: 232, y: 271}
-  m_MaxSize: {x: 10002, y: 10021}
-  m_ActualView: {fileID: 16}
+  m_MinSize: {x: 100, y: 100}
+  m_MaxSize: {x: 4000, y: 4000}
+  m_ActualView: {fileID: 17}
   m_Panes:
   - {fileID: 16}
   - {fileID: 17}
-  m_Selected: 0
-  m_LastSelected: 1
+  m_Selected: 1
+  m_LastSelected: 0
 --- !u!114 &11
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -254,8 +254,8 @@ MonoBehaviour:
     y: 0
     width: 277
     height: 868
-  m_MinSize: {x: 277, y: 71}
-  m_MaxSize: {x: 4002, y: 4021}
+  m_MinSize: {x: 275, y: 50}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 18}
   m_Panes:
   - {fileID: 18}
@@ -367,9 +367,9 @@ MonoBehaviour:
   m_PersistentViewDataDictionary: {fileID: 0}
   m_TreeViewState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: ec0e0000
-    m_LastClickedID: 0
-    m_ExpandedIDs: 5ccfc6ff5ecfc6ff44d4c6ffecdfc6ff3615c9ff3815c9ff4c22c9ffbc44ceffbe44ceff3250ceff1e6cceff206cceff7c00cfff0a02e7ff0c02e7ffe209e7ff3a87e7ff3c87e7ffdc8ae7ffde8ae7ff4691e7ffbad9e7ff3828eaff3a28eaff2e2feaff6c03ecff486dedff06d2f1ff08d2f1ffecdbf1ffbcdbf5ff7abbfbff7cbbfbff42c0fbffc034fdff2ee3ffff30e3ffff6cedffff5ef9ffffecf9ffff5efbffffe2fbffffe4fbffff000000004227000040280000282900005c290000e62a00000e2b0000d657000074580000e058000076e80000e2e800004ee90000549b010022f401008ef40100faf4010076c0020048500300b45003002051030058620300f272030090730300fc7303006874030034850300a08503000c8603000e97030006ac030072ac030074bd03005c2d0400c82d0400342e0400ee9d04008c9e0400f89e0400
+    m_SelectedIDs: b22a0000
+    m_LastClickedID: 10930
+    m_ExpandedIDs: e4fbffff000000001e280000b22a0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -456,7 +456,7 @@ MonoBehaviour:
   m_Rotation:
     m_Target: {x: -0.20509239, y: 0.37822714, z: -0.08632707, w: -0.89857745}
     speed: 2
-    m_Value: {x: -0.20509112, y: 0.3782248, z: -0.08632653, w: -0.8985719}
+    m_Value: {x: -0.20509239, y: 0.37822714, z: -0.08632706, w: -0.89857745}
   m_Size:
     m_Target: 2.1841352
     speed: 2
@@ -534,19 +534,19 @@ MonoBehaviour:
     m_ShowAllHits: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/paraglider/textures
+    - Assets/paraglider
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - Assets/paraglider/textures
+  - Assets/paraglider
   m_LastFoldersGridSize: 16
   m_LastProjectPath: C:\data\git\paraglider\paraglider unity
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 7e0f0000
-    m_LastClickedID: 3966
+    m_SelectedIDs: bc110000
+    m_LastClickedID: 4540
     m_ExpandedIDs: 00000000a40a0000ae0a0000bc110000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -606,18 +606,18 @@ MonoBehaviour:
     m_ExpandedInstanceIDs: c6230000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
-      m_Name: paraglider_object_heli_wasser
-      m_OriginalName: paraglider_object_heli_wasser
+      m_Name: 
+      m_OriginalName: 
       m_EditFieldRect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 0
         height: 0
-      m_UserData: 3458
+      m_UserData: 0
       m_IsWaitingForDelay: 0
       m_IsRenaming: 0
-      m_OriginalEventType: 0
+      m_OriginalEventType: 11
       m_IsRenamingFilename: 1
       m_ClientGUIView: {fileID: 10}
     m_CreateAssetUtility:

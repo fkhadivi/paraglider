@@ -416,7 +416,7 @@ public class GameManager : MonoBehaviour {
         //StartPlaying();
         ParagliderGame.GetInstance().gameResume();
     }
-
+    
     // 11.0 Inaktivität
     public static void OpenInactivityDialog()
     {

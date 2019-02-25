@@ -225,6 +225,7 @@ public class ParagliderGame : MonoBehaviour {
         gliderRig.AddRelativeForce(Vector3.forward * 0.5f* (float)Configuration.GetInnerTextByTagName("startSpeed", 2000.0));
     }
 
+    
 
 
     /// <summary>
