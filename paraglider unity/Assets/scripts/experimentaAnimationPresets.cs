@@ -7,21 +7,20 @@ public class experimentaAnimationPresets : MonoBehaviour {
 
 
 
-    public string info = "for notes, wont influence the script";
     public bool visible = true;
-    private bool lastFrameVisible = true;
     public bool alwaysCompleteTransition = false;
+
+
+    [Header("CANT TOUCH THIS")]
+    public STATE state = STATE.IDLE;
     private bool dontTouchAlpha = false;
-
-
-    private float visibilityTarget = 1;
-    private float visibilityTargetFinal = 1;
-    public float visibility = 1;
     private bool easeIn = false;
     private bool easeOut = false;
     private float transitionTime;
     public float delay = 0;
-    public  bool inTransition = false;
+    public float visibilityCurrent = 1;
+    private float visibilityTarget = 1;
+
     private float[] defaultAlphaImages;
     private float[] defaultAlphaTexts;
     private RectTransform trafo;
@@ -29,6 +28,7 @@ public class experimentaAnimationPresets : MonoBehaviour {
     private Text[] texts;
     public bool forceReset = false;
 
+    [Header("Adjust Intro")]
     public bool introEaseIn = false;
     public bool introEaseOut = false;
     public float introTime = 1;
@@ -37,7 +37,7 @@ public class experimentaAnimationPresets : MonoBehaviour {
     public float introScale =1;
     public float introAlpha =1;
 
-    
+    [Header("Adjust Outro")]
     public bool outroEaseIn = false;
     public bool outroEaseOut = false;
     public float outroTime = 1;
@@ -48,39 +48,27 @@ public class experimentaAnimationPresets : MonoBehaviour {
     public float outroAlpha = 1;
 
 
-    public Keyframe intro;
+    public Keyframe introVisiblityTarget;
     public Keyframe idle;
-    public Keyframe outro;
-    public Keyframe target;
- 
+    public Keyframe outroVisiblityTarget;
+    public Keyframe transitionVisisbiltyTarget;
+
+    public enum STATE
+    {
+        HIDDEN,
+        DELAY_INTRO,
+        INTRO,
+        IDLE,
+        DELAY_OUTRO,
+        OUTRO
+    }
+
     public class Keyframe
     {
         public Vector3 position;
         public Vector3 scale;
         public float alpha;
 
-        /*
-        public int ease = 0;
-        public float transitionTime = 1;
-
-        public Keyframe(RectTransform nullTrafo, 
-                        Vector3 offset = new Vector3(), 
-                        float newScale = 1f, 
-                        float newAlpha = 1f,
-                        int newEase = 0,
-                        float newTransitionTime = 0)
-        {
-            position = nullTrafo.anchoredPosition3D + offset;
-            scale = nullTrafo.localScale*newScale;
-            alpha = newAlpha;
-            ease = newEase;
-            if (newTransitionTime < 0)
-                transitionTime = -1;
-            else if (newTransitionTime > 0)
-                transitionTime = 1;
-            else
-                transitionTime = 0;
-        }*/
 
         public Keyframe(RectTransform nullTrafo,
                 Vector3 offset = new Vector3(),
@@ -119,9 +107,9 @@ public class experimentaAnimationPresets : MonoBehaviour {
             }
         }
         idle = new Keyframe(trafo, Vector3.zero);
-        intro = new Keyframe(trafo, introOffset, introScale, introAlpha);
-        if(outroLikeIntro) outro = new Keyframe(trafo, introOffset, introScale, introAlpha);
-        else outro = new Keyframe(trafo, outroOffset, outroScale, outroAlpha);
+        introVisiblityTarget = new Keyframe(trafo, introOffset, introScale, introAlpha);
+        if(outroLikeIntro) outroVisiblityTarget = new Keyframe(trafo, introOffset, introScale, introAlpha);
+        else outroVisiblityTarget = new Keyframe(trafo, outroOffset, outroScale, outroAlpha);
     }
 
     private void setAlpa(float alpha)
@@ -150,98 +138,127 @@ public class experimentaAnimationPresets : MonoBehaviour {
         }
     }
 
-    public bool isReady = true;
-
-    public void updateTransition()
+    public void toggleVisibilty(bool shouldBeVisible)
     {
-        if (visibility != visibilityTarget)
-        {
-            if (inTransition || BenjasMath.countdownToZero(ref delay))
-            {
-                inTransition = true;
-                visibility = Mathf.Clamp01(visibility + Time.deltaTime / transitionTime);
-
-                float t = visibility;
-
-                if (easeIn) if (easeOut) t = BenjasMath.easeInOut(t);
-                    else                 t = BenjasMath.easeIn(t);
-                else if (easeOut)        t = BenjasMath.easeOut(t);
-                //t goes automaticly backwards when going out
-                trafo.anchoredPosition3D = Vector3.Lerp(target.position, idle.position, t);
-                trafo.localScale = Vector3.Lerp(target.scale, idle.scale, t);
-                setAlpa(Mathf.Lerp(target.alpha, idle.alpha, t));
-
-                if (visibility == visibilityTarget)
-                {
-                    visibilityTarget = visibilityTargetFinal;
-                    inTransition = false;
-                    if(visibility == visibilityTarget)
-                    {
-                        isReady = true;
-                    }
-                }
-            }
-            else if (visibility == visibilityTargetFinal)
-            {
-                //kill pending transition
-                visibilityTarget = visibilityTargetFinal;
-                delay = 0;
-                inTransition = false;
-                isReady = true;
-            }
-
-        } 
-  
+        visible = shouldBeVisible;
     }
 
+    public bool log = false;
 
-    public void setupTransition(float newVisibilityTarget)
+    // Update is called once per frame
+    void Update ()
     {
-        isReady = false;
-        visibilityTarget = newVisibilityTarget;
-        if (visibilityTarget == 1)
+        if(log)
         {
-            transitionTime = introTime;
-            easeIn = introEaseIn;
-            easeOut = introEaseOut;
-            target = intro;
-            delay = introDelay;
+            Debug.Log(
+                " state = " + state.ToString()
+            + " visibilityCurrent = " + visibilityCurrent
+            + " visibilityTarget = " + visibilityTarget
+            + " visibilityTarget = " + visible
+            );
         }
-        else
-        {
-            target = outro;
-            //going out is backward from 1 to 0
-            // so outro speed is negative managed by making outro time negative instead
-            transitionTime = -outroTime;
-            // so easing must be turned aswell;
-            easeIn = introEaseOut;
-            easeOut = introEaseIn;
-            delay = outroDelay;
-        }
-    }
-
-	// Update is called once per frame
-	void Update ()
-    {
         if (forceReset) Start();
-        if (visible != lastFrameVisible)
-        {
-            lastFrameVisible = visible;
-            visibilityTargetFinal = visible ? 1 : 0;
-            //action reqired
-            if (visibilityTargetFinal != visibility)
-            {
-                if (!alwaysCompleteTransition)
-                {
-                    setupTransition(visibilityTargetFinal);
-                }
-            }
+
+        
+        switch(state){
+
+            case STATE.HIDDEN:
+                if (visible) setState(STATE.DELAY_INTRO);
+                break;
+
+            case STATE.IDLE:
+                if (!visible) setState(STATE.DELAY_OUTRO);
+                break;
+
+            case STATE.DELAY_OUTRO:
+                if (visible) killTransition();
+                else if (runDelay()) setState(STATE.OUTRO);
+                break;
+
+            case STATE.DELAY_INTRO:
+                if (!visible) killTransition();
+                else if (runDelay()) setState(STATE.INTRO);
+                break;
+
+            case STATE.OUTRO:
+                if (visible && !alwaysCompleteTransition) setState(STATE.INTRO);
+                else updateTransition();
+                break;
+
+            case STATE.INTRO:
+                if (!visible && !alwaysCompleteTransition) setState(STATE.OUTRO);
+                else updateTransition();
+                break;
 
         }
-        if (visibilityTarget!=visibilityTargetFinal && visibilityTarget == visibility)
+
+
+    }
+
+    private void setState(STATE newState)
+    {
+        Debug.Log("animation setting state to " + newState);
+        state = newState;
+        switch (state)
         {
-            setupTransition(visibilityTargetFinal);
+            case STATE.DELAY_INTRO:
+                visibilityTarget = 1;
+                delay = introDelay;
+                break;
+
+            case STATE.DELAY_OUTRO:
+                visibilityTarget = 0;
+                delay = outroDelay;
+                break;
+
+            case STATE.INTRO:
+                visibilityTarget = 1;
+                easeIn = introEaseIn;
+                easeOut = introEaseOut;
+                transitionVisisbiltyTarget = introVisiblityTarget;
+                transitionTime = introTime;
+                break;
+
+            case STATE.OUTRO:
+                visibilityTarget = 0;
+                easeIn = introEaseOut;
+                easeOut = introEaseIn;
+                transitionVisisbiltyTarget = outroVisiblityTarget;
+                // going out is backward from 1 to 0
+                // so outroVisiblityTarget speed is negative 
+                // managed by making outroVisiblityTarget time negative instead
+                transitionTime = -outroTime;
+                break;
         }
-        updateTransition();
+    }
+
+    private bool runDelay()
+    {
+        return BenjasMath.countdownToZero(ref delay);
+    }
+
+    private void updateTransition()
+    {
+        visibilityCurrent = Mathf.Clamp01(visibilityCurrent + Time.deltaTime / transitionTime);
+
+        float t = visibilityCurrent;
+
+        if (easeIn) if (easeOut) t = BenjasMath.easeInOut(t);
+            else t = BenjasMath.easeIn(t);
+        else if (easeOut) t = BenjasMath.easeOut(t);
+        //t goes automaticly backwards when going out
+        trafo.anchoredPosition3D = Vector3.Lerp(transitionVisisbiltyTarget.position, idle.position, t);
+        trafo.localScale = Vector3.Lerp(transitionVisisbiltyTarget.scale, idle.scale, t);
+        setAlpa(Mathf.Lerp(transitionVisisbiltyTarget.alpha, idle.alpha, t));
+
+        if (visibilityCurrent == visibilityTarget)  killTransition();
+    }
+
+    private void killTransition()
+    {
+        setState ((visibilityCurrent == 1) ? STATE.IDLE : STATE.HIDDEN);
+        delay = 0;
     }
 }
+
+

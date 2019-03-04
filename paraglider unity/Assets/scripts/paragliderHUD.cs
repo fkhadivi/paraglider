@@ -93,7 +93,7 @@ public class paragliderHUD : MonoBehaviour {
    
     */
 
-    public void toggleVisibility()
+    private void toggleVisibility()
     {
         switch(state)
         {
@@ -119,9 +119,12 @@ public class paragliderHUD : MonoBehaviour {
 
     private void appear(experimentaAnimationPresets thing, bool shouldBeVisible)
     {
-        thing.visible = shouldBeVisible;
+        thing.toggleVisibilty(shouldBeVisible);
     }
 
+    /// <summary>
+    /// the whole hud is visible, including the backdrop for info top left
+    /// </summary>
     public void appearCOMPLETE()
     {
         appear(mapFrame, true);
@@ -136,6 +139,9 @@ public class paragliderHUD : MonoBehaviour {
         currentState = state = STATE.COMPLETE;
     }
 
+    /// <summary>
+    /// the whole hud is visible, no backdrop for info top left
+    /// </summary>
     public void appearNOINFO()
     {
         appear(mapFrame, true);
@@ -150,6 +156,9 @@ public class paragliderHUD : MonoBehaviour {
         currentState = state = STATE.NO_INFO;
     }
 
+    /// <summary>
+    /// the whole hud vanishes, only the backdrop for info top left stays visible
+    /// </summary>
     public void appearINFOONLY()
     {
         appear(mapFrame, false);
@@ -164,6 +173,9 @@ public class paragliderHUD : MonoBehaviour {
         currentState = state = STATE.INFO_ONLY;
     }
 
+    /// <summary>
+    /// the whole hud vanishes, including the backdrop for info top left
+    /// </summary>
     public void appearHIDDEN()
     {
         appear(mapFrame, false);
@@ -178,7 +190,7 @@ public class paragliderHUD : MonoBehaviour {
         currentState = state = STATE.HIDDEN;
     }
 
-    public Vector3 getHandAngle( float value, float min, float max, float minAngle, float maxAngle, float currentAngle)
+    private Vector3 getHandAngle( float value, float min, float max, float minAngle, float maxAngle, float currentAngle)
     {
         float targetAngle = BenjasMath.map(value, min, max, minAngle, maxAngle);
         if (instrumentMaxDegreesPerSec > 0) targetAngle = Mathf.MoveTowardsAngle(currentAngle, targetAngle, instrumentMaxDegreesPerSec * Time.deltaTime);
@@ -187,7 +199,7 @@ public class paragliderHUD : MonoBehaviour {
     }
         
         
-        public void updatespeedo()
+    public void updatespeedo()
     {
         if (glider != null)
         {

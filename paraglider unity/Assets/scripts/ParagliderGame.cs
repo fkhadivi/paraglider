@@ -568,6 +568,7 @@ public class ParagliderGame : MonoBehaviour {
          {
             HUD.setGameTime(timeNormalized);
             debugInfo.log("time", gameTime);
+            debugInfo.log("HUD state", HUD.currentState.ToString());
             //make we put a bacon game object to the finish 
             GameObject bacon1 = new GameObject();
             bacon1.transform.position = levelControl.levelInfo().finish.transform.position;
