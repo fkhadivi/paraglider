@@ -96,6 +96,7 @@ public class GameManager : MonoBehaviour {
         }
 
 #if UNITY_EDITOR
+        /*
         if (testTime > 1.0)
         {
             num++;
@@ -125,7 +126,7 @@ public class GameManager : MonoBehaviour {
         {
             testTime += Time.deltaTime;
 
-        }
+        }*/
 #endif
 
         // --------------------------------
@@ -411,6 +412,7 @@ public class GameManager : MonoBehaviour {
     public static void ResumeGame()
     {
         state = STATE.GAME;
+        Debug.Log("ResumeGame");
         UDPSender.SendUDPStringUTF8(ip, port, "state=game;action=resume");
         //ParagliderGame.GetInstance().gamePause(false);
         //StartPlaying();
